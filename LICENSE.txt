@@ -1,0 +1,14 @@
+Copyright © 2026 Dr. Masoud Al Abdali. All rights reserved.
+
+This work (the "OPD Patient Education" application, including its text, illustrations,
+storybooks, booklets, code, and design) is the property of Dr. Masoud Al Abdali.
+
+No part of this work may be reproduced, copied, distributed, republished, modified,
+rebranded, reverse-engineered, or used to create derivative works, in whole or in part,
+by any means, without the prior written permission of the copyright holder.
+
+Viewing the application through its official hosted address is permitted. All other
+rights are reserved. Unauthorized reproduction, redistribution, or rebranding is
+prohibited and may be unlawful.
+
+For permissions, contact the copyright holder.
