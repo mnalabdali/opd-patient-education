@@ -2,8 +2,8 @@
   "stage": 1,
   "gateKey": "khoula-ortho-2026",
   "assign": {
-    "hand-upper-limb": "90c22f",
-    "spine": "706293"
+    "spine": "706293",
+    "hand-upper-limb": "90c22f"
   },
   "override": {},
   "status": {},
