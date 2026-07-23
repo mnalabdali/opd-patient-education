@@ -3,7 +3,8 @@
   "gateKey": "khoula-ortho-2026",
   "assign": {
     "spine": "706293",
-    "hand-upper-limb": "90c22f"
+    "hand-upper-limb": "90c22f",
+    "hip": "d43f01"
   },
   "override": {},
   "status": {},
