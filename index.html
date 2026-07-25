@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v7.24 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.3 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -922,8 +922,9 @@ function arStems(w){
 }
 function stripTags(h){ return (h||"").replace(/<[^>]*>/g," "); }
 /* Pre-computed search haystack per leaflet: titles + summaries + synonyms + full body text (both languages) */
-var HAY={};
-function buildIndex(){
+var HAY={}, __opdIdxT=null, __opdIdxN=0;
+function buildIndex(){ if(__opdIdxT) return; __opdIdxT=setTimeout(function(){ __opdIdxT=null; __opdIdxN++; __opdBuildIndexNow(); },80); }
+function __opdBuildIndexNow(){
   LEAFLETS.forEach(function(x){
     var parts=[x.title.en,x.title.ar&&x.title.ar||"",x.summary.en,x.summary.ar||"",(x.synonyms||[]).join(" "),
                stripTags(x.html&&x.html.en),stripTags(x.html&&x.html.ar),
@@ -3371,7 +3372,7 @@ function opd7KbFlip(q){
 /* ---- rebuilt index: haystack + vocabulary for fuzzy ---- */
 var OPD7_VOCAB=null; /* token -> {ids:{}} */
 var OPD7_HAY_TOP={}, OPD7_HAY_SUM={}, OPD7_HAY_TITLE={}; /* title+synonyms | summary | title only */
-buildIndex=function(){
+var __opd7IdxNow=function(){
   OPD7_VOCAB={};
   LEAFLETS.forEach(function(x){
     OPD7_HAY_TITLE[x.id]=" "+normTxt((x.title.en||"")+" "+(x.title.ar||""))+" ";
@@ -3567,6 +3568,10 @@ function opd7BuildPop(){
 /* rebuild everything with the enriched index */
 try{ buildIndex(); OPD7_FUZZ_CACHE={}; }catch(e){}
 
+
+/* opd-1354: debounce enriched index rebuilds (129 parse-time calls -> 1) */
+buildIndex=function(){ if(__opdIdxT) return; __opdIdxT=setTimeout(function(){ __opdIdxT=null; __opdIdxN++; __opd7IdxNow(); },80); };
+buildIndex();
 </script>
 <script id="opd7-quizdata">
 /* ============================================================
@@ -4323,7 +4328,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v7.24 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.3 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
