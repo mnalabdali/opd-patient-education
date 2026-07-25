@@ -18203,13 +18203,15 @@ try{ window.__opd_1324=log; }catch(e){}
 })();
 </script>
 <script id="opd-1353-imgprefetch">
-/* v8.1: prefetch all images of a booklet/story the moment it opens, so page turns never blink */
+/* v8.2: (a) prefetch a booklet/story/leaflet's images the moment it opens;
+   (b) after the home page has painted, warm the whole image cache in the background
+       (connection-aware: full sweep only on fast connections, covers+heroes otherwise, nothing on save-data). */
 (function(){"use strict";
   var seen={};
   function pf(u){ if(!u||seen[u]) return; seen[u]=1; try{ var im=new Image(); im.decoding="async"; im.src=u; }catch(e){} }
   function wrap(name, getUrls){
     var fn=window[name]; if(typeof fn!=="function"||fn.__opd1353) return false;
-    var w=function(key){ var r=fn.apply(this,arguments); try{ (getUrls(key)||[]).forEach(pf); }catch(e){} return r; };
+    var w=function(){ var r=fn.apply(this,arguments); try{ (getUrls.apply(null,arguments)||[]).forEach(pf); }catch(e){} return r; };
     w.__opd1353=true; window[name]=w; return true;
   }
   var a=0;
@@ -18219,7 +18221,35 @@ try{ window.__opd_1324=log; }catch(e){}
     try{ if(st.cover&&st.cover.img&&STORY_IMG[st.cover.img]) out.push(STORY_IMG[st.cover.img]); }catch(e){}
     (st.pages||[]).forEach(function(p){ if(p&&p.img&&window.STORY_IMG&&STORY_IMG[p.img]) out.push(STORY_IMG[p.img]); });
     return out; })) a++;
+  if(wrap("openReader", function(x){ var out=[]; try{ if(x&&x.illus&&window.IMG){ ["cover","fig1","fig2","fig3","fig4","fig5","fig6","card"].forEach(function(s){ var k=x.illus[s]; if(k&&IMG[k]) out.push(IMG[k]); }); for(var s in x.illus){ var k2=x.illus[s]; if(k2&&IMG[k2]) out.push(IMG[k2]); } } }catch(e){}
+    return out; })) a++;
+
+  /* ---- background cache warm-up after home paints ---- */
+  function conn(){ try{ return navigator.connection||{}; }catch(e){ return {}; } }
+  function sweep(){
+    var c=conn(); if(c.saveData) return "skipped-savedata";
+    var slow=/(^|-)2g/.test(c.effectiveType||"");
+    if(slow) return "skipped-slow";
+    var full=(c.effectiveType||"4g")==="4g";
+    var q=[];
+    try{ for(var k in STORIES){ var cv=STORIES[k].cover; if(cv&&cv.img&&STORY_IMG[cv.img]) q.push(STORY_IMG[cv.img]); } }catch(e){}
+    try{ (LEAFLETS||[]).forEach(function(x){ if(x&&x.illus&&window.IMG){ for(var s in x.illus){ var kk=x.illus[s]; if(kk&&IMG[kk]) q.push(IMG[kk]); } } }); }catch(e){}
+    if(full){
+      try{ for(var k2 in STORY_IMG) q.push(STORY_IMG[k2]); }catch(e){}
+      try{ for(var k3 in IMG) q.push(IMG[k3]); }catch(e){}
+    }
+    var i=0;
+    (function next(){
+      var n=0;
+      while(i<q.length&&n<2){ if(!seen[q[i]]) n++; pf(q[i]); i++; }
+      if(i<q.length) setTimeout(next, 120);
+      else window.__opd1353.sweepDone=q.length;
+    })();
+    return full?"full":"covers";
+  }
   window.__opd1353={wrapped:a};
+  if(document.readyState==="complete") setTimeout(function(){ window.__opd1353.sweep=sweep(); }, 2500);
+  else window.addEventListener("load", function(){ setTimeout(function(){ window.__opd1353.sweep=sweep(); }, 2500); });
 })();
 </script>
 </body>
