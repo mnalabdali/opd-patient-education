@@ -73,5 +73,12 @@
       }
     }
   },
-  "reviewers": {}
+  "reviewers": {
+    "c60d28": {
+      "name": {
+        "en": "Dr Wafa Al Baluki",
+        "ar": "د. وفاء البلوكي"
+      }
+    }
+  }
 }
