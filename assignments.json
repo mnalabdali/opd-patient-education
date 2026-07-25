@@ -7,6 +7,71 @@
     "hip": "d43f01"
   },
   "override": {},
-  "status": {},
+  "status": {
+    "ddh-pavlik": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "ddh-spica": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "perthes": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "scfe": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "bone-joint-infection": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "limping-child": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "residual-dysplasia": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    },
+    "fai": {
+      "state": "reviewed",
+      "by": "d43f01",
+      "date": {
+        "en": "25 July 2026",
+        "ar": "25 يوليو 2026"
+      }
+    }
+  },
   "reviewers": {}
 }
