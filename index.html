@@ -18202,5 +18202,25 @@ try{ window.__opd_1324=log; }catch(e){}
   try{ window.__opd1352={applied:applied, missed:missed}; }catch(e){}
 })();
 </script>
+<script id="opd-1353-imgprefetch">
+/* v8.1: prefetch all images of a booklet/story the moment it opens, so page turns never blink */
+(function(){"use strict";
+  var seen={};
+  function pf(u){ if(!u||seen[u]) return; seen[u]=1; try{ var im=new Image(); im.decoding="async"; im.src=u; }catch(e){} }
+  function wrap(name, getUrls){
+    var fn=window[name]; if(typeof fn!=="function"||fn.__opd1353) return false;
+    var w=function(key){ var r=fn.apply(this,arguments); try{ (getUrls(key)||[]).forEach(pf); }catch(e){} return r; };
+    w.__opd1353=true; window[name]=w; return true;
+  }
+  var a=0;
+  if(wrap("openMini", function(key){ var reg=window.MB_REG&&MB_REG[key]; if(!reg) return [];
+    return (reg.panels||[]).map(function(p){ return (p&&p.img&&window.IMG)?IMG[p.img]:null; }); })) a++;
+  if(wrap("openStory", function(key){ var st=window.STORIES&&STORIES[key]; if(!st) return []; var out=[];
+    try{ if(st.cover&&st.cover.img&&STORY_IMG[st.cover.img]) out.push(STORY_IMG[st.cover.img]); }catch(e){}
+    (st.pages||[]).forEach(function(p){ if(p&&p.img&&window.STORY_IMG&&STORY_IMG[p.img]) out.push(STORY_IMG[p.img]); });
+    return out; })) a++;
+  window.__opd1353={wrapped:a};
+})();
+</script>
 </body>
 </html>
