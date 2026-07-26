@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.6 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.7 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4328,7 +4328,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.6 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.7 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -18661,6 +18661,27 @@ try{ window.__opd_1324=log; }catch(e){}
     w.__opd1356=true; window[name]=w; }
   wrap("openStory",goFS); wrap("closeStory",exitFS);
   try{ window.__opd1356="mobile-ux: header, sticky chips, dvh fullscreen story, note overlay"; }catch(e){}
+})();
+</script>
+<script id="opd-1357-kids-story-fix">
+/* opd-1357: kids-corner slidable sticky tabs + storybook text-clip fix (26 Jul 2026) */
+(function(){
+  "use strict";
+  var css=document.createElement("style");
+  css.textContent=
+   ".kh2-chips{flex-wrap:nowrap!important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:0;z-index:30;box-shadow:0 8px 16px -12px rgba(15,46,82,.28)}"
+  +".kh2-chips::-webkit-scrollbar{display:none}"
+  +".kh2-chips>*{flex:0 0 auto}"
+  /* storybook: center short pages, scroll tall pages — never clip behind the frame */
+  +".st-txtcol{justify-content:flex-start!important}"
+  +".st-txtcol::before{content:\"\";margin-top:auto}"
+  +".st-txtcol::after{content:\"\";margin-bottom:auto}";
+  (document.head||document.documentElement).appendChild(css);
+  function paint(){ try{ var c=document.getElementById("kh2-chips");
+    if(c&&c.parentNode) c.style.background=getComputedStyle(c.parentNode).backgroundColor||getComputedStyle(document.body).backgroundColor;
+  }catch(e){} }
+  try{ new MutationObserver(paint).observe(document.body,{childList:true}); }catch(e){}
+  setInterval(paint, 2500);
 })();
 </script>
 </body>
