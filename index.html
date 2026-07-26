@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.7 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.9 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -1013,6 +1013,7 @@ function libCards(items,q){
     var a=document.createElement("button"); a.className="libcard"+(isGame?" libcard-game":""); a.type="button";
     a.innerHTML=cover+'<span class="libtxt"><h3>'+it.title+'</h3><p>'+(it.sub||"")+'</p><span class="libtag">'+tag+'</span></span>';
     a.onclick=(function(it){ return function(){
+      if(typeof it.open==="function"){ it.open(); return; }
       if(it.kind==="catch"){ if(typeof openCatch==="function") openCatch(); }
       else if(it.kind==="memory"){ if(typeof openMemory==="function") openMemory(); }
       else if(it.kind==="quiz"){ if(typeof openQuiz==="function") openQuiz(); }
@@ -4328,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.7 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.9 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -15978,6 +15979,7 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
       '<span class="kx-body"><h3>'+esc(o.title)+'</h3>'+(o.sub?'<p>'+esc(o.sub)+'</p>':'')+'</span>';
     a.onclick=o.onclick; return a; }
   function openGame(it){ try{
+      if(typeof it.open==="function") return it.open();
       if(it.bestKey==="speed" && typeof openSpeedDr==="function") return openSpeedDr();
       if(it.bestKey==="bones" && typeof openBones==="function") return openBones();
       var map={"catch":"openCatch","memory":"openMemory","quiz":"openQuiz","match":"openMatch","spot":"openSpot","word":"openWord"};
@@ -18684,5 +18686,387 @@ try{ window.__opd_1324=log; }catch(e){}
   setInterval(paint, 2500);
 })();
 </script>
+<script id="opd-1358-games2">
+/* ============================================================
+   OPD-PE — opd-1358: games boost (26 Jul 2026)
+   · اعرف عظامك rebuilt: real skeleton, 10 true bones, fact per answer
+   · صائد الكالسيوم rebuilt: preview, streaks, end recap that teaches
+   · طابِق الأزواج rebuilt: learning pairs (term ↔ symbol) + fact on match
+   · Match game renamed «المطابقة الذكية / Smart Match»
+   · Content gap filled: quiz 6→10 sets, matching 6→9, warning-signs 6→9,
+     word game 6→8 — new sets cover spine/scoliosis, fractures & casts,
+     hand & upper limb, hip & foot, devices, pin sites, back red flags.
+   Draft content pending author clinical sign-off. (c) 2026 Dr. M. Al Abdali.
+   ============================================================ */
+(function(){
+"use strict";
+function AR(){ try{ return (typeof lang!=="undefined"?lang:"ar")==="ar"; }catch(e){ return true; } }
+function L2(o){ return AR()?o.ar:o.en; }
+
+/* ---------- shared mini-shell ---------- */
+var css=document.createElement("style");
+css.textContent=
+ ".g2-ov{position:fixed;inset:0;z-index:95;background:rgba(15,29,47,.6);display:flex;align-items:center;justify-content:center;padding:12px}"
++".g2-card{background:linear-gradient(160deg,#12365c,#1b4a7a);color:#fff;border-radius:20px;width:100%;max-width:430px;max-height:96dvh;display:flex;flex-direction:column;padding:14px 14px 12px;box-shadow:0 22px 60px rgba(0,0,0,.5);font-family:inherit}"
++".g2-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}"
++".g2-top h3{margin:0;font-size:17px;font-weight:800;flex:1}"
++".g2-x{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#456;font-size:20px;cursor:pointer}"
++".g2-hud{display:flex;gap:8px;margin-bottom:8px;font-weight:800;font-size:13.5px}"
++".g2-hud span{background:rgba(255,255,255,.14);border-radius:10px;padding:5px 12px}"
++".g2-stage{flex:1;min-height:0;overflow:auto;background:rgba(255,255,255,.07);border-radius:14px;padding:10px;-webkit-overflow-scrolling:touch}"
++".g2-q{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;text-align:center;font-size:16px;font-weight:800;margin-bottom:8px}"
++".g2-fact{background:#eafcf0;color:#1e5c34;border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:700;margin-top:8px;line-height:1.5}"
++".g2-btn{display:block;width:100%;border:0;border-radius:999px;padding:12px;background:#f4a83c;color:#4a2c00;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:10px}"
++".g2-end{text-align:center;padding:14px 6px}"
++".g2-end .big{font-size:44px}"
++".g2-end h4{margin:6px 0;font-size:18px}"
++"#g2skel svg{width:100%;height:auto;display:block;touch-action:manipulation}"
++"#g2skel [data-k]{cursor:pointer}"
++"#g2skel [data-k] .bn{fill:#f2f6fb;stroke:#9db8d4;stroke-width:2}"
++"#g2skel [data-k].ok .bn{fill:#7ee2a1;stroke:#2e9e5b}"
++"#g2skel [data-k].bad .bn{fill:#f5a19a;stroke:#c94f44}"
++".g2-catch{position:relative;height:52dvh;min-height:300px;background:linear-gradient(180deg,#eaf4ff,#dcecfb);border-radius:12px;overflow:hidden;touch-action:none}"
++".g2-it{position:absolute;font-size:34px;line-height:1;user-select:none;pointer-events:none}"
++".g2-bk{position:absolute;bottom:4px;left:0;font-size:44px;line-height:1;transform:translateX(-50%)}"
++".g2-legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:12.5px;font-weight:700;color:#dbe9f8;margin-top:8px}"
++".g2-legend b{color:#fff}"
++".g2-mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}"
++".g2-mc{aspect-ratio:3/4;border-radius:12px;border:0;background:#2f6da8;color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px;text-align:center;line-height:1.25}"
++".g2-mc.up{background:#fff;color:#14395f}"
++".g2-mc.done{background:#7ee2a1;color:#134d2a}"
++".g2-mc .em{font-size:30px}";
+document.head.appendChild(css);
+
+var OV=null;
+function g2open(title){ if(!OV){ OV=document.createElement("div"); OV.className="g2-ov";
+    OV.innerHTML='<div class="g2-card"><div class="g2-top"><h3></h3><button class="g2-x">×</button></div><div class="g2-hud"></div><div class="g2-stage"></div></div>';
+    document.body.appendChild(OV);
+    OV.querySelector(".g2-x").onclick=function(){ OV.style.display="none"; if(OV._onclose){try{OV._onclose();}catch(e){}} };
+  }
+  OV.style.display="flex"; OV._onclose=null;
+  OV.querySelector(".g2-card").setAttribute("dir", AR()?"rtl":"ltr");
+  OV.querySelector("h3").textContent=title;
+  OV.querySelector(".g2-hud").innerHTML=""; OV.querySelector(".g2-stage").innerHTML="";
+  return {hud:OV.querySelector(".g2-hud"), stage:OV.querySelector(".g2-stage"),
+          close:function(){OV.style.display="none";}, onClose:function(f){OV._onclose=f;}};
+}
+
+/* ============ 1 · اعرف عظامك — rebuilt, bones only ============ */
+var SK_BONES=[
+ {k:"skull",ar:"الجمجمة",en:"the skull",fa:{ar:"الجمجمة خوذة طبيعية تحمي دماغك.",en:"Your skull is a natural helmet protecting your brain."}},
+ {k:"clav",ar:"الترقوة",en:"the collarbone",fa:{ar:"الترقوة من أكثر العظام التي تنكسر عند الأطفال — وتلتئم جيدًا.",en:"The collarbone is one of the most commonly broken bones in children — and it heals well."}},
+ {k:"ribs",ar:"الأضلاع",en:"the ribs",fa:{ar:"أضلاعك قفص مرن يحمي القلب والرئتين.",en:"Your ribs are a springy cage guarding the heart and lungs."}},
+ {k:"spine",ar:"العمود الفقري",en:"the spine",fa:{ar:"عمودك الفقري سلسلة فقرات تحمي الحبل الشوكي وتبقيك منتصبًا.",en:"Your spine is a chain of vertebrae protecting the spinal cord and keeping you upright."}},
+ {k:"hum",ar:"عظم العضد",en:"the humerus",fa:{ar:"عظم العضد يصل الكتف بالمرفق.",en:"The humerus connects your shoulder to your elbow."}},
+ {k:"fore",ar:"الساعد (الكعبرة والزند)",en:"the forearm bones",fa:{ar:"في ساعدك عظمتان تدوران حول بعضهما عندما تقلب كفك.",en:"Your forearm has two bones that rotate when you flip your palm."}},
+ {k:"pelvis",ar:"الحوض",en:"the pelvis",fa:{ar:"الحوض يحمل جذعك ويحتضن مفصلي الورك.",en:"The pelvis carries your trunk and cradles both hip joints."}},
+ {k:"femur",ar:"عظمة الفخذ",en:"the femur",fa:{ar:"عظمة الفخذ أطول وأقوى عظمة في جسمك!",en:"The femur is the longest, strongest bone in your body!"}},
+ {k:"pat",ar:"الرضفة (الصابونة)",en:"the kneecap",fa:{ar:"الرضفة درع صغير أمام الركبة يساعد عضلات الفخذ على العمل.",en:"The kneecap is a small shield that helps your thigh muscles work."}},
+ {k:"tibia",ar:"الظنبوب (عظمة الساق)",en:"the tibia",fa:{ar:"الظنبوب يحمل معظم وزنك عند الوقوف والمشي.",en:"The tibia carries most of your weight when you stand and walk."}}
+];
+function bone(x,y,w,h,rot){ return '<g transform="translate('+x+' '+y+') rotate('+(rot||0)+')"><rect class="bn" x="'+(-w/2)+'" y="0" width="'+w+'" height="'+h+'" rx="'+(w/2)+'"/><circle class="bn" cx="'+(-w/4)+'" cy="2" r="'+(w/2.6)+'"/><circle class="bn" cx="'+(w/4)+'" cy="2" r="'+(w/2.6)+'"/><circle class="bn" cx="'+(-w/4)+'" cy="'+h+'" r="'+(w/2.6)+'"/><circle class="bn" cx="'+(w/4)+'" cy="'+h+'" r="'+(w/2.6)+'"/></g>'; }
+var SK_SVG='<svg viewBox="0 0 240 420" xmlns="http://www.w3.org/2000/svg">'
++'<g data-k="skull"><ellipse class="bn" cx="120" cy="34" rx="26" ry="28"/><rect class="bn" x="106" y="56" width="28" height="14" rx="7"/></g>'
++'<g data-k="spine">'+[0,1,2,3,4,5,6].map(function(i){return '<rect class="bn" x="112" y="'+(76+i*13)+'" width="16" height="10" rx="4"/>';}).join('')+'</g>'
++'<g data-k="clav"><rect class="bn" x="78" y="78" width="38" height="7" rx="3.5" transform="rotate(-8 97 81)"/><rect class="bn" x="124" y="78" width="38" height="7" rx="3.5" transform="rotate(8 143 81)"/></g>'
++'<g data-k="ribs">'+[0,1,2,3].map(function(i){return '<path class="bn" fill="none" d="M120 '+(96+i*14)+' C 88 '+(98+i*14)+', 84 '+(108+i*14)+', 96 '+(112+i*14)+' M120 '+(96+i*14)+' C 152 '+(98+i*14)+', 156 '+(108+i*14)+', 144 '+(112+i*14)+'"/>';}).join('')+'</g>'
++'<g data-k="hum">'+bone(72,92,12,60,8)+bone(168,92,12,60,-8)+'</g>'
++'<g data-k="fore">'+bone(62,160,10,52,4)+bone(178,160,10,52,-4)+'</g>'
++'<g data-k="pelvis"><path class="bn" d="M92 178 q28 -14 56 0 q6 22 -12 30 l-6 12 h-20 l-6 -12 q-18 -8 -12 -30 z"/></g>'
++'<g data-k="femur">'+bone(102,222,13,70,3)+bone(138,222,13,70,-3)+'</g>'
++'<g data-k="pat"><circle class="bn" cx="104" cy="300" r="8"/><circle class="bn" cx="136" cy="300" r="8"/></g>'
++'<g data-k="tibia">'+bone(102,312,11,66,1)+bone(138,312,11,66,-1)+'</g>'
++'<g><ellipse class="bn" cx="100" cy="392" rx="17" ry="8"/><ellipse class="bn" cx="140" cy="392" rx="17" ry="8"/></g>'
++'</svg>';
+window.openSkeleton=function(){
+  var s=g2open(AR()?"🦴 اعرف عظامك":"🦴 Know Your Bones");
+  var order=SK_BONES.slice().sort(function(){return Math.random()-.5;}), i=0, score=0, locked=false;
+  s.hud.innerHTML='<span>⭐ <b id="g2sc">0</b></span><span><b id="g2pr">1</b>/10</span>';
+  s.stage.innerHTML='<div class="g2-q" id="g2q"></div><div id="g2skel">'+SK_SVG+'</div><div class="g2-fact" id="g2f" style="display:none"></div>';
+  var svg=s.stage.querySelector("#g2skel");
+  function ask(){ locked=false; s.stage.querySelector("#g2f").style.display="none";
+    svg.querySelectorAll("[data-k]").forEach(function(g){ g.classList.remove("ok","bad"); });
+    document.getElementById("g2q").textContent=(AR()?"👆 أين ":"👆 Where is ")+L2(order[i])+(AR()?"؟":"?");
+    document.getElementById("g2pr").textContent=(i+1); }
+  function finish(){ var msg=score>=8?(AR()?"🏆 خبير عظام!":"🏆 Bone expert!"):score>=5?(AR()?"👍 أحسنت!":"👍 Well done!"):(AR()?"💪 حاول مجددًا!":"💪 Try again!");
+    s.stage.innerHTML='<div class="g2-end"><div class="big">'+(score>=8?"🏆":score>=5?"🎉":"💪")+'</div><h4>'+msg+'</h4><p>'+score+' / 10</p><button class="g2-btn" id="g2again">'+(AR()?"العب مرة أخرى":"Play again")+'</button></div>';
+    document.getElementById("g2again").onclick=function(){ window.openSkeleton(); };
+    try{ if(window.OPD7&&OPD7.stat) OPD7.stat("bones",score,true); }catch(e){} }
+  svg.addEventListener("click",function(ev){ if(locked) return;
+    var g=ev.target.closest?ev.target.closest("[data-k]"):null; if(!g) return;
+    locked=true; var want=order[i].k, got=g.getAttribute("data-k");
+    var f=s.stage.querySelector("#g2f");
+    if(got===want){ g.classList.add("ok"); score++; document.getElementById("g2sc").textContent=score;
+      f.textContent="✅ "+L2(order[i].fa); }
+    else{ g.classList.add("bad");
+      var right=svg.querySelector('[data-k="'+want+'"]'); if(right) right.classList.add("ok");
+      f.textContent=(AR()?"هذه ليست ":"That is not ")+L2(order[i])+" — "+L2(order[i].fa); }
+    f.style.display="block";
+    setTimeout(function(){ if(!document.getElementById('g2q')) return; i++; if(i>=10) finish(); else ask(); }, 1600);
+  });
+  ask();
+};
+
+/* ============ 2 · صائد الكالسيوم — rebuilt ============ */
+var CT_GOOD=[{e:"🥛",ar:"الحليب",en:"milk"},{e:"🧀",ar:"الجبن",en:"cheese"},{e:"🐟",ar:"السمك",en:"fish"},{e:"🥚",ar:"البيض",en:"eggs"},{e:"🥬",ar:"الخضار الورقية",en:"leafy greens"},{e:"🌰",ar:"المكسرات",en:"nuts"}];
+var CT_BAD=[{e:"🥤",ar:"المشروبات الغازية",en:"fizzy drinks"},{e:"🍬",ar:"الحلوى",en:"sweets"},{e:"🍟",ar:"المقليات",en:"fried snacks"},{e:"🧋",ar:"المشروبات السكرية",en:"sugary drinks"}];
+window.openCatch=function(){
+  var s=g2open(AR()?"🥛 صائد الكالسيوم":"🥛 Calcium Catcher");
+  s.hud.innerHTML='<span>⭐ <b id="c2sc">0</b></span><span>⏱ <b id="c2t">45</b></span><span>🔥 <b id="c2st">0</b></span>';
+  s.stage.innerHTML='<div class="g2-catch" id="c2f"></div>'
+    +'<div class="g2-legend">'+(AR()?"<b>التقط:</b>":"<b>Catch:</b>")+CT_GOOD.map(function(g){return g.e;}).join(" ")+" · "+(AR()?"<b>تجنّب:</b>":"<b>Avoid:</b>")+CT_BAD.map(function(g){return g.e;}).join(" ")+'</div>'
+    +'<button class="g2-btn" id="c2go">▶ '+(AR()?"ابدأ":"Start")+'</button>';
+  var field=document.getElementById("c2f");
+  /* preview: gentle floating samples so the field is never blank */
+  var pv=[]; [CT_GOOD[0],CT_BAD[0],CT_GOOD[2],CT_GOOD[4]].forEach(function(o,ix){
+    var d=document.createElement("div"); d.className="g2-it"; d.textContent=o.e;
+    d.style.left=(15+ix*22)+"%"; d.style.top=(18+(ix%2)*30)+"%"; d.style.opacity=".55"; field.appendChild(d); pv.push(d); });
+  var bk=document.createElement("div"); bk.className="g2-bk"; bk.textContent="🧺"; field.appendChild(bk);
+  var W=function(){return field.clientWidth;};
+  var bx=0.5; function placeBk(){ bk.style.left=(bx*100)+"%"; } placeBk();
+  field.addEventListener("pointermove",function(e){ var r=field.getBoundingClientRect(); bx=Math.min(.94,Math.max(.06,(e.clientX-r.left)/r.width)); placeBk(); });
+  field.addEventListener("pointerdown",function(e){ var r=field.getBoundingClientRect(); bx=Math.min(.94,Math.max(.06,(e.clientX-r.left)/r.width)); placeBk(); });
+  var items=[], score=0, streak=0, tLeft=45, run=false, raf=null, timer=null, caught={};
+  function spawn(){ var good=Math.random()<0.62; var pool=good?CT_GOOD:CT_BAD; var o=pool[Math.floor(Math.random()*pool.length)];
+    var d=document.createElement("div"); d.className="g2-it"; d.textContent=o.e; field.appendChild(d);
+    items.push({el:d,x:0.08+Math.random()*0.84,y:-0.08,v:0.0032+Math.random()*0.0028+((45-tLeft)*0.00004),good:good,o:o}); }
+  function step(){ if(!run) return;
+    if(Math.random()<0.045+((45-tLeft)*0.0009)) spawn();
+    var H=field.clientHeight;
+    items=items.filter(function(it){ it.y+=it.v; it.el.style.left=(it.x*100)+"%"; it.el.style.top=(it.y*100)+"%";
+      if(it.y>0.86 && it.y<0.97 && Math.abs(it.x-bx)<0.11){
+        if(it.good){ streak++; var pts=streak>=5?2:1; score+=pts; caught[it.o.e]=(it.o); }
+        else { streak=0; score=Math.max(0,score-1); }
+        var e1=document.getElementById("c2sc"), e2=document.getElementById("c2st"); if(e1) e1.textContent=score; if(e2) e2.textContent=streak;
+        field.removeChild(it.el); return false; }
+      if(it.y>1.02){ field.removeChild(it.el); return false; } return true; });
+    raf=requestAnimationFrame(step); }
+  function finish(){ run=false; cancelAnimationFrame(raf); clearInterval(timer);
+    var got=Object.keys(caught);
+    var why=AR()
+      ?"الحليب والجبن والخضار الورقية غنية بالكالسيوم الذي يبني العظم، والسمك والبيض فيهما فيتامين (د) الذي يساعد الجسم على امتصاصه — والمشروبات الغازية والسكرية لا تبني عظامًا."
+      :"Milk, cheese and leafy greens are rich in calcium that builds bone; fish and eggs carry vitamin D that helps absorb it — fizzy and sugary drinks build nothing.";
+    s.stage.innerHTML='<div class="g2-end"><div class="big">'+(score>=25?"🏆":score>=12?"🎉":"💪")+'</div><h4>'+(AR()?"نتيجتك: ":"Your score: ")+score+'</h4>'
+      +'<p style="font-size:26px;margin:4px 0">'+(got.length?got.join(" "):"—")+'</p>'
+      +'<div class="g2-fact" style="display:block;text-align:start">'+why+'</div>'
+      +'<button class="g2-btn" id="c2again">'+(AR()?"العب مرة أخرى":"Play again")+'</button></div>';
+    document.getElementById("c2again").onclick=function(){ window.openCatch(); }; }
+  document.getElementById("c2go").onclick=function(){ if(run) return;
+    pv.forEach(function(d){ if(d.parentNode) d.parentNode.removeChild(d); });
+    this.style.display="none"; run=true; step();
+    timer=setInterval(function(){ tLeft--; var el=document.getElementById("c2t"); if(!el){ clearInterval(timer); return; } el.textContent=tLeft; if(tLeft<=0) finish(); },1000); };
+  s.onClose(function(){ run=false; cancelAnimationFrame(raf); clearInterval(timer); });
+};
+
+/* ============ 3 · طابِق الأزواج — learning pairs ============ */
+var MM_PAIRS=[
+ {e:"🦴",ar:"عظم",en:"Bone",fa:{ar:"عظامك حية وتتجدد باستمرار.",en:"Your bones are alive and always renewing."}},
+ {e:"🥛",ar:"كالسيوم",en:"Calcium",fa:{ar:"الكالسيوم حجر البناء الأول للعظم.",en:"Calcium is bone's main building block."}},
+ {e:"☀️",ar:"فيتامين د",en:"Vitamin D",fa:{ar:"الشمس تساعد جسمك على صنع فيتامين (د).",en:"Sunshine helps your body make vitamin D."}},
+ {e:"🏃",ar:"حركة",en:"Movement",fa:{ar:"الجري واللعب يقويان العظم مثل التمرين للعضلات.",en:"Running and play strengthen bone like exercise strengthens muscle."}},
+ {e:"🛡️",ar:"جبيرة",en:"Cast",fa:{ar:"الجبيرة درع يحمي العظم حتى يلتئم.",en:"A cast is a shield protecting bone while it heals."}},
+ {e:"🩻",ar:"أشعة",en:"X-ray",fa:{ar:"الأشعة تُري الطبيب العظم من الداخل دون ألم.",en:"An X-ray shows the doctor your bones painlessly."}},
+ {e:"🥬",ar:"غذاء صحي",en:"Healthy food",fa:{ar:"الخضار والحليب والسمك أصدقاء عظامك.",en:"Greens, milk and fish are your bones' best friends."}},
+ {e:"😴",ar:"نوم",en:"Sleep",fa:{ar:"أثناء النوم يفرز جسمك هرمون النمو.",en:"While you sleep, your body releases growth hormone."}}
+];
+window.openMemory=function(){
+  var s=g2open(AR()?"🧩 طابِق الأزواج":"🧩 Match the Pairs");
+  s.hud.innerHTML='<span>'+(AR()?"الحركات":"Moves")+': <b id="m2mv">0</b></span><span><b id="m2ok">0</b>/8</span>';
+  var deck=[]; MM_PAIRS.forEach(function(p,i){ deck.push({i:i,t:"e"}); deck.push({i:i,t:"w"}); });
+  deck.sort(function(){return Math.random()-.5;});
+  s.stage.innerHTML='<div class="g2-mem" id="m2g"></div><div class="g2-fact" id="m2f" style="display:none"></div>';
+  var g=document.getElementById("m2g"), open=[], lock=false, moves=0, okc=0;
+  deck.forEach(function(c,ix){ var b=document.createElement("button"); b.type="button"; b.className="g2-mc"; b.textContent="؟";
+    b.onclick=function(){ if(lock||b.classList.contains("up")||b.classList.contains("done")) return;
+      b.classList.add("up"); b.innerHTML=(c.t==="e")?('<span class="em">'+MM_PAIRS[c.i].e+'</span>'):L2(MM_PAIRS[c.i]);
+      open.push({b:b,c:c});
+      if(open.length===2){ lock=true; moves++; document.getElementById("m2mv").textContent=moves;
+        var a=open[0], z=open[1];
+        if(a.c.i===z.c.i && a.c.t!==z.c.t){ setTimeout(function(){ a.b.classList.add("done"); z.b.classList.add("done");
+            okc++; document.getElementById("m2ok").textContent=okc;
+            var f=document.getElementById("m2f"); f.textContent="✨ "+L2(MM_PAIRS[a.c.i].fa); f.style.display="block";
+            open=[]; lock=false;
+            if(okc===8){ setTimeout(function(){ s.stage.innerHTML='<div class="g2-end"><div class="big">🏆</div><h4>'+(AR()?"أكملت كل الأزواج!":"All pairs matched!")+'</h4><p>'+(AR()?"عدد الحركات: ":"Moves: ")+moves+'</p><button class="g2-btn" id="m2again">'+(AR()?"العب مرة أخرى":"Play again")+'</button></div>'; document.getElementById("m2again").onclick=function(){window.openMemory();}; },900); } },420); }
+        else { setTimeout(function(){ a.b.classList.remove("up"); z.b.classList.remove("up"); a.b.textContent="؟"; z.b.textContent="؟"; open=[]; lock=false; },800); } } };
+    g.appendChild(b); });
+};
+
+/* ============ 4 · new content sets (draft — author review) ============ */
+function q(qa,qe,o,c,wa,we){ return {q:{ar:qa,en:qe},opts:o.map(function(p){return {ar:p[0],en:p[1]};}),correct:c,why:{ar:wa,en:we}}; }
+try{ if(window.QZ_SETS){
+QZ_SETS.push(
+{name:{ar:"العمود الفقري والجنف",en:"Spine & scoliosis"},data:[
+ q("أوضح علامة مبكرة للجنف؟","Clearest early sign of scoliosis?",[["ألم شديد","Severe pain"],["عدم تساوي الكتفين وبروز جانب عند الانحناء","Uneven shoulders and a hump on bending"],["حرارة","Fever"],["تنميل القدمين","Numb feet"]],1,"فحص الانحناء للأمام يُظهر بروز جانب واحد من الظهر.","The forward-bend test shows one side of the back standing higher."),
+ q("هدف دعامة الظهر في الجنف؟","What does a scoliosis brace do?",[["تقويم الانحناء نهائيًا","Straighten the curve for good"],["منع ازدياد الانحناء أثناء النمو","Stop the curve growing during growth"],["تقوية العضلات","Strengthen muscles"],["علاج الألم","Treat pain"]],1,"الدعامة توجّه النمو وتمنع الانحناء من الازدياد — لا تعالج الألم.","The brace guides growth and stops progression — it is not a pain treatment."),
+ q("حقيبة مدرسية ثقيلة…","A heavy schoolbag…",[["تسبب الجنف","Causes scoliosis"],["قد تسبب ألمًا عضليًا لكنها لا تسبب الجنف","May cause muscle ache but does not cause scoliosis"],["تقوّم الظهر","Straightens the back"],["تكسر الفقرات","Breaks vertebrae"]],1,"الجنف لا تسببه الحقيبة؛ الحقيبة الثقيلة تسبب إجهادًا عضليًا فقط.","Scoliosis is not caused by bags; heavy bags only strain muscles."),
+ q("ألم ظهر ليلي يوقظ الطفل من النوم؟","Night back pain that wakes a child?",[["طبيعي","Normal"],["يستدعي مراجعة الطبيب","Needs a doctor's review"],["يُعالج بالمسكنات فقط","Painkillers only"],["بسبب الدراسة","From studying"]],1,"الألم الليلي الموقظ من العلامات التي نفحصها دائمًا بعناية.","Waking night pain is a sign we always examine carefully."),
+ q("معظم حالات الجنف البسيط تحتاج…","Most mild scoliosis needs…",[["جراحة فورية","Immediate surgery"],["متابعة دورية بالقياس","Regular measured follow-up"],["راحة تامة","Complete rest"],["فيتامينات","Vitamins"]],1,"الانحناءات الصغيرة تُراقب فقط، وكثير منها لا يزداد.","Small curves are simply monitored; many never progress.")]},
+{name:{ar:"الكسور والجبائر",en:"Fractures & casts"},data:[
+ q("أصابع باردة أو زرقاء تحت الجبس؟","Cold or blue fingers under a cast?",[["ننتظر يومين","Wait two days"],["مراجعة فورية في نفس اليوم","Same-day urgent review"],["تدفئتها","Warm them"],["طبيعي","Normal"]],1,"تغيّر لون الأصابع أو برودتها علامة ضغط — لا تنتظروا.","Colour change or cold fingers means pressure — never wait."),
+ q("الحكة داخل الجبس تُعالج بـ…","Itching inside a cast is treated with…",[["إدخال قلم","Poking a pencil in"],["هواء بارد من مجفف الشعر","Cool air from a hairdryer"],["ماء","Water"],["بودرة","Powder"]],1,"لا يدخل شيء تحت الجبس أبدًا؛ الهواء البارد آمن ويريح.","Nothing ever goes inside a cast; cool air is safe and soothing."),
+ q("عظام الأطفال مقارنة بالكبار…","Children's bones compared to adults'…",[["أبطأ التئامًا","Heal slower"],["أسرع التئامًا","Heal faster"],["لا تلتئم","Don't heal"],["مثلها تمامًا","Exactly the same"]],1,"عظم الطفل نشيط النمو ويلتئم أسرع من عظم الكبار.","A child's growing bone heals faster than an adult's."),
+ q("يُزال الجبس بـ…","A cast is removed with…",[["سكين","A knife"],["منشار متذبذب لا يجرح الجلد","An oscillating saw that cannot cut skin"],["مقص كبير","Big scissors"],["كسره باليد","Breaking it by hand"]],1,"منشار الجبس يهتز ولا يدور، فيقطع الجبس الصلب ولا يجرح الجلد.","The cast saw wiggles rather than spins — it cuts hard cast, not skin."),
+ q("جبس ابتلّ وأصبح طريًا؟","A cast got soaked and soft?",[["يُترك","Leave it"],["مراجعة العيادة لتقييمه","Clinic review to assess it"],["يُجفف بالفرن","Oven-dry it"],["يُنزع في البيت","Remove it at home"]],1,"الجبس الطري يفقد حمايته وقد يحتاج تبديلًا.","A soft cast loses protection and may need replacing.")]},
+{name:{ar:"اليد والطرف العلوي",en:"Hand & upper limb"},data:[
+ q("الإبهام الزنادي عند الطفل هو…","Trigger thumb in a child is…",[["كسر","A fracture"],["عقدة على الوتر تجعل الإبهام منثنيًا","A nodule on the tendon keeping the thumb bent"],["خلع","A dislocation"],["التهاب مفصل","Arthritis"]],1,"عقدة صغيرة على الوتر تمنع فرده — كثير منها يتحسن قبل عمر ٢–٣ سنوات.","A small tendon nodule stops it straightening — many resolve before age 2–3."),
+ q("إصبع زائد عند مولود…","An extra digit in a newborn…",[["يُربط بخيط في البيت","Tie it with a thread at home"],["يُقيَّم بالعيادة لاختيار العلاج الأنسب","Clinic assessment chooses the right treatment"],["يُترك دائمًا","Always left alone"],["علامة مرض خطير دائمًا","Always serious disease"]],1,"لا يُربط في البيت؛ التقييم يحدد النوع والعلاج الأنسب وتوقيته.","Never tie at home; assessment defines the type, treatment and timing."),
+ q("أهم علاج مبكر لشلل الضفيرة الولادي؟","Key early treatment in birth brachial plexus palsy?",[["جراحة فورية","Immediate surgery"],["تمارين مدى الحركة اليومية","Daily range-of-motion exercises"],["جبيرة دائمة","Permanent splint"],["تدليك بالأعشاب","Herbal massage"]],1,"التمارين اليومية تحفظ ليونة المفاصل بينما تتعافى الأعصاب.","Daily exercises keep joints supple while nerves recover."),
+ q("سقوط على اليد مع تورم فوق الرسغ؟","Fall on the hand with swelling above the wrist?",[["شد عضلي دائمًا","Always a strain"],["قد يكون كسرًا ويحتاج أشعة","May be a fracture — needs an X-ray"],["ثلج فقط","Ice only"],["طبيعي","Normal"]],1,"الرسغ من أكثر أماكن الكسور عند الأطفال بعد السقوط.","The wrist is one of children's commonest fracture sites after a fall."),
+ q("طفل لا يحرك ذراعه بعد شدّها فجأة؟","A child not moving the arm after a sudden pull?",[["كسر مؤكد","Definitely a fracture"],["قد يكون خلعًا جزئيًا للمرفق (مرفق المربية)","May be a pulled elbow (nursemaid's elbow)"],["شلل","Paralysis"],["تمثيل","Pretending"]],1,"مرفق المربية شائع ويُعاد بمناورة بسيطة في العيادة.","Pulled elbow is common and reduced with a simple clinic manoeuvre.")]},
+{name:{ar:"الورك والقدم",en:"Hip & foot"},data:[
+ q("القماط الصحي للورك يعني…","Hip-healthy swaddling means…",[["شد الساقين مستقيمتين","Legs straight and tight"],["حرية الوركين بوضعية الضفدع","Free hips in the frog position"],["لف الجسم كله بإحكام","Whole body wrapped tight"],["لا فرق","No difference"]],1,"قمّط الأعلى وحرّر الأسفل: الوركان يحبان الانثناء والتباعد.","Swaddle the top, free the bottom: hips like to bend and spread."),
+ q("علاج حنف القدم الناجح غالبًا…","Successful clubfoot treatment is usually…",[["جراحة كبيرة فورًا","Big immediate surgery"],["جبائر أسبوعية بطريقة بونسيتي","Weekly Ponseti casts"],["أحذية فقط","Shoes only"],["تدليك","Massage"]],1,"جبائر بونسيتي الأسبوعية تصحح القدم تدريجيًا بنجاح عالٍ.","Weekly Ponseti casting corrects the foot gradually with high success."),
+ q("بعد تصحيح حنف القدم يلبس الطفل…","After clubfoot correction the child wears…",[["لا شيء","Nothing"],["حذاءً بقضيب أثناء النوم لسنوات","Boots-and-bar during sleep for years"],["جبسًا دائمًا","Permanent cast"],["دعامة ظهر","A back brace"]],1,"حذاء القضيب الليلي يمنع عودة الاعوجاج — الالتزام به سر النجاح.","The night boots-and-bar prevents relapse — sticking with it is the secret."),
+ q("مولود بمجيء مقعدي أو قصة عائلية لخلع الورك؟","Newborn breech or with family history of DDH?",[["لا شيء يلزم","Nothing needed"],["سونار مبكر للورك","Early hip ultrasound"],["أشعة فورًا","Immediate X-ray"],["ننتظر المشي","Wait for walking"]],1,"السونار المبكر يكشف خلل التنسج قبل أن يتأخر العلاج.","Early ultrasound catches dysplasia before treatment gets harder."),
+ q("جهاز بافليك…","The Pavlik harness…",[["يُنزع متى شئنا","Comes off whenever we like"],["يُلبس حسب تعليمات الطبيب ولا يُعدَّل في البيت","Worn per the doctor's instructions, never adjusted at home"],["للزينة","Decorative"],["يُشد بقوة","Tightened hard"]],1,"ساعات اللبس وضبط الأحزمة يحددها الفريق المعالج فقط.","Wearing hours and strap settings belong to the treating team only.")]});
+}}catch(e){}
+try{ if(window.MT_SETS){
+function P(ca,ce,la,le){ return {c:{ar:ca,en:ce},l:{ar:la,en:le}}; }
+MT_SETS.push(
+{name:{ar:"العلاج والحالة",en:"Treatment → condition"},pairs:[P("جبائر بونسيتي","Ponseti casts","حنف القدم","Clubfoot"),P("جهاز بافليك","Pavlik harness","خلع الورك الولادي","DDH"),P("دعامة الظهر","TLSO brace","الجنف","Scoliosis"),P("حذاء بقضيب","Boots-and-bar","منع عودة حنف القدم","Clubfoot relapse prevention"),P("تمارين الإطالة","Stretching exercises","المشي على الأصابع","Toe-walking")]},
+{name:{ar:"الجهاز والغرض",en:"Device → purpose"},pairs:[P("منشار الجبس","Cast saw","إزالة الجبيرة بأمان","Safe cast removal"),P("الجبس الحوضي","Hip spica","تثبيت الورك بعد الرد","Holding the hip after reduction"),P("المثبت الحلقي","Ring fixator","تقويم وتطويل العظم","Straightening & lengthening bone"),P("العكازان","Crutches","تخفيف التحميل على الساق","Off-loading the leg"),P("الجبيرة الليلية","Night splint","إبقاء الوتر مشدودًا أثناء النوم","Keeping the tendon stretched overnight")]},
+{name:{ar:"من يعالج ماذا؟",en:"Who does what?"},pairs:[P("جراح عظام الأطفال","Paediatric orthopaedic surgeon","التشخيص والقرار والجراحة","Diagnosis, decisions & surgery"),P("فني الجبس","Cast technician","تركيب الجبيرة وإزالتها","Applying & removing casts"),P("أخصائي العلاج الطبيعي","Physiotherapist","التمارين واستعادة الحركة","Exercises & regaining movement"),P("أخصائي الأشعة","Radiologist","قراءة الصور والسونار","Reading X-rays & ultrasound"),P("الممرضة","Nurse","العناية بالجرح والتثقيف","Wound care & education")]});
+}}catch(e){}
+try{ if(window.SP_SETS){
+function R2(ta,te,signs){ return {topic:{ar:ta,en:te},signs:signs.map(function(s){return {t:{ar:s[0],en:s[1]},red:s[2]};})}; }
+SP_SETS.push(
+{name:{ar:"الجبيرة",en:"The cast"},rounds:[
+ R2("طفل في جبيرة ذراع","A child in an arm cast",[["أصابع زرقاء أو باردة","Blue or cold fingers",true],["حكة خفيفة","Mild itching",false],["ألم يزداد رغم المسكن والرفع","Pain rising despite analgesia & elevation",true],["رائحة كريهة من الجبس","Bad smell from the cast",true],["ضيق بسيط أول يوم يتحسن بالرفع","Slight day-one tightness easing with elevation",false],["تشقق الجبس أو تليّنه","Cracked or softened cast",true]]),
+ R2("طفل في جبس حوضي","A child in a hip spica",[["بكاء متكرر عند النوم بعد فترة هدوء","Recurrent crying at sleep after settled days",true],["تسرب بول بسيط جُفف فورًا","Small urine leak dried promptly",false],["حرارة مع رائحة","Fever with smell",true],["جلد أحمر متسلخ عند الحواف","Red broken skin at the edges",true],["حكة عند الحافة تخف بالهواء البارد","Edge itching easing with cool air",false],["أصابع قدم شاحبة","Pale toes",true]])]},
+{name:{ar:"موضع الأسلاك",en:"Pin sites"},rounds:[
+ R2("طفل بمثبت خارجي","A child with an external fixator",[["احمرار ينتشر للخارج","Redness spreading outward",true],["إفراز صافٍ قليل ثابت","Small steady clear ooze",false],["صديد كثيف أو عكر","Thick cloudy pus",true],["حمى","Fever",true],["احمرار خفيف ثابت حول السلك","Faint unchanging redness at the pin",false],["ألم يزداد يومًا بعد يوم","Pain rising day after day",true]])]},
+{name:{ar:"الظهر",en:"The back"},rounds:[
+ R2("طفل يشكو ظهره","A child with back pain",[["ألم ليلي يوقظه من النوم","Night pain waking from sleep",true],["شد عضلي بعد رياضة يزول بيومين","Post-sport ache settling in two days",false],["حرارة مع ألم الظهر","Fever with the pain",true],["تنميل أو ضعف في الساقين","Numbness or weak legs",true],["ألم خفيف بعد حقيبة ثقيلة","Mild ache after a heavy bag",false],["فقدان وزن مع الألم","Weight loss with the pain",true]])]});
+}}catch(e){}
+try{ if(window.HM_SETS){
+HM_SETS.push(
+{name:{ar:"الأدوات",en:"Tools"},words:[
+ {w:{ar:"جبيرة",en:"CAST"},h:{ar:"تحمي العظم المكسور حتى يلتئم",en:"Protects a broken bone while it heals"}},
+ {w:{ar:"دعامة",en:"BRACE"},h:{ar:"توجّه النمو وتمنع ازدياد الانحناء",en:"Guides growth and stops a curve worsening"}},
+ {w:{ar:"سونار",en:"SCAN"},h:{ar:"يصوّر ورك الرضيع بلا إشعاع",en:"Images a baby's hip without radiation"}},
+ {w:{ar:"عكاز",en:"CRUTCH"},h:{ar:"يساعد على المشي دون تحميل الساق",en:"Helps walk without loading the leg"}},
+ {w:{ar:"منشار",en:"SAW"},h:{ar:"يهتز ولا يدور فلا يجرح الجلد",en:"Wiggles, doesn't spin — can't cut skin"}}]},
+{name:{ar:"المفاصل",en:"Joints"},words:[
+ {w:{ar:"الورك",en:"HIP"},h:{ar:"يصل الفخذ بالحوض",en:"Joins thigh to pelvis"}},
+ {w:{ar:"الركبة",en:"KNEE"},h:{ar:"أكبر مفصل في الجسم",en:"The body's largest joint"}},
+ {w:{ar:"الكاحل",en:"ANKLE"},h:{ar:"بين الساق والقدم",en:"Between leg and foot"}},
+ {w:{ar:"الكتف",en:"SHOULDER"},h:{ar:"أوسع المفاصل حركة",en:"The most mobile joint"}},
+ {w:{ar:"المرفق",en:"ELBOW"},h:{ar:"منتصف الذراع",en:"The middle of the arm"}}]});
+}}catch(e){}
+
+/* ============ 5 · headers with live counts + Smart Match rename ============ */
+function nSets(a){ try{ return a.length; }catch(e){ return 6; } }
+if(typeof window.openQuiz==="function"&&typeof window.gmOpen==="function"&&typeof window.gmPicker==="function"){
+  window.openQuiz=function(){ var n=nSets(window.QZ_SETS); gmOpen('🧠 '+(AR()?'اختبر معلوماتك':'Test Your Knowledge'), (AR()?n+' مجموعات أسئلة — اختر واحدة':n+' quiz sets — pick one')); document.getElementById('qz-body').innerHTML=gmPicker(QZ_SETS,'qzStart'); };
+  window.openMatch=function(){ var n=nSets(window.MT_SETS); gmOpen('🧩 '+(AR()?'المطابقة الذكية':'Smart Match'), (AR()?n+' مجموعات مطابقة — اختر واحدة':n+' matching sets — pick one')); document.getElementById('qz-body').innerHTML=gmPicker(MT_SETS,'mtStart'); };
+  window.openSpot=function(){ var n=nSets(window.SP_SETS); gmOpen('🚩 '+(AR()?'اكتشف العلامة التحذيرية':'Spot the Warning Sign'), (AR()?n+' مجموعات — اختر واحدة':n+' sets — pick one')); document.getElementById('qz-body').innerHTML=gmPicker(SP_SETS,'spStart'); };
+  window.openWord=function(){ var n=nSets(window.HM_SETS); gmOpen('🎈 '+(AR()?'خمّن الكلمة':'Guess the Word'), (AR()?n+' مجموعات كلمات — اختر واحدة':n+' word sets — pick one')); document.getElementById('qz-body').innerHTML=gmPicker(HM_SETS,'hmStart'); };
+}
+
+/* ============ 6 · registry: new bones game + fresh titles/counts ============ */
+var _gi=window.gameItems;
+window.gameItems=function(){
+  var g=(typeof _gi==="function")?_gi():[];
+  g.forEach(function(it){
+    if(it.bestKey==="bones"){ it.open=window.openSkeleton; it.kind="skeleton";
+      it.title=AR()?"اعرف عظامك":"Know Your Bones";
+      it.sub=AR()?"اضغط على العظمة الصحيحة — ١٠ عظام وحقائق ممتعة":"Tap the right bone — 10 bones, fun facts"; }
+    if(it.kind==="match"){ it.title=AR()?"المطابقة الذكية":"Smart Match";
+      it.sub=AR()?nSets(window.MT_SETS)+" مجموعات مطابقة تفاعلية":nSets(window.MT_SETS)+" interactive matching sets"; }
+    if(it.kind==="quiz"&&!it.bestKey){ it.sub=AR()?nSets(window.QZ_SETS)+" مجموعات أسئلة سريعة وممتعة":nSets(window.QZ_SETS)+" quick, fun quiz sets"; }
+    if(it.kind==="spot"){ it.sub=AR()?nSets(window.SP_SETS)+" مجموعات: اختر ما يستدعي الطبيب":nSets(window.SP_SETS)+" sets: pick what needs a doctor"; }
+    if(it.kind==="word"){ it.sub=AR()?nSets(window.HM_SETS)+" مجموعات كلمات":nSets(window.HM_SETS)+" word sets"; }
+    if(it.kind==="catch"){ it.sub=AR()?"التقط أصدقاء العظام واكسب سلاسل نقاط":"Catch bone-friends, earn streaks"; }
+    if(it.kind==="memory"){ it.title=AR()?"طابِق الأزواج":"Match the Pairs"; it.sub=AR()?"طابق الرمز بمعناه واكسب حقيقة مع كل زوج":"Match symbol to meaning — a fact with every pair"; }
+  });
+  return g;
+};
+try{ window.__g2open=g2open; window.__opd1358="games2: skeleton rebuild, catch v2, memory v2, +12 new sets, smart-match rename"; }catch(e){}
+})();
+</script>
+
+<script id="opd-1359-speed2">
+/* opd-1359: Speed Doctor v2 — 30-statement pool across all 12 subspecialty
+   areas, instant ✓/✗ with a one-line "why", streak bonus, best score.
+   Draft content pending author clinical sign-off. (c) 2026 Dr. M. Al Abdali. */
+(function(){
+"use strict";
+function AR(){ try{ return (typeof lang!=="undefined"?lang:"ar")==="ar"; }catch(e){ return true; } }
+function S(a,e,t,wa,we){ return {ar:a,en:e,t:t,why:{ar:wa,en:we}}; }
+var POOL=[
+ S("الحليب والجبن يقوّيان العظام","Milk and cheese strengthen bones",true,"غنيان بالكالسيوم الذي يبني العظم.","Rich in bone-building calcium."),
+ S("المشروبات الغازية تبني عظامًا قوية","Fizzy drinks build strong bones",false,"لا تحتوي ما يفيد العظم.","They contain nothing bone needs."),
+ S("الشمس تساعد الجسم على صنع فيتامين (د)","Sunshine helps make vitamin D",true,"فيتامين (د) يساعد على امتصاص الكالسيوم.","Vitamin D helps absorb calcium."),
+ S("القدم المسطحة عند الصغار غالبًا طبيعية","Flat feet in young children are usually normal",true,"القوس يظهر تدريجيًا بين سن ٢ و٦.","The arch appears gradually between 2 and 6."),
+ S("كل طفل يمشي على أصابعه يحتاج عملية","Every toe-walker needs surgery",false,"معظمهم يتحسن بالتمارين والمتابعة.","Most improve with stretches and follow-up."),
+ S("يُدخل قلم تحت الجبس لحك الجلد","Poke a pencil under an itchy cast",false,"لا يدخل شيء تحت الجبس أبدًا؛ استخدم هواءً باردًا.","Nothing goes under a cast — use cool air."),
+ S("منشار الجبس يهتز ولا يجرح الجلد","The cast saw wiggles and cannot cut skin",true,"يقطع الصلب فقط — لهذا يزيل الجبس بأمان.","It only cuts hard material — that's why it's safe."),
+ S("أصابع زرقاء تحت الجبس تنتظر ليوم غد","Blue fingers under a cast can wait a day",false,"علامة ضغط تستدعي مراجعة فورية.","A pressure sign — same-day review."),
+ S("عظام الأطفال تلتئم أسرع من الكبار","Children's bones heal faster than adults'",true,"العظم النامي نشيط الترميم.","Growing bone repairs quickly."),
+ S("القماط الصحيح يشد الساقين مستقيمتين","Good swaddling holds the legs straight and tight",false,"الوركان يحتاجان حرية الانثناء والتباعد.","Hips need to bend and spread freely."),
+ S("جهاز بافليك يُضبط في البيت متى شئنا","Adjust the Pavlik harness at home freely",false,"الضبط للفريق المعالج فقط.","Only the treating team adjusts it."),
+ S("سونار الورك يكشف خلل التنسج مبكرًا","Hip ultrasound detects dysplasia early",true,"أدق فحص في الأشهر الأولى.","The most accurate early test."),
+ S("حنف القدم يُعالج غالبًا بجبائر أسبوعية","Clubfoot is usually treated with weekly casts",true,"طريقة بونسيتي ناجحة في معظم الحالات.","The Ponseti method succeeds in most cases."),
+ S("حذاء القضيب الليلي يمنع عودة حنف القدم","Night boots-and-bar prevent clubfoot relapse",true,"الالتزام به سر بقاء التصحيح.","Sticking with it keeps the correction."),
+ S("حقيبة المدرسة الثقيلة تسبب الجنف","Heavy schoolbags cause scoliosis",false,"قد تتعب العضلات لكنها لا تسبب الجنف.","They tire muscles but don't cause scoliosis."),
+ S("دعامة الجنف تمنع ازدياد الانحناء","A scoliosis brace stops curve progression",true,"توجّه النمو حتى يكتمل.","It guides growth until it finishes."),
+ S("ألم ليلي يوقظ الطفل يستدعي مراجعة","Night pain waking a child needs review",true,"من العلامات التي تُفحص دائمًا.","A sign we always assess."),
+ S("تقوّس الساقين قبل السنتين غالبًا طبيعي","Bow legs before age two are usually normal",true,"يستقيم مع النمو في معظم الأطفال.","It straightens with growth in most children."),
+ S("مرفق المربية يُعاد بمناورة بسيطة","A pulled elbow is fixed with a simple manoeuvre",true,"ثوانٍ في العيادة ويعود الطفل يلعب.","Seconds in clinic and the child plays again."),
+ S("الإبهام الزنادي دائمًا يحتاج جراحة","Trigger thumb always needs surgery",false,"كثير من الحالات يتحسن قبل عمر ٢–٣ سنوات.","Many resolve before age 2–3."),
+ S("حرارة مع رفض تحريك الطرف تحتاج طوارئ","Fever with refusal to move a limb needs urgent care",true,"قد تكون عدوى مفصل أو عظم.","It may be a bone or joint infection."),
+ S("احمرار ينتشر حول سلك المثبت يُراجع سريعًا","Spreading redness at a pin site needs prompt review",true,"قد يكون بداية التهاب موضع السلك.","It may be an early pin-site infection."),
+ S("إفراز صافٍ قليل حول السلك طبيعي","A little clear ooze at a pin site is normal",true,"الصافي القليل الثابت متوقع؛ العكر ليس كذلك.","Small steady clear ooze is expected; cloudy is not."),
+ S("الجبس المبتل يُترك حتى يجف وحده","A soaked cast just dries by itself",false,"الجبس الطري يفقد حمايته — راجعوا العيادة.","A soft cast loses protection — visit the clinic."),
+ S("الرضّع يولدون بقوس ظاهر في القدم","Babies are born with a visible foot arch",false,"القوس يظهر لاحقًا مع تقوّي القدم.","The arch develops later as the foot strengthens."),
+ S("المشي المبكر جدًا يسبب تقوّس الساقين","Very early walking causes bow legs",false,"التقوّس المبكر فسيولوجي ولا يسببه المشي.","Early bowing is physiological, not from walking."),
+ S("الكسر عند الطفل قد يمر عبر صفيحة النمو","A child's fracture may involve the growth plate",true,"لذلك نتابع بعض الكسور لفترة أطول.","That's why some fractures get longer follow-up."),
+ S("العرج الجديد عند طفل صغير يُقيَّم دائمًا","A new limp in a young child always needs assessment",true,"العرج ليس تشخيصًا — بل علامة نبحث عن سببها.","A limp is a sign, not a diagnosis — we find its cause."),
+ S("الحركة والجري يقويان العظام","Movement and running strengthen bones",true,"العظم يستجيب للتحميل فيزداد قوة.","Bone responds to loading by getting stronger."),
+ S("بعد إزالة الجبس يعود الطفل للرياضة فورًا بلا تدرج","Straight back to sport the day the cast comes off",false,"العودة تكون تدريجية حسب توجيه الفريق.","Return is gradual, guided by the team.")
+];
+var css=document.createElement("style");
+css.textContent=".g2-tf{display:flex;gap:10px;margin-top:10px}"
++".g2-tf button{flex:1;border:0;border-radius:14px;padding:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}"
++".g2-tf .yes{background:#7ee2a1;color:#134d2a}.g2-tf .no{background:#f5a19a;color:#6b1d15}"
++".g2-why{margin-top:10px;min-height:44px;border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:700;line-height:1.5;background:rgba(255,255,255,.12)}"
++".g2-why.ok{background:#eafcf0;color:#1e5c34}.g2-why.bad{background:#fdecea;color:#8c2f27}";
+document.head.appendChild(css);
+window.openSpeedDr2=function(){
+  if(typeof window.__g2open!=="function"){ return; }
+  var s=window.__g2open(AR()?"⚡ الطبيب السريع":"⚡ Speed Doctor");
+  var qs=POOL.slice().sort(function(){return Math.random()-.5;}), i=0, score=0, streak=0, tLeft=60, timer=null, over=false;
+  var best=0; try{ best=parseInt(localStorage.getItem("g2_speed_best"))||0; }catch(e){}
+  s.hud.innerHTML='<span>⭐ <b id="s2sc">0</b></span><span>⏱ <b id="s2t">60</b></span><span>🔥 <b id="s2st">0</b></span><span>🏅 <b id="s2b">'+best+'</b></span>';
+  function ask(){ if(i>=qs.length) i=0;
+    s.stage.innerHTML='<div class="g2-q">'+(AR()?qs[i].ar:qs[i].en)+'</div>'
+      +'<div class="g2-tf"><button class="yes">✓ '+(AR()?"صحيح":"True")+'</button><button class="no">✗ '+(AR()?"خطأ":"False")+'</button></div>'
+      +'<div class="g2-why" id="s2w"></div>';
+    s.stage.querySelector(".yes").onclick=function(){ answer(true); };
+    s.stage.querySelector(".no").onclick=function(){ answer(false); };
+  }
+  function answer(v){ if(over) return; var it=qs[i]; var w=document.getElementById("s2w"); if(!w) return;
+    if(v===it.t){ streak++; score+=(streak>=5?2:1); w.className="g2-why ok"; w.textContent="✓ "+(AR()?it.why.ar:it.why.en); }
+    else { streak=0; w.className="g2-why bad"; w.textContent="✗ "+(AR()?it.why.ar:it.why.en); }
+    var e1=document.getElementById("s2sc"), e2=document.getElementById("s2st"); if(e1)e1.textContent=score; if(e2)e2.textContent=streak;
+    i++; setTimeout(function(){ if(!over&&document.getElementById("s2w")) ask(); }, 1250); }
+  function finish(){ over=true; clearInterval(timer);
+    var nb=Math.max(best,score); try{ localStorage.setItem("g2_speed_best",nb); }catch(e){}
+    try{ if(window.OPD7&&OPD7.stat) OPD7.stat("speed",score,true); }catch(e){}
+    s.stage.innerHTML='<div class="g2-end"><div class="big">'+(score>=20?"🏆":score>=10?"🎉":"💪")+'</div><h4>'+(AR()?"نتيجتك: ":"Your score: ")+score+'</h4><p>🏅 '+(AR()?"أفضل نتيجة: ":"Best: ")+nb+'</p><button class="g2-btn" id="s2again">'+(AR()?"العب مرة أخرى":"Play again")+'</button></div>';
+    document.getElementById("s2again").onclick=function(){ window.openSpeedDr2(); }; }
+  timer=setInterval(function(){ tLeft--; var el=document.getElementById("s2t"); if(!el){ clearInterval(timer); return; } el.textContent=tLeft; if(tLeft<=0) finish(); },1000);
+  s.onClose(function(){ over=true; clearInterval(timer); });
+  ask();
+};
+/* route the registry item to v2 */
+var _gi=window.gameItems;
+window.gameItems=function(){ var g=(typeof _gi==="function")?_gi():[];
+  g.forEach(function(it){ if(it.bestKey==="speed"){ it.open=window.openSpeedDr2;
+    it.sub=AR()?"٦٠ ثانية: صح أم خطأ مع السبب — ٣٠ عبارة":"60 seconds: true/false with the why — 30 statements"; } });
+  return g; };
+})();
+</script>
+
 </body>
 </html>
