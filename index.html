@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.9 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.0 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.9 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.0 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -19065,6 +19065,114 @@ window.gameItems=function(){ var g=(typeof _gi==="function")?_gi():[];
   g.forEach(function(it){ if(it.bestKey==="speed"){ it.open=window.openSpeedDr2;
     it.sub=AR()?"٦٠ ثانية: صح أم خطأ مع السبب — ٣٠ عبارة":"60 seconds: true/false with the why — 30 statements"; } });
   return g; };
+})();
+</script>
+
+<script id="opd-1360-family-games">
+/* ============================================================
+   OPD-PE — opd-1360: condition-aware games (26 Jul 2026)
+   A parent reads 1–3 leaflets, not 132 — so the games now meet the family
+   where they are:
+   · every set is tagged with the categories it serves;
+   · set pickers group into «يخصّ طفلك» (matches leaflets the family read
+     or starred) → «لكل العائلة» (universal) → «تخصصات أخرى» (collapsed);
+   · each leaflet with matching sets gets a «🎮 اختبر ما قرأت» chip that
+     jumps into the games with that condition already on top.
+   (c) 2026 Dr. Masoud Al Abdali.
+   ============================================================ */
+(function(){
+"use strict";
+function AR(){ try{ return (typeof lang!=="undefined"?lang:"ar")==="ar"; }catch(e){ return true; } }
+
+/* ---- set → category tags (index-based, matches current set order) ---- */
+var TAGS={
+ QZ:{0:["very-common"],1:["knee","leg","very-common"],2:["foot","clubfoot","very-common"],3:["hip"],4:[],5:["surgical-procedures","injuries"],6:["spine"],7:["injuries"],8:["hand-upper-limb"],9:["hip","clubfoot","foot"]},
+ MT:{0:["knee","foot","hip","leg"],1:[],2:[],3:[],4:["hip","leg","very-common"],5:[],6:["clubfoot","hip","spine","foot"],7:["injuries","hip","surgical-procedures"],8:[]},
+ SP:{0:["leg","very-common"],1:["foot","very-common"],2:["hip"],3:["spine","neuromuscular"],4:["surgical-procedures"],5:[],6:["injuries"],7:["surgical-procedures"],8:["spine"]},
+ HM:{0:[],1:["hip","knee","foot"],2:[],3:[],4:[],5:[],6:[],7:[]}
+};
+function tagsFor(sets,i){
+  try{
+    if(sets===window.QZ_SETS) return TAGS.QZ[i]||[];
+    if(sets===window.MT_SETS) return TAGS.MT[i]||[];
+    if(sets===window.SP_SETS) return TAGS.SP[i]||[];
+    if(sets===window.HM_SETS) return TAGS.HM[i]||[];
+  }catch(e){}
+  return [];
+}
+
+/* ---- what does this family care about? read history + stars ---- */
+function myCats(){
+  var ids={};
+  try{ var st=JSON.parse(localStorage.getItem("opd7_stats")); if(st&&st.readIds) Object.keys(st.readIds).forEach(function(k){ids[k]=1;}); }catch(e){}
+  try{ (JSON.parse(localStorage.getItem("opd_clinic_favs_v1"))||[]).forEach(function(k){ids[k]=1;}); }catch(e){}
+  try{ (JSON.parse(localStorage.getItem("pe_mylist"))||[]).forEach(function(k){ids[k]=1;}); }catch(e){}
+  var cats={};
+  try{ LEAFLETS.forEach(function(x){ if(ids[x.id]&&x.cat) cats[x.cat]=1; }); }catch(e){}
+  return cats;
+}
+
+/* ---- grouped picker (all four set-games share gmPicker) ---- */
+var _pick=window.gmPicker;
+window.gmPicker=function(sets,fn){
+  try{
+    var mine=myCats(), A=[],B=[],C=[];
+    sets.forEach(function(s,i){
+      var tg=tagsFor(sets,i);
+      if(tg.length===0){ B.push(i); return; }
+      var hit=tg.some(function(c){ return mine[c]; });
+      (hit?A:C).push(i);
+    });
+    if(A.length===0 && C.length===0) return _pick(sets,fn);
+    function btn(i){ var s=sets[i];
+      return '<button class="gm-set" type="button" onclick="'+fn+'('+i+')"><span class="gm-set-n">'+(i+1)+'</span><span class="gm-set-t">'+(AR()?s.name.ar:s.name.en)+'</span><span class="gm-set-go">▶</span></button>'; }
+    function head(t){ return '<div class="gm-pick-h" style="margin-top:10px">'+t+'</div>'; }
+    var out='<div class="gm-pick">';
+    if(A.length){ out+=head(AR()?"🎯 يخصّ طفلك":"🎯 About your child")+A.map(btn).join(""); }
+    if(B.length){ out+=head(AR()?"🌟 لكل العائلة":"🌟 For every family")+B.map(btn).join(""); }
+    if(C.length){ out+='<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800;opacity:.75;padding:6px 2px">'+(AR()?"مجموعات تخصصات أخرى ("+C.length+")":"Other specialty sets ("+C.length+")")+'</summary>'+C.map(btn).join("")+'</details>'; }
+    out+='</div>';
+    return out;
+  }catch(e){ return _pick(sets,fn); }
+};
+
+/* ---- «اختبر ما قرأت» chip inside each leaflet with matching sets ---- */
+function leafletHasSets(x){
+  if(!x||!x.cat) return false;
+  var all=[TAGS.QZ,TAGS.MT,TAGS.SP,TAGS.HM];
+  for(var a=0;a<all.length;a++){ for(var k in all[a]){ if((all[a][k]||[]).indexOf(x.cat)>=0) return true; } }
+  return false;
+}
+function injectChip(x){
+  try{
+    var host=document.getElementById("rbody"); if(!host) return;
+    var old=document.getElementById("opd1360chip"); if(old) old.parentNode.removeChild(old);
+    if(!leafletHasSets(x)) return;
+    var b=document.createElement("button"); b.type="button"; b.id="opd1360chip"; b.className="mb-launch";
+    b.innerHTML="🎮 "+(AR()?"اختبر ما قرأت — لعبة قصيرة":"Quiz what you read — a short game");
+    b.onclick=function(){ try{ if(typeof openQuiz==="function") openQuiz(); }catch(e){} };
+    host.insertBefore(b, host.firstChild);
+  }catch(e){}
+}
+var _or=window.openReader;
+if(typeof _or==="function" && !_or.__opd1360){
+  var w=function(x){ var r=_or.apply(this,arguments); try{ setTimeout(function(){ injectChip(x); },250); }catch(e){} return r; };
+  w.__opd1360=true; window.openReader=w;
+}
+
+/* ---- registry copy reflects the new promise ---- */
+var _gi=window.gameItems;
+window.gameItems=function(){
+  var g=(typeof _gi==="function")?_gi():[];
+  g.forEach(function(it){
+    if(it.kind==="quiz"&&!it.bestKey){ it.sub=AR()?"أسئلة عن حالة طفلك — ومجموعات لكل العائلة":"Questions about your child — plus family sets"; }
+    if(it.kind==="spot"){ it.sub=AR()?"علامات تخصّ حالة طفلك: متى نراجع الطبيب؟":"Warning signs for your child's condition"; }
+    if(it.kind==="match"){ it.sub=AR()?"مطابقات عن حالة طفلك ومجموعات عامة":"Matches about your child's condition + general sets"; }
+    if(it.kind==="word"){ it.sub=AR()?"كلمات عن العظام وحالة طفلك":"Words about bones and your child's condition"; }
+  });
+  return g;
+};
+try{ window.__opd1360="family-games: tagged sets, grouped pickers, leaflet quiz chip"; }catch(e){}
 })();
 </script>
 
