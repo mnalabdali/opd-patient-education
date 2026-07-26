@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.1 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.2 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.1 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.2 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -18824,8 +18824,12 @@ window.openCatch=function(){
   var bk=document.createElement("div"); bk.className="g2-bk"; bk.textContent="🧺"; field.appendChild(bk);
   var W=function(){return field.clientWidth;};
   var bx=0.5; function placeBk(){ bk.style.left=(bx*100)+"%"; } placeBk();
-  field.addEventListener("pointermove",function(e){ var r=field.getBoundingClientRect(); bx=Math.min(.94,Math.max(.06,(e.clientX-r.left)/r.width)); placeBk(); });
-  field.addEventListener("pointerdown",function(e){ var r=field.getBoundingClientRect(); bx=Math.min(.94,Math.max(.06,(e.clientX-r.left)/r.width)); placeBk(); });
+  field.style.touchAction="none";
+  function bkTo(cx){ var r=field.getBoundingClientRect(); bx=Math.min(.94,Math.max(.06,(cx-r.left)/r.width)); placeBk(); }
+  field.addEventListener("pointermove",function(e){ bkTo(e.clientX); });
+  field.addEventListener("pointerdown",function(e){ bkTo(e.clientX); });
+  field.addEventListener("touchstart",function(e){ if(e.touches[0]) bkTo(e.touches[0].clientX); },{passive:true});
+  field.addEventListener("touchmove",function(e){ e.preventDefault(); if(e.touches[0]) bkTo(e.touches[0].clientX); },{passive:false});
   var items=[], score=0, streak=0, tLeft=45, run=false, raf=null, timer=null, caught={};
   function spawn(){ var good=Math.random()<0.62; var pool=good?CT_GOOD:CT_BAD; var o=pool[Math.floor(Math.random()*pool.length)];
     var d=document.createElement("div"); d.className="g2-it"; d.textContent=o.e; field.appendChild(d);
@@ -18997,25 +19001,13 @@ var POOL=[
  S("الحليب والجبن يقوّيان العظام","Milk and cheese strengthen bones",true,"غنيان بالكالسيوم الذي يبني العظم.","Rich in bone-building calcium."),
  S("المشروبات الغازية تبني عظامًا قوية","Fizzy drinks build strong bones",false,"لا تحتوي ما يفيد العظم.","They contain nothing bone needs."),
  S("الشمس تساعد الجسم على صنع فيتامين (د)","Sunshine helps make vitamin D",true,"فيتامين (د) يساعد على امتصاص الكالسيوم.","Vitamin D helps absorb calcium."),
- S("القدم المسطحة عند الصغار غالبًا طبيعية","Flat feet in young children are usually normal",true,"القوس يظهر تدريجيًا بين سن ٢ و٦.","The arch appears gradually between 2 and 6."),
- S("كل طفل يمشي على أصابعه يحتاج عملية","Every toe-walker needs surgery",false,"معظمهم يتحسن بالتمارين والمتابعة.","Most improve with stretches and follow-up."),
- S("يُدخل قلم تحت الجبس لحك الجلد","Poke a pencil under an itchy cast",false,"لا يدخل شيء تحت الجبس أبدًا؛ استخدم هواءً باردًا.","Nothing goes under a cast — use cool air."),
- S("منشار الجبس يهتز ولا يجرح الجلد","The cast saw wiggles and cannot cut skin",true,"يقطع الصلب فقط — لهذا يزيل الجبس بأمان.","It only cuts hard material — that's why it's safe."),
- S("أصابع زرقاء تحت الجبس تنتظر ليوم غد","Blue fingers under a cast can wait a day",false,"علامة ضغط تستدعي مراجعة فورية.","A pressure sign — same-day review."),
  S("عظام الأطفال تلتئم أسرع من الكبار","Children's bones heal faster than adults'",true,"العظم النامي نشيط الترميم.","Growing bone repairs quickly."),
- S("القماط الصحيح يشد الساقين مستقيمتين","Good swaddling holds the legs straight and tight",false,"الوركان يحتاجان حرية الانثناء والتباعد.","Hips need to bend and spread freely."),
- S("حقيبة المدرسة الثقيلة تسبب الجنف","Heavy schoolbags cause scoliosis",false,"قد تتعب العضلات لكنها لا تسبب الجنف.","They tire muscles but don't cause scoliosis."),
  S("ألم ليلي يوقظ الطفل يستدعي مراجعة","Night pain waking a child needs review",true,"من العلامات التي تُفحص دائمًا.","A sign we always assess."),
- S("تقوّس الساقين قبل السنتين غالبًا طبيعي","Bow legs before age two are usually normal",true,"يستقيم مع النمو في معظم الأطفال.","It straightens with growth in most children."),
- S("مرفق المربية يُعاد بمناورة بسيطة","A pulled elbow is fixed with a simple manoeuvre",true,"ثوانٍ في العيادة ويعود الطفل يلعب.","Seconds in clinic and the child plays again."),
  S("حرارة مع رفض تحريك الطرف تحتاج طوارئ","Fever with refusal to move a limb needs urgent care",true,"قد تكون عدوى مفصل أو عظم.","It may be a bone or joint infection."),
- S("الجبس المبتل يُترك حتى يجف وحده","A soaked cast just dries by itself",false,"الجبس الطري يفقد حمايته — راجعوا العيادة.","A soft cast loses protection — visit the clinic."),
  S("الرضّع يولدون بقوس ظاهر في القدم","Babies are born with a visible foot arch",false,"القوس يظهر لاحقًا مع تقوّي القدم.","The arch develops later as the foot strengthens."),
- S("المشي المبكر جدًا يسبب تقوّس الساقين","Very early walking causes bow legs",false,"التقوّس المبكر فسيولوجي ولا يسببه المشي.","Early bowing is physiological, not from walking."),
  S("الكسر عند الطفل قد يمر عبر صفيحة النمو","A child's fracture may involve the growth plate",true,"لذلك نتابع بعض الكسور لفترة أطول.","That's why some fractures get longer follow-up."),
  S("العرج الجديد عند طفل صغير يُقيَّم دائمًا","A new limp in a young child always needs assessment",true,"العرج ليس تشخيصًا — بل علامة نبحث عن سببها.","A limp is a sign, not a diagnosis — we find its cause."),
  S("الحركة والجري يقويان العظام","Movement and running strengthen bones",true,"العظم يستجيب للتحميل فيزداد قوة.","Bone responds to loading by getting stronger."),
- S("بعد إزالة الجبس يعود الطفل للرياضة فورًا بلا تدرج","Straight back to sport the day the cast comes off",false,"العودة تكون تدريجية حسب توجيه الفريق.","Return is gradual, guided by the team."),
 S("الخوذة تحمي رأسك عند ركوب الدراجة","A helmet protects your head on a bike",true,"معظم إصابات الرأس يمكن منعها بالخوذة.","Most head injuries are preventable with a helmet."),
 S("يولد الطفل بعظام أكثر من الكبار","Babies are born with more bones than adults",true,"نحو ٣٠٠ عظمة تلتحم لتصبح ٢٠٦.","About 300 bones fuse into 206."),
 S("طقطقة الأصابع تسبب التهاب المفاصل","Knuckle cracking causes arthritis",false,"الصوت فقاعات غاز في سائل المفصل ولا يسبب التهابًا.","The pop is gas bubbles in joint fluid — it doesn't cause arthritis."),
@@ -19023,7 +19015,19 @@ S("الإحماء قبل الرياضة يقلل الإصابات","Warming up b
 S("النوم المبكر يساعد الطفل على النمو","Early sleep helps children grow",true,"هرمون النمو يُفرز في النوم العميق.","Growth hormone is released in deep sleep."),
 S("قفز أطفال كثيرين معًا على الترامبولين آمن","Many kids jumping together on a trampoline is safe",false,"معظم الإصابات تحدث عند القفز الجماعي.","Most injuries happen with several jumpers."),
 S("الجلوس الطويل أمام الشاشة يضعف العضلات","Long screen-sitting weakens muscles",true,"العضلات تقوى بالاستخدام وتضعف بالخمول.","Muscles strengthen with use and weaken with idleness."),
-S("حقيبة الظهر تُحمل على كتف واحد","Carry a backpack on one shoulder",false,"الكتفان معًا مع حزام مضبوط أريح للظهر.","Both shoulders with snug straps is kinder to the back.")];
+S("حقيبة الظهر تُحمل على كتف واحد","Carry a backpack on one shoulder",false,"الكتفان معًا مع حزام مضبوط أريح للظهر.","Both shoulders with snug straps is kinder to the back."),
+S("الجسم يخزّن الكالسيوم في العظام","The body stores calcium in the bones",true,"العظام مخزن الكالسيوم الرئيسي في الجسم.","Bones are the body's main calcium store."),
+S("أصغر عظمة في جسمك داخل أذنك","Your smallest bone is inside your ear",true,"عظمة الركاب بحجم حبة الأرز تقريبًا.","The stapes is about the size of a rice grain."),
+S("شرب الماء مهم أثناء اللعب والرياضة","Drinking water matters during play and sport",true,"الجسم يفقد الماء بالتعرق ويحتاج تعويضه.","Sweating loses water that must be replaced."),
+S("الإفطار يمنح الجسم طاقة للحركة واللعب","Breakfast fuels the body for moving and playing",true,"وجبة الصباح وقود العضلات والدماغ.","The morning meal fuels muscles and brain."),
+S("عظامك حية وتتجدد باستمرار","Your bones are alive and always renewing",true,"خلايا العظم تهدم وتبني طوال العمر.","Bone cells remodel throughout life."),
+S("القلب عضلة تعمل ليلًا ونهارًا","The heart is a muscle working day and night",true,"يضخ الدم لكل الجسم دون توقف.","It pumps blood nonstop to the whole body."),
+S("السهر كل ليلة لا يؤثر على الطفل","Staying up late every night doesn't affect a child",false,"قلة النوم تؤثر على النمو والتركيز والمزاج.","Poor sleep affects growth, focus and mood."),
+S("حزام الأمان للكبار فقط","Seatbelts are only for grown-ups",false,"كل راكب يحتاج حزامًا أو مقعدًا مناسبًا لعمره.","Every passenger needs a belt or seat right for their age."),
+S("التمدد اللطيف بعد الرياضة يريح العضلات","Gentle stretching after sport helps muscles",true,"يقلل الشد ويحافظ على المرونة.","It eases tightness and keeps you flexible."),
+S("الحلوى بديل جيد عن وجبة الغداء","Sweets are a fine substitute for lunch",false,"الجسم يحتاج وجبات متوازنة لينمو.","Growing bodies need balanced meals."),
+S("اللعب في الخارج يفيد العظام والمزاج","Outdoor play helps bones and mood",true,"حركة وشمس وهواء — فوائد ثلاث معًا.","Movement, sunshine and fresh air — three wins at once."),
+S("القفز من مكان مرتفع آمن إذا كنت سريعًا","Jumping from high places is safe if you're quick",false,"الارتفاع خطر مهما كانت السرعة.","Height is dangerous no matter how quick you are.")];
 var css=document.createElement("style");
 css.textContent=".g2-tf{display:flex;gap:10px;margin-top:10px}"
 +".g2-tf button{flex:1;border:0;border-radius:14px;padding:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}"
