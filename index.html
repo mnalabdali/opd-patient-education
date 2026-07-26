@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.5 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v8.6 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -1074,7 +1074,7 @@ function render(){
 /* ---------- figures (inline SVG) ---------- */
 function figSVG(key,cls,caption){
   var inner;
-  if(typeof IMG!=="undefined" && IMG[key]){ inner='<div class="imgwrap"><img loading=lazy src="'+IMG[key]+'" alt="" loading="lazy"></div>'; }
+  if(typeof IMG!=="undefined" && IMG[key]){ inner='<div class="imgwrap"><img fetchpriority="high" src="'+IMG[key]+'" alt=""></div>'; }
   else { var svg=ILLUS[key]; inner=svg?('<div class="svgwrap">'+svg+'</div>'):('<div class="ph-box">'+(window.PE_PH_TXT||"Image")+'</div>'); }
   return '<figure class="rfig'+(cls?' '+cls:'')+'">'+inner+(caption?'<figcaption>'+caption+'</figcaption>':'')+'</figure>';
 }
@@ -4328,7 +4328,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.5 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v8.6 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -12060,7 +12060,7 @@ body.hc #rbody .lf-redflag{border-color:#a00 !important;}
     function figSVG2(key,cls,caption){
       var inner, cap=(typeof caption==="string"?caption:"");
       if(typeof IMG!=="undefined" && IMG[key]){
-        inner='<div class="imgwrap"><img loading=lazy src="'+IMG[key]+'" alt="'+cap.replace(/"/g,"&quot;")+'" loading="lazy"></div>';
+        inner='<div class="imgwrap"><img fetchpriority="high" src="'+IMG[key]+'" alt="'+cap.replace(/"/g,"&quot;")+'"></div>';
       } else {
         var svg=(typeof ILLUS!=="undefined")?ILLUS[key]:null;
         inner=svg?('<div class="svgwrap" role="img" aria-label="'+cap.replace(/"/g,"&quot;")+'">'+svg+'</div>')
@@ -18626,7 +18626,7 @@ try{ window.__opd_1324=log; }catch(e){}
    +".head-txt .l4{font-size:10px}"
   +"}"
   /* --- 2 · sticky category pane --- */
-  +".chips{position:sticky;top:0;z-index:60;box-shadow:0 8px 16px -12px rgba(15,46,82,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}"
+  +".search-wrap{position:sticky;top:0;z-index:31;padding-top:6px;margin-top:-6px}"+".chips{position:sticky;top:var(--opd-sw-h,58px);z-index:30;box-shadow:0 8px 16px -12px rgba(15,46,82,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}"
   /* --- 3 · story reader: true full screen on phones --- */
   +"@media (orientation:portrait) and (max-width:820px){"
    +".st-rot{inset:auto;top:0;left:100dvw;width:100dvh;height:100dvw;padding:0}"
@@ -18642,7 +18642,13 @@ try{ window.__opd_1324=log; }catch(e){}
   (document.head||document.documentElement).appendChild(css);
 
   /* sticky pane inherits the page background (adapts to dark mode) */
-  function paintChips(){ try{ var c=document.getElementById("chips"); if(c) c.style.background=getComputedStyle(document.body).backgroundColor; }catch(e){} }
+  function paintChips(){ try{
+    var bg=getComputedStyle(document.body).backgroundColor;
+    var c=document.getElementById("chips"); if(c) c.style.background=bg;
+    var s=document.querySelector(".search-wrap"); if(s){ s.style.background=bg;
+      document.documentElement.style.setProperty("--opd-sw-h", (s.offsetHeight||58)+"px"); }
+  }catch(e){} }
+  try{ window.addEventListener("resize",function(){ setTimeout(paintChips,80); }); }catch(e){}
   paintChips(); setTimeout(paintChips,1200);
   try{ new MutationObserver(paintChips).observe(document.documentElement,{attributes:true,attributeFilter:["class","data-theme"]}); }catch(e){}
   try{ document.addEventListener("click",function(e){ if(e.target&&e.target.closest&&e.target.closest("#langBtn")) setTimeout(paintChips,120); }); }catch(e){}
