@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.2 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.3 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.2 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.3 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -18725,7 +18725,9 @@ css.textContent=
 +"#g2skel [data-k] .bn{fill:#f2f6fb;stroke:#9db8d4;stroke-width:2}"
 +"#g2skel [data-k].ok .bn{fill:#7ee2a1;stroke:#2e9e5b}"
 +"#g2skel [data-k].bad .bn{fill:#f5a19a;stroke:#c94f44}"
-+".g2-catch{position:relative;height:52dvh;min-height:300px;background:linear-gradient(180deg,#eaf4ff,#dcecfb);border-radius:12px;overflow:hidden;touch-action:none}"
++".g2-catch{position:relative;flex:1;min-height:240px;background:linear-gradient(180deg,#eaf4ff,#dcecfb);border-radius:12px;overflow:hidden;touch-action:none}"
++".c2-stage{display:flex;flex-direction:column;overflow:hidden}"
++".c2-go{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:auto !important;padding:12px 30px !important;z-index:3;box-shadow:0 8px 24px rgba(0,0,0,.3)}"
 +".g2-it{position:absolute;font-size:34px;line-height:1;user-select:none;pointer-events:none}"
 +".g2-bk{position:absolute;bottom:4px;left:0;font-size:44px;line-height:1;transform:translateX(-50%)}"
 +".g2-legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:12.5px;font-weight:700;color:#dbe9f8;margin-top:8px}"
@@ -18746,7 +18748,7 @@ function g2open(title){ if(!OV){ OV=document.createElement("div"); OV.className=
   OV.style.display="flex"; OV._onclose=null;
   OV.querySelector(".g2-card").setAttribute("dir", AR()?"rtl":"ltr");
   OV.querySelector("h3").textContent=title;
-  OV.querySelector(".g2-hud").innerHTML=""; OV.querySelector(".g2-stage").innerHTML="";
+  OV.querySelector(".g2-hud").innerHTML=""; var __st=OV.querySelector(".g2-stage"); __st.innerHTML=""; __st.className="g2-stage";
   return {hud:OV.querySelector(".g2-hud"), stage:OV.querySelector(".g2-stage"),
           close:function(){OV.style.display="none";}, onClose:function(f){OV._onclose=f;}};
 }
@@ -18813,9 +18815,9 @@ var CT_BAD=[{e:"🥤",ar:"المشروبات الغازية",en:"fizzy drinks"},
 window.openCatch=function(){
   var s=g2open(AR()?"🥛 صائد الكالسيوم":"🥛 Calcium Catcher");
   s.hud.innerHTML='<span>⭐ <b id="c2sc">0</b></span><span>⏱ <b id="c2t">45</b></span><span>🔥 <b id="c2st">0</b></span>';
-  s.stage.innerHTML='<div class="g2-catch" id="c2f"></div>'
-    +'<div class="g2-legend">'+(AR()?"<b>التقط:</b>":"<b>Catch:</b>")+CT_GOOD.map(function(g){return g.e;}).join(" ")+" · "+(AR()?"<b>تجنّب:</b>":"<b>Avoid:</b>")+CT_BAD.map(function(g){return g.e;}).join(" ")+'</div>'
-    +'<button class="g2-btn" id="c2go">▶ '+(AR()?"ابدأ":"Start")+'</button>';
+  s.stage.classList.add("c2-stage");
+  s.stage.innerHTML='<div class="g2-legend" style="margin:0 0 8px">'+(AR()?"<b>التقط:</b>":"<b>Catch:</b>")+CT_GOOD.map(function(g){return g.e;}).join(" ")+" · "+(AR()?"<b>تجنّب:</b>":"<b>Avoid:</b>")+CT_BAD.map(function(g){return g.e;}).join(" ")+'</div>'
+    +'<div class="g2-catch" id="c2f"><button class="g2-btn c2-go" id="c2go">▶ '+(AR()?"ابدأ":"Start")+'</button></div>';
   var field=document.getElementById("c2f");
   /* preview: gentle floating samples so the field is never blank */
   var pv=[]; [CT_GOOD[0],CT_BAD[0],CT_GOOD[2],CT_GOOD[4]].forEach(function(o,ix){
@@ -19407,6 +19409,397 @@ window.gameItems=function(){
   return g;
 };
 try{ window.__opd1361="general-interest games: filtered specialty sets, +12 general sets, steps & riddle games"; }catch(e){}
+})();
+</script>
+
+<script id="opd-1362-more-games">
+/* =====================================================
+   opd-1362 · Six new family games (all general-interest)
+   سلّم العظام · ظل العظمة · صح الجلسة · ابنِ الهيكل · طبق صحي · صوت الجسم
+   All health messages are DRAFT pending author sign-off.
+   ===================================================== */
+(function(){
+"use strict";
+function AR(){ try{ return (typeof lang!=="undefined"? lang : "ar")!=="en"; }catch(e){ return true; } }
+function T(o){ return AR()? o.ar : o.en; }
+var g2=window.__g2open;
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+
+/* ================= 1 · سلّم العظام (Bones & Ladders) ================= */
+var BL_EV={
+  3:{to:11,good:1,ar:"شربت الحليب في الفطور! تسلّق 🥛",en:"You drank milk at breakfast! Climb 🥛"},
+  7:{to:14,good:1,ar:"لبست الخوذة على الدراجة! تسلّق ⛑️",en:"You wore your bike helmet! Climb ⛑️"},
+  13:{to:22,good:1,ar:"لعبت في الخارج تحت الشمس! تسلّق ☀️",en:"You played outside in the sun! Climb ☀️"},
+  18:{to:25,good:1,ar:"نمت مبكرًا! تسلّق 😴",en:"You slept early! Climb 😴"},
+  21:{to:28,good:1,ar:"أكلت خضارًا وفواكه! تسلّق 🍎",en:"You ate fruit and veg! Climb 🍎"},
+  10:{to:4,good:0,ar:"مشروب غازي بدل الحليب! انزل 🥤",en:"Fizzy drink instead of milk! Slide 🥤"},
+  16:{to:8,good:0,ar:"سهرت طويلًا أمام الشاشة! انزل 📱",en:"Late night on the screen! Slide 📱"},
+  24:{to:15,good:0,ar:"قفزت على الدرج! انزل ⚠️",en:"You jumped down the stairs! Slide ⚠️"},
+  27:{to:17,good:0,ar:"نسيت حزام الأمان! انزل 🚗",en:"You forgot your seatbelt! Slide 🚗"}
+};
+var BL={p:[0,0],turn:0,busy:false,vs:"bot"};
+function blCellRC(n){ /* boustrophedon 6col x 5row, cell1 bottom-right(rtl bottom-left visually ok) */
+  var idx=n-1, row=Math.floor(idx/6), col=idx%6; if(row%2===1) col=5-col;
+  return {r:4-row,c:col}; }
+function blBoard(){
+  var html='<div class="bl-board">';
+  for(var r=0;r<5;r++){ for(var c=0;c<6;c++){
+    var n=0; for(var k=1;k<=30;k++){ var rc=blCellRC(k); if(rc.r===r&&rc.c===c){ n=k; break; } }
+    var ev=BL_EV[n]; var cls="bl-c"+(ev?(ev.good?" up":" down"):"")+(n===30?" fin":"");
+    var mark=ev?(ev.good?"🪜":"🛝"):(n===30?"🏆":"");
+    html+='<div class="'+cls+'" id="blc'+n+'"><i>'+n+'</i>'+mark+'<span class="bl-tk" id="blt'+n+'"></span></div>';
+  }}
+  return html+'</div>';
+}
+function blDrawTokens(){
+  for(var k=1;k<=30;k++){ var el=document.getElementById('blt'+k); if(el) el.textContent=''; }
+  var icons=['🧒', BL.vs==="bot"?'🤖':'🧑'];
+  for(var i=0;i<2;i++){ if(BL.p[i]>0){ var el2=document.getElementById('blt'+BL.p[i]); if(el2) el2.textContent+=icons[i]; } }
+}
+function blMsg(t){ var m=document.getElementById('blmsg'); if(m){ m.textContent=t; } }
+function blRoll(auto){
+  if(BL.busy) return; BL.busy=true;
+  var who=BL.turn, d=1+Math.floor(Math.random()*6);
+  var names=AR()?['أنت',(BL.vs==="bot"?'الروبوت':'اللاعب الثاني')]:['You',(BL.vs==="bot"?'Robot':'Player 2')];
+  blMsg((AR()?(who===0?'رميتَ':'رمى '+names[1]):names[who]+' rolled')+' 🎲 '+d);
+  var target=BL.p[who]+d; if(target>30) target=30;
+  var i=BL.p[who];
+  var iv=setInterval(function(){
+    i++; BL.p[who]=i; blDrawTokens();
+    if(i>=target){
+      clearInterval(iv);
+      var ev=BL_EV[i];
+      setTimeout(function(){
+        if(ev){ BL.p[who]=ev.to; blDrawTokens(); blMsg(names[who]+': '+T(ev)); }
+        if(BL.p[who]>=30){
+          blMsg('🏆 '+(AR()?(who===0?'وصلتَ القمة! العادات الصحية توصلك دائمًا أعلى.':names[1]+' وصل القمة! جرّب مرة أخرى — العادات الصحية توصلك أعلى.')
+                        :(names[who]+' reached the top! Healthy habits always take you higher.')));
+          var rb=document.getElementById('blroll'); if(rb){ rb.textContent=AR()?"العب من جديد":"Play again"; rb.onclick=function(){ window.openLadders(); }; }
+          BL.busy=false; return;
+        }
+        BL.turn=1-BL.turn; BL.busy=false;
+        var rb2=document.getElementById('blroll');
+        if(BL.vs==="bot" && BL.turn===1){ if(rb2) rb2.disabled=true; setTimeout(function(){ blRoll(true); },900); }
+        else if(rb2){ rb2.disabled=false; rb2.textContent='🎲 '+(AR()?(BL.turn===0?"دورك":"دور "+names[1]):(BL.turn===0?"Your turn":names[1]+"'s turn")); }
+      }, ev?450:150);
+    }
+  },170);
+}
+window.blRoll=blRoll;
+window.blMode=function(m){ BL={p:[0,0],turn:0,busy:false,vs:m}; blStartUI(); };
+function blStartUI(){
+  var s=g2(AR()?"🪜 سلّم العظام":"🪜 Bones & Ladders");
+  s.hud.innerHTML='<span>🧒 '+(AR()?"أنت":"You")+'</span><span>'+(BL.vs==="bot"?'🤖 '+(AR()?"الروبوت":"Robot"):'🧑 '+(AR()?"لاعب ٢":"Player 2"))+'</span>';
+  s.stage.innerHTML=blBoard()
+    +'<div class="bl-msg" id="blmsg">'+(AR()?"العادات الصحية تصعد بك 🪜 والعادات السيئة تنزل بك 🛝":"Good habits climb you up 🪜 — bad ones slide you down 🛝")+'</div>'
+    +'<button class="g2-btn" id="blroll" onclick="window.blRoll()">🎲 '+(AR()?"ارمِ النرد":"Roll the dice")+'</button>';
+  blDrawTokens();
+}
+window.openLadders=function(){
+  var s=g2(AR()?"🪜 سلّم العظام":"🪜 Bones & Ladders");
+  s.hud.innerHTML='';
+  s.stage.innerHTML='<div class="g2-end"><div class="big">🪜</div><h4>'+(AR()?"من يصل القمة أولًا؟":"Who reaches the top first?")+'</h4>'
+    +'<p style="opacity:.85;margin:4px 0 14px">'+(AR()?"العادات الصحية سلالم، والعادات السيئة زلاقات!":"Healthy habits are ladders; bad habits are slides!")+'</p>'
+    +'<button class="g2-btn" onclick="window.blMode(\'bot\')">🤖 '+(AR()?"ضد الروبوت":"Vs the robot")+'</button>'
+    +'<button class="g2-btn" onclick="window.blMode(\'p2\')" style="background:#7fc8f8;color:#0b3556">🧑‍🤝‍🧑 '+(AR()?"لاعبان على نفس الجهاز":"Two players, one device")+'</button></div>';
+};
+
+/* ================= 2 · ظل العظمة (Shadow Match) ================= */
+var SH=[
+ {e:"💀",n:{ar:"الجمجمة",en:"The skull"},f:{ar:"خوذة طبيعية تحمي الدماغ.",en:"A natural helmet protecting the brain."}},
+ {e:"🦴",n:{ar:"عظمة",en:"A bone"},f:{ar:"في جسمك ٢٠٦ منها عندما تكبر!",en:"You'll have 206 of these when grown!"}},
+ {e:"🖐️",n:{ar:"اليد",en:"The hand"},f:{ar:"فيها ٢٧ عظمة صغيرة.",en:"It holds 27 little bones."}},
+ {e:"🦶",n:{ar:"القدم",en:"The foot"},f:{ar:"تحمل وزنك كله مع كل خطوة.",en:"It carries all your weight at every step."}},
+ {e:"🦷",n:{ar:"السن",en:"A tooth"},f:{ar:"أقسى شيء في جسمك كله!",en:"The hardest thing in your whole body!"}},
+ {e:"🧠",n:{ar:"الدماغ",en:"The brain"},f:{ar:"قائد الجسم — تحميه الجمجمة.",en:"The body's captain — guarded by the skull."}},
+ {e:"🫀",n:{ar:"القلب",en:"The heart"},f:{ar:"عضلة تضخ الدم ليلًا ونهارًا.",en:"A muscle pumping blood day and night."}},
+ {e:"🫁",n:{ar:"الرئتان",en:"The lungs"},f:{ar:"يحميهما القفص الصدري المرن.",en:"Protected by the springy rib cage."}},
+ {e:"👂",n:{ar:"الأذن",en:"The ear"},f:{ar:"فيها أصغر عظمة في الجسم.",en:"Home of the body's smallest bone."}},
+ {e:"💪",n:{ar:"العضلة",en:"A muscle"},f:{ar:"تشد العظام كالحبال لتحركك.",en:"Pulls bones like ropes to move you."}}
+];
+var shI=0, shScore=0, shOrder=[];
+function shRender(){
+  var it=SH[shOrder[shI]];
+  var wrong=shuffle(SH.filter(function(x){return x!==it;})).slice(0,3);
+  var opts=shuffle([it].concat(wrong));
+  var s=window.__sh;
+  s.hud.innerHTML='<span>'+(shI+1)+' / '+SH.length+'</span><span>⭐ '+shScore+'</span>';
+  s.stage.innerHTML='<div class="sh-sil" id="shsil">'+it.e+'</div><div class="g2-q">'+(AR()?"ما هذا الظل؟":"Whose shadow is this?")+'</div>'
+    +'<div class="sh-opts">'+opts.map(function(o){ return '<button class="st1361-b" onclick="window.shPick(this,'+(o===it?1:0)+',\''+SH.indexOf(it)+'\')">'+T(o.n)+'</button>'; }).join("")+'</div>'
+    +'<div id="shend"></div>';
+}
+window.shPick=function(btn,ok,idx){
+  var it=SH[+idx];
+  if(ok){
+    shScore++; btn.classList.add('okpick');
+    document.getElementById('shsil').classList.add('rev');
+    var bs=document.querySelectorAll('.sh-opts button'); for(var i=0;i<bs.length;i++) bs[i].disabled=true;
+    document.getElementById('shend').innerHTML='<div class="g2-fact" style="display:block">'+T(it.f)+'</div>'
+      +'<button class="g2-btn" onclick="window.shNext()">'+(shI+1<SH.length?(AR()?"التالي":"Next"):(AR()?"النتيجة":"Result"))+'</button>';
+  } else { btn.classList.add('bad'); btn.disabled=true; }
+};
+window.shNext=function(){
+  shI++;
+  if(shI>=SH.length){
+    var s=window.__sh, st=shScore>=8?"⭐⭐⭐":(shScore>=5?"⭐⭐":"⭐");
+    s.stage.innerHTML='<div class="g2-end"><div class="big">'+st+'</div><h4>'+(AR()?("عرفت "+shScore+" من "+SH.length):("You knew "+shScore+" of "+SH.length))+'</h4>'
+      +'<button class="g2-btn" onclick="window.openShadow()">'+(AR()?"العب من جديد":"Play again")+'</button></div>';
+    return;
+  }
+  shRender();
+};
+window.openShadow=function(){ shI=0; shScore=0; shOrder=shuffle(SH.map(function(_,i){return i;}));
+  window.__sh=g2(AR()?"👤 ظل العظمة":"👤 Shadow Match"); shRender(); };
+
+/* ================= 3 · صح الجلسة (Posture Detective) ================= */
+var PD=[
+ {t:{ar:"عند المكتب",en:"At the desk"},e:"🧒💻",items:[
+   {x:{ar:"الظهر منحنٍ كالقوس",en:"Back bent like a bow"},bad:1},
+   {x:{ar:"القدمان مستقرتان على الأرض",en:"Feet flat on the floor"},bad:0},
+   {x:{ar:"الشاشة قريبة جدًا من العينين",en:"Screen right up to the eyes"},bad:1},
+   {x:{ar:"الظهر مستند إلى الكرسي",en:"Back resting on the chair"},bad:0},
+   {x:{ar:"ساعتان من الجلوس بلا حركة",en:"Two hours without moving"},bad:1},
+   {x:{ar:"استراحة حركة كل ساعة",en:"A movement break every hour"},bad:0}]},
+ {t:{ar:"حقيبة المدرسة",en:"The schoolbag"},e:"🎒🚶",items:[
+   {x:{ar:"الحقيبة على كتف واحد",en:"Bag on one shoulder"},bad:1},
+   {x:{ar:"الحزامان على الكتفين معًا",en:"Both straps on both shoulders"},bad:0},
+   {x:{ar:"محشوة بأشياء لا يحتاجها اليوم",en:"Stuffed with things not needed today"},bad:1},
+   {x:{ar:"الأثقل قريب من الظهر",en:"Heaviest items closest to the back"},bad:0},
+   {x:{ar:"الأحزمة مرخية والحقيبة متدلية",en:"Loose straps, bag hanging low"},bad:1},
+   {x:{ar:"وزن مناسب لعمره",en:"A weight right for his age"},bad:0}]},
+ {t:{ar:"وقت الشاشة",en:"Screen time"},e:"📱🛋️",items:[
+   {x:{ar:"الرقبة منحنية للأسفل طويلًا",en:"Neck bent down for ages"},bad:1},
+   {x:{ar:"الجهاز مرفوع لمستوى النظر",en:"Device raised to eye level"},bad:0},
+   {x:{ar:"اللعب في غرفة مظلمة",en:"Playing in a dark room"},bad:1},
+   {x:{ar:"إضاءة جيدة في الغرفة",en:"Good light in the room"},bad:0},
+   {x:{ar:"ساعات متواصلة بلا فاصل",en:"Hours on end with no break"},bad:1},
+   {x:{ar:"فواصل قصيرة للحركة واللعب",en:"Short breaks to move and play"},bad:0}]}
+];
+var pdI=0,pdScore=0,pdFound=0,pdWrong=0;
+function pdRender(){
+  var sc=PD[pdI], s=window.__pd;
+  pdFound=0; pdWrong=0;
+  var need=sc.items.filter(function(i){return i.bad;}).length;
+  s.hud.innerHTML='<span>'+(pdI+1)+' / '+PD.length+'</span><span>⭐ '+pdScore+'</span>';
+  s.stage.innerHTML='<div class="sh-sil" style="font-size:56px">'+sc.e+'</div>'
+    +'<div class="g2-q">'+T(sc.t)+' — '+(AR()?("اضغط الأخطاء الثلاثة"):("Tap the three mistakes"))+'</div>'
+    +'<div class="sh-opts">'+shuffle(sc.items.map(function(it,ix){return ix;})).map(function(ix){
+        return '<button class="st1361-b" onclick="window.pdPick(this,'+sc.items[ix].bad+')">'+T(sc.items[ix].x)+'</button>'; }).join("")+'</div>'
+    +'<div id="pdend"></div>';
+}
+window.pdPick=function(btn,bad){
+  if(btn.disabled) return;
+  if(bad){ btn.classList.add('okpick'); btn.disabled=true; pdScore++; pdFound++;
+    if(pdFound>=3){
+      var bs=document.querySelectorAll('.sh-opts button'); for(var i=0;i<bs.length;i++) bs[i].disabled=true;
+      document.getElementById('pdend').innerHTML='<div class="g2-fact" style="display:block">'
+        +(AR()?"أحسنت أيها المحقق! الجلسة الصحيحة تريح الظهر والرقبة والعينين.":"Well done, detective! Good posture rests the back, neck and eyes.")+'</div>'
+        +'<button class="g2-btn" onclick="window.pdNext()">'+(pdI+1<PD.length?(AR()?"المشهد التالي":"Next scene"):(AR()?"النتيجة":"Result"))+'</button>';
+    }
+  } else { btn.classList.add('bad'); btn.disabled=true; pdWrong++; pdScore=Math.max(0,pdScore-1); }
+  var s=window.__pd; s.hud.innerHTML='<span>'+(pdI+1)+' / '+PD.length+'</span><span>⭐ '+pdScore+'</span>';
+};
+window.pdNext=function(){
+  pdI++;
+  if(pdI>=PD.length){
+    var s=window.__pd, st=pdScore>=8?"🕵️⭐⭐⭐":(pdScore>=5?"🕵️⭐⭐":"🕵️⭐");
+    s.stage.innerHTML='<div class="g2-end"><div class="big">'+st+'</div><h4>'+(AR()?("نقاطك: "+pdScore):("Your score: "+pdScore))+'</h4>'
+      +'<button class="g2-btn" onclick="window.openPosture()">'+(AR()?"العب من جديد":"Play again")+'</button></div>';
+    return;
+  }
+  pdRender();
+};
+window.openPosture=function(){ pdI=0; pdScore=0; window.__pd=g2(AR()?"🕵️ صح الجلسة":"🕵️ Posture Detective"); pdRender(); };
+
+/* ================= 4 · ابنِ الهيكل (Build the Skeleton) ================= */
+var BD_Z=[
+ {z:{ar:"الرأس",en:"Head"},e:"🙂"},{z:{ar:"الصدر",en:"Chest"},e:"👕"},
+ {z:{ar:"الظهر",en:"Back"},e:"🔗"},{z:{ar:"الذراع",en:"Arm"},e:"💪"},
+ {z:{ar:"اليد",en:"Hand"},e:"🖐️"},{z:{ar:"الوسط",en:"Middle"},e:"🩳"},
+ {z:{ar:"الساق",en:"Leg"},e:"🦵"},{z:{ar:"القدم",en:"Foot"},e:"🦶"}
+];
+var BD_B=[
+ {b:{ar:"الجمجمة",en:"Skull"},zi:0},{b:{ar:"الأضلاع",en:"Ribs"},zi:1},
+ {b:{ar:"العمود الفقري",en:"Spine"},zi:2},{b:{ar:"عظمة العضد",en:"Humerus"},zi:3},
+ {b:{ar:"عظام الأصابع",en:"Finger bones"},zi:4},{b:{ar:"الحوض",en:"Pelvis"},zi:5},
+ {b:{ar:"عظمة الفخذ",en:"Femur"},zi:6},{b:{ar:"عظام مشط القدم",en:"Foot bones"},zi:7}
+];
+var bdQ=[], bdI=0, bdScore=0, bdMiss=0;
+function bdRender(){
+  var s=window.__bd, cur=BD_B[bdQ[bdI]];
+  s.hud.innerHTML='<span>'+(bdI+1)+' / '+BD_B.length+'</span><span>⭐ '+bdScore+'</span>';
+  s.stage.innerHTML='<div class="g2-q">🦴 '+(AR()?("أين مكان: "):("Where does this go: "))+'<b>'+T(cur.b)+'</b>؟</div>'
+    +'<div class="bd-body">'+BD_Z.map(function(z,ix){
+       return '<button class="bd-z bd-z'+ix+'" onclick="window.bdPick(this,'+ix+')">'+z.e+'<i>'+T(z.z)+'</i></button>'; }).join("")+'</div>'
+    +'<div id="bdend"></div>';
+}
+window.bdPick=function(btn,zi){
+  var cur=BD_B[bdQ[bdI]];
+  if(zi===cur.zi){
+    btn.classList.add('ok'); bdScore++;
+    setTimeout(function(){
+      bdI++;
+      if(bdI>=BD_B.length){
+        var s=window.__bd, st=bdScore>=7?"⭐⭐⭐":(bdScore>=5?"⭐⭐":"⭐");
+        s.stage.innerHTML='<div class="g2-end"><div class="big">🦴 '+st+'</div><h4>'+(AR()?("بنيت الهيكل! "+bdScore+" من "+BD_B.length):("Skeleton built! "+bdScore+" of "+BD_B.length))+'</h4>'
+          +'<div class="g2-fact" style="display:block;text-align:start">'+(AR()?"كل عظمة لها مكان ووظيفة — معًا تسند الجسم وتحميه وتحركه.":"Every bone has a place and a job — together they support, protect and move the body.")+'</div>'
+          +'<button class="g2-btn" onclick="window.openBuild()">'+(AR()?"ابنِ من جديد":"Build again")+'</button></div>';
+        return;
+      }
+      bdRender();
+    },420);
+  } else { btn.classList.add('bad'); bdMiss++; setTimeout(function(){ try{btn.classList.remove('bad');}catch(e){} },420); }
+};
+window.openBuild=function(){ bdQ=shuffle(BD_B.map(function(_,i){return i;})); bdI=0; bdScore=0; bdMiss=0;
+  window.__bd=g2(AR()?"🦴 ابنِ الهيكل":"🦴 Build the Skeleton"); bdRender(); };
+
+/* ================= 5 · طبق صحي (Healthy Plate) ================= */
+var HP_F=[
+ {e:"🥛",n:{ar:"حليب",en:"Milk"},cat:"ca"},{e:"🧀",n:{ar:"جبن",en:"Cheese"},cat:"ca"},
+ {e:"🐟",n:{ar:"سمك",en:"Fish"},cat:"pr"},{e:"🥚",n:{ar:"بيض",en:"Eggs"},cat:"pr"},{e:"🍗",n:{ar:"دجاج",en:"Chicken"},cat:"pr"},
+ {e:"🥬",n:{ar:"خضار",en:"Veg"},cat:"vf"},{e:"🍎",n:{ar:"فواكه",en:"Fruit"},cat:"vf"},
+ {e:"🍞",n:{ar:"خبز أسمر",en:"Brown bread"},cat:"gr"},{e:"💧",n:{ar:"ماء",en:"Water"},cat:"gr"},{e:"🌰",n:{ar:"مكسرات",en:"Nuts"},cat:"gr"},
+ {e:"🥤",n:{ar:"مشروب غازي",en:"Fizzy drink"},cat:"junk"},{e:"🍬",n:{ar:"حلوى",en:"Sweets"},cat:"junk"},{e:"🍟",n:{ar:"مقليات",en:"Fries"},cat:"junk"},{e:"🧋",n:{ar:"عصير محلّى",en:"Sugary drink"},cat:"junk"}
+];
+var hpPick=[];
+function hpRender(){
+  var s=window.__hp;
+  s.hud.innerHTML='<span>🍽️ '+hpPick.length+' / 5</span>';
+  s.stage.innerHTML='<div class="g2-q">'+(AR()?"اختر ٥ أشياء لطبق يبني عظامًا قوية":"Pick 5 things for a bone-strong plate")+'</div>'
+    +'<div class="hp-plate" id="hpplate">'+(hpPick.map(function(i){return HP_F[i].e;}).join(" ")||"🍽️")+'</div>'
+    +'<div class="hp-grid">'+HP_F.map(function(f,ix){
+       var on=hpPick.indexOf(ix)>=0;
+       return '<button class="hp-f'+(on?' on':'')+'" onclick="window.hpTap('+ix+')">'+f.e+'<i>'+T(f.n)+'</i></button>'; }).join("")+'</div>'
+    +'<button class="g2-btn" '+(hpPick.length===5?'':'disabled style="opacity:.5"')+' onclick="window.hpScore()">'+(AR()?"قيّم طبقي ✓":"Rate my plate ✓")+'</button>';
+}
+window.hpTap=function(ix){
+  var at=hpPick.indexOf(ix);
+  if(at>=0) hpPick.splice(at,1);
+  else if(hpPick.length<5) hpPick.push(ix);
+  hpRender();
+};
+window.hpScore=function(){
+  var s=window.__hp, cats={}, junk=0;
+  hpPick.forEach(function(i){ var c=HP_F[i].cat; if(c==="junk") junk++; else cats[c]=1; });
+  var cov=Object.keys(cats).length; /* ca, pr, vf, gr */
+  var stars=(cov>=4&&junk===0)?3:(cov>=3&&junk<=1)?2:1;
+  var msgA="", msgE="";
+  if(junk>0){ msgA="فيه "+junk+" من الأصناف غير المفيدة — جرّب استبدالها. "; msgE=junk+" less-helpful items — try swapping them. "; }
+  if(!cats.ca){ msgA+="ينقصه مصدر كالسيوم 🥛. "; msgE+="Missing a calcium source 🥛. "; }
+  if(!cats.pr){ msgA+="ينقصه بروتين 🐟. "; msgE+="Missing protein 🐟. "; }
+  if(!cats.vf){ msgA+="ينقصه خضار أو فواكه 🍎. "; msgE+="Missing veg or fruit 🍎. "; }
+  if(!msgA){ msgA="طبق متوازن يبني عظامًا قوية!"; msgE="A balanced, bone-building plate!"; }
+  s.stage.innerHTML='<div class="g2-end"><div class="big">'+("⭐⭐⭐".slice(0,stars*2))+'</div>'
+    +'<div class="hp-plate">'+hpPick.map(function(i){return HP_F[i].e;}).join(" ")+'</div>'
+    +'<div class="g2-fact" style="display:block;text-align:start">'+(AR()?msgA:msgE)+'</div>'
+    +'<button class="g2-btn" onclick="window.openPlate()">'+(AR()?"طبق جديد":"New plate")+'</button></div>';
+};
+window.openPlate=function(){ hpPick=[]; window.__hp=g2(AR()?"🍽️ طبق صحي":"🍽️ Healthy Plate"); hpRender(); };
+
+/* ================= 6 · صوت الجسم (Sound Quiz) ================= */
+var sndCtx=null;
+function ac(){ if(!sndCtx){ var C=window.AudioContext||window.webkitAudioContext; sndCtx=new C(); } if(sndCtx.state==="suspended") sndCtx.resume(); return sndCtx; }
+function tone(t0,f,dur,type,gain){ var c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.type=type||"sine"; o.frequency.value=f; o.connect(g); g.connect(c.destination);
+  g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(gain||0.5,t0+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur); o.start(t0); o.stop(t0+dur+0.05); }
+function noise(t0,dur,fLow,fHigh,gain){ var c=ac(),len=Math.max(1,Math.floor(c.sampleRate*dur)),b=c.createBuffer(1,len,c.sampleRate),d=b.getChannelData(0);
+  for(var i=0;i<len;i++) d[i]=Math.random()*2-1;
+  var src=c.createBufferSource(); src.buffer=b;
+  var f=c.createBiquadFilter(); f.type="bandpass"; f.frequency.value=(fLow+fHigh)/2; f.Q.value=1;
+  var g=c.createGain(); g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(gain||0.4,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  src.connect(f); f.connect(g); g.connect(c.destination); src.start(t0); }
+var SND=[
+ {n:{ar:"نبض القلب",en:"A heartbeat"},f:{ar:"القلب عضلة تنبض نحو ١٠٠ ألف مرة في اليوم.",en:"The heart beats about 100,000 times a day."},
+  play:function(){ var t=ac().currentTime; for(var i=0;i<4;i++){ tone(t+i*0.8,70,0.12,"sine",0.7); tone(t+i*0.8+0.22,55,0.1,"sine",0.5); } }},
+ {n:{ar:"خطوات الجري",en:"Running feet"},f:{ar:"الجري يقوّي العظام لأنها تحمل وزن الجسم.",en:"Running strengthens bones by loading them."},
+  play:function(){ var t=ac().currentTime; for(var i=0;i<8;i++) noise(t+i*0.28,0.08,120,400,0.5); }},
+ {n:{ar:"التنفس العميق",en:"Deep breathing"},f:{ar:"الأضلاع تتحرك مع كل نفَس لتفسح للرئتين.",en:"Ribs move with every breath to make room for the lungs."},
+  play:function(){ var t=ac().currentTime; noise(t,1.2,300,900,0.25); noise(t+1.5,1.2,200,700,0.2); }},
+ {n:{ar:"طقطقة مفصل",en:"A joint pop"},f:{ar:"الصوت فقاعة غاز في سائل المفصل — وليس كسرًا!",en:"That pop is a gas bubble in joint fluid — not a break!"},
+  play:function(){ var t=ac().currentTime; tone(t,900,0.03,"square",0.4); noise(t,0.05,800,2500,0.4); }},
+ {n:{ar:"مضغ الطعام",en:"Munching food"},f:{ar:"الأسنان أقسى جزء في الجسم — والمضغ أول خطوات الهضم.",en:"Teeth are the body's hardest part — chewing starts digestion."},
+  play:function(){ var t=ac().currentTime; for(var i=0;i<6;i++) noise(t+i*0.35,0.12,400,1600,0.45); }}
+];
+var snI=0, snScore=0, snOrder=[];
+function snRender(){
+  var it=SND[snOrder[snI]];
+  var wrong=shuffle(SND.filter(function(x){return x!==it;})).slice(0,3);
+  var opts=shuffle([it].concat(wrong));
+  var s=window.__sn;
+  s.hud.innerHTML='<span>'+(snI+1)+' / '+SND.length+'</span><span>⭐ '+snScore+'</span>';
+  s.stage.innerHTML='<div class="sh-sil" style="font-size:56px">🔊</div>'
+    +'<button class="g2-btn" style="margin:0 0 10px" onclick="window.snPlay()">🔊 '+(AR()?"شغّل الصوت":"Play the sound")+'</button>'
+    +'<div class="g2-q">'+(AR()?"ما هذا الصوت؟":"What is this sound?")+'</div>'
+    +'<div class="sh-opts">'+opts.map(function(o){ return '<button class="st1361-b" onclick="window.snPick(this,'+(o===it?1:0)+','+SND.indexOf(it)+')">'+T(o.n)+'</button>'; }).join("")+'</div>'
+    +'<div id="snend"></div>';
+}
+window.snPlay=function(){ try{ SND[snOrder[snI]].play(); }catch(e){} };
+window.snPick=function(btn,ok,idx){
+  var it=SND[idx];
+  if(ok){
+    snScore++; btn.classList.add('okpick');
+    var bs=document.querySelectorAll('.sh-opts button'); for(var i=0;i<bs.length;i++) bs[i].disabled=true;
+    document.getElementById('snend').innerHTML='<div class="g2-fact" style="display:block">'+T(it.f)+'</div>'
+      +'<button class="g2-btn" onclick="window.snNext()">'+(snI+1<SND.length?(AR()?"الصوت التالي":"Next sound"):(AR()?"النتيجة":"Result"))+'</button>';
+  } else { btn.classList.add('bad'); btn.disabled=true; }
+};
+window.snNext=function(){
+  snI++;
+  if(snI>=SND.length){
+    var s=window.__sn, st=snScore>=4?"⭐⭐⭐":(snScore>=3?"⭐⭐":"⭐");
+    s.stage.innerHTML='<div class="g2-end"><div class="big">'+st+'</div><h4>'+(AR()?("أذن ذهبية! "+snScore+" من "+SND.length):("Golden ear! "+snScore+" of "+SND.length))+'</h4>'
+      +'<button class="g2-btn" onclick="window.openSound()">'+(AR()?"العب من جديد":"Play again")+'</button></div>';
+    return;
+  }
+  snRender();
+};
+window.openSound=function(){ snI=0; snScore=0; snOrder=shuffle(SND.map(function(_,i){return i;}));
+  window.__sn=g2(AR()?"🔊 صوت الجسم":"🔊 Body Sounds"); snRender(); };
+
+/* ================= styles ================= */
+try{
+  var css=document.createElement('style');
+  css.textContent=
+   '.bl-board{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:8px}'
+  +'.bl-c{position:relative;aspect-ratio:1;background:rgba(255,255,255,.1);border-radius:8px;font-size:15px;display:flex;align-items:center;justify-content:center}'
+  +'.bl-c i{position:absolute;top:2px;inset-inline-start:4px;font-size:9px;font-style:normal;opacity:.65}'
+  +'.bl-c.up{background:rgba(126,226,161,.28)}.bl-c.down{background:rgba(245,161,154,.28)}.bl-c.fin{background:rgba(244,168,60,.35)}'
+  +'.bl-tk{position:absolute;bottom:1px;inset-inline-end:2px;font-size:14px;line-height:1}'
+  +'.bl-msg{background:rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;min-height:36px;text-align:center}'
+  +'.sh-sil{font-size:84px;text-align:center;filter:brightness(0) invert(.25);transition:filter .5s;line-height:1.2;margin-bottom:8px}'
+  +'.sh-sil.rev{filter:none}'
+  +'.sh-opts{display:flex;flex-direction:column;gap:8px}'
+  +'.g2-stage .st1361-b{background:rgba(255,255,255,.92);border-color:transparent;color:#123}'
+  +'.g2-stage .st1361-b.okpick{background:#bff0cd;color:#14532d}'
+  +'.g2-stage .st1361-b.bad{background:#f8cfcf;color:#7f1d1d}'
+  +'.bd-body{display:grid;grid-template-columns:1fr 1fr;gap:8px}'
+  +'.bd-z{border:0;border-radius:12px;background:rgba(255,255,255,.92);color:#123;font-family:inherit;font-weight:800;font-size:22px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}'
+  +'.bd-z i{font-style:normal;font-size:12.5px}'
+  +'.bd-z.ok{background:#7ee2a1}.bd-z.bad{background:#f5a19a;animation:st1361sh .35s}'
+  +'.hp-plate{background:rgba(255,255,255,.92);border-radius:999px;min-height:64px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 10px;max-width:280px;padding:8px 14px;gap:4px}'
+  +'.hp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}'
+  +'.hp-f{border:2px solid transparent;border-radius:12px;background:rgba(255,255,255,.92);color:#123;font-family:inherit;font-weight:700;font-size:20px;padding:7px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}'
+  +'.hp-f i{font-style:normal;font-size:10.5px}'
+  +'.hp-f.on{border-color:#f4a83c;background:#fff3df}';
+  document.head.appendChild(css);
+}catch(e){}
+
+/* ================= registry ================= */
+var _gi=window.gameItems;
+window.gameItems=function(){
+  var g=(typeof _gi==="function")?_gi():[];
+  var ar=AR();
+  g.push(
+   {kind:"ladders",open:window.openLadders,emoji:"🪜",title:ar?"سلّم العظام":"Bones & Ladders",sub:ar?"لعبة لوحية: العادات الصحية تصعد بك والسيئة تنزل بك":"Board game: good habits climb, bad habits slide"},
+   {kind:"shadow",open:window.openShadow,emoji:"👤",title:ar?"ظل العظمة":"Shadow Match",sub:ar?"١٠ ظلال: خمّن الجزء — للصغار قبل الكبار":"10 shadows to name — great for little ones"},
+   {kind:"posture",open:window.openPosture,emoji:"🕵️",title:ar?"صح الجلسة":"Posture Detective",sub:ar?"٣ مشاهد: اكتشف أخطاء الجلسة والحقيبة والشاشة":"3 scenes: find the posture mistakes"},
+   {kind:"build",open:window.openBuild,emoji:"🦴",title:ar?"ابنِ الهيكل":"Build the Skeleton",sub:ar?"ضع كل عظمة في مكانها الصحيح":"Put every bone where it belongs"},
+   {kind:"plate",open:window.openPlate,emoji:"🍽️",title:ar?"طبق صحي":"Healthy Plate",sub:ar?"ركّب طبقًا يبني عظامًا قوية":"Build a bone-strong plate"},
+   {kind:"sound",open:window.openSound,emoji:"🔊",title:ar?"صوت الجسم":"Body Sounds",sub:ar?"٥ أصوات: خمّن ما تسمع":"5 sounds: guess what you hear"});
+  return g;
+};
+try{ window.__opd1362="six family games: ladders, shadow, posture, build, plate, sound"; }catch(e){}
 })();
 </script>
 
