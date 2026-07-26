@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.3 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.4 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.3 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.4 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -19425,28 +19425,29 @@ function T(o){ return AR()? o.ar : o.en; }
 var g2=window.__g2open;
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 
-/* ================= 1 · سلّم العظام (Bones & Ladders) ================= */
-var BL_EV={
-  3:{to:11,good:1,ar:"شربت الحليب في الفطور! تسلّق 🥛",en:"You drank milk at breakfast! Climb 🥛"},
-  7:{to:14,good:1,ar:"لبست الخوذة على الدراجة! تسلّق ⛑️",en:"You wore your bike helmet! Climb ⛑️"},
-  13:{to:22,good:1,ar:"لعبت في الخارج تحت الشمس! تسلّق ☀️",en:"You played outside in the sun! Climb ☀️"},
-  18:{to:25,good:1,ar:"نمت مبكرًا! تسلّق 😴",en:"You slept early! Climb 😴"},
-  21:{to:28,good:1,ar:"أكلت خضارًا وفواكه! تسلّق 🍎",en:"You ate fruit and veg! Climb 🍎"},
-  10:{to:4,good:0,ar:"مشروب غازي بدل الحليب! انزل 🥤",en:"Fizzy drink instead of milk! Slide 🥤"},
-  16:{to:8,good:0,ar:"سهرت طويلًا أمام الشاشة! انزل 📱",en:"Late night on the screen! Slide 📱"},
-  24:{to:15,good:0,ar:"قفزت على الدرج! انزل ⚠️",en:"You jumped down the stairs! Slide ⚠️"},
-  27:{to:17,good:0,ar:"نسيت حزام الأمان! انزل 🚗",en:"You forgot your seatbelt! Slide 🚗"}
-};
-var BL={p:[0,0],turn:0,busy:false,vs:"bot"};
-function blCellRC(n){ /* boustrophedon 6col x 5row, cell1 bottom-right(rtl bottom-left visually ok) */
-  var idx=n-1, row=Math.floor(idx/6), col=idx%6; if(row%2===1) col=5-col;
-  return {r:4-row,c:col}; }
+/* ================= 1 · سلّم العظام (Bones & Ladders) — v2: charge dice + questions ================= */
+var BL_Q=[
+ {s:{ar:"الحليب يقوّي العظام",en:"Milk strengthens bones"},t:true,why:{ar:"غني بالكالسيوم الذي يبني العظم.",en:"It's rich in bone-building calcium."}},
+ {s:{ar:"المشروبات الغازية مفيدة للعظام",en:"Fizzy drinks are good for bones"},t:false,why:{ar:"لا تحتوي شيئًا يفيد العظم.",en:"They hold nothing bone needs."}},
+ {s:{ar:"الشمس تساعد الجسم على صنع فيتامين (د)",en:"Sunshine helps the body make vitamin D"},t:true,why:{ar:"فيتامين (د) يساعد على امتصاص الكالسيوم.",en:"Vitamin D helps absorb calcium."}},
+ {s:{ar:"السهر كل ليلة لا يؤثر على النمو",en:"Staying up late never affects growth"},t:false,why:{ar:"هرمون النمو يُفرز في النوم العميق.",en:"Growth hormone is released in deep sleep."}},
+ {s:{ar:"الخوذة ضرورية عند ركوب الدراجة",en:"A helmet is a must on a bike"},t:true,why:{ar:"تحمي الرأس والدماغ عند السقوط.",en:"It protects head and brain in a fall."}},
+ {s:{ar:"القفز من مكان عالٍ آمن إذا كنت سريعًا",en:"Jumping from high places is safe if you're quick"},t:false,why:{ar:"الارتفاع خطر مهما كانت سرعتك.",en:"Height is dangerous however quick you are."}},
+ {s:{ar:"الجري واللعب يقوّيان العظام",en:"Running and playing strengthen bones"},t:true,why:{ar:"العظام تتقوى عندما تحمل وزن الجسم.",en:"Bones strengthen when they carry your weight."}},
+ {s:{ar:"حزام الأمان لكل ركّاب السيارة",en:"Seatbelts are for every passenger"},t:true,why:{ar:"كل راكب يحتاج حزامًا أو مقعدًا مناسبًا.",en:"Everyone needs a belt or proper seat."}},
+ {s:{ar:"الحلوى بديل جيد عن الفطور",en:"Sweets are a fine breakfast"},t:false,why:{ar:"الجسم يحتاج فطورًا متوازنًا للطاقة.",en:"The body needs a balanced breakfast for energy."}},
+ {s:{ar:"الإحماء قبل الرياضة يقلل الإصابات",en:"Warming up before sport prevents injuries"},t:true,why:{ar:"يجهّز العضلات والمفاصل للحركة.",en:"It readies muscles and joints."}}
+];
+var BL_QC={4:1,8:1,12:1,15:1,19:1,22:1,26:1};
+var BL={p:[0,0],turn:0,busy:false,vs:"bot",qbag:[]};
+function blNames(){ return AR()?['أنت',(BL.vs==="bot"?'الروبوت':'اللاعب الثاني')]:['You',(BL.vs==="bot"?'Robot':'Player 2')]; }
+function blCellRC(n){ var idx=n-1, row=Math.floor(idx/6), col=idx%6; if(row%2===1) col=5-col; return {r:4-row,c:col}; }
 function blBoard(){
   var html='<div class="bl-board">';
   for(var r=0;r<5;r++){ for(var c=0;c<6;c++){
     var n=0; for(var k=1;k<=30;k++){ var rc=blCellRC(k); if(rc.r===r&&rc.c===c){ n=k; break; } }
-    var ev=BL_EV[n]; var cls="bl-c"+(ev?(ev.good?" up":" down"):"")+(n===30?" fin":"");
-    var mark=ev?(ev.good?"🪜":"🛝"):(n===30?"🏆":"");
+    var cls="bl-c"+(BL_QC[n]?" q":"")+(n===30?" fin":"");
+    var mark=BL_QC[n]?"؟":(n===30?"🏆":"");
     html+='<div class="'+cls+'" id="blc'+n+'"><i>'+n+'</i>'+mark+'<span class="bl-tk" id="blt'+n+'"></span></div>';
   }}
   return html+'</div>';
@@ -19456,11 +19457,72 @@ function blDrawTokens(){
   var icons=['🧒', BL.vs==="bot"?'🤖':'🧑'];
   for(var i=0;i<2;i++){ if(BL.p[i]>0){ var el2=document.getElementById('blt'+BL.p[i]); if(el2) el2.textContent+=icons[i]; } }
 }
-function blMsg(t){ var m=document.getElementById('blmsg'); if(m){ m.textContent=t; } }
-function blRoll(auto){
-  if(BL.busy) return; BL.busy=true;
-  var who=BL.turn, d=1+Math.floor(Math.random()*6);
-  var names=AR()?['أنت',(BL.vs==="bot"?'الروبوت':'اللاعب الثاني')]:['You',(BL.vs==="bot"?'Robot':'Player 2')];
+function blMsg(t){ var m=document.getElementById('blmsg'); if(m){ m.innerHTML=t; } }
+function blDie(v){ var d=document.getElementById('bldie'); if(d) d.textContent='🎲 '+v; }
+function blBar(p){ var b=document.getElementById('blbar'); if(b) b.style.width=p+'%'; }
+function blPickQ(){ if(!BL.qbag.length){ BL.qbag=BL_Q.map(function(_,i){return i;}); }
+  var at=Math.floor(Math.random()*BL.qbag.length); return BL_Q[BL.qbag.splice(at,1)[0]]; }
+function blWin(who){
+  var names=blNames();
+  blMsg('🏆 '+(AR()?(who===0?'وصلتَ القمة! المعرفة الصحية توصلك دائمًا أعلى.':names[1]+' وصل القمة! جرّب مرة أخرى.')
+              :(names[who]+' reached the top!')));
+  var rb=document.getElementById('blroll');
+  if(rb){ rb.textContent=AR()?"العب من جديد":"Play again";
+    rb.onpointerdown=null; rb.onpointerup=null; rb.onpointerleave=null;
+    rb.onclick=function(){ window.openLadders(); }; }
+  BL.busy=false; BL.over=true;
+}
+function blEndTurn(){
+  if(BL.over) return;
+  if(BL.p[BL.turn]>=30){ blWin(BL.turn); return; }
+  BL.turn=1-BL.turn; BL.busy=false;
+  var names=blNames(), rb=document.getElementById('blroll');
+  if(BL.vs==="bot" && BL.turn===1){
+    if(rb) rb.disabled=true;
+    setTimeout(blBotRoll,900);
+  } else if(rb){
+    rb.disabled=false;
+    rb.textContent=(AR()?(BL.turn===0?"🎲 اضغط مطوّلًا واترك — دورك":"🎲 اضغط مطوّلًا — دور "+names[1])
+                        :(BL.turn===0?"🎲 Hold & release — your turn":"🎲 Hold & release — "+names[1]+"'s turn"));
+  }
+}
+function blSlide(who,delta,doneMsg){
+  var from=BL.p[who], to=Math.max(1,Math.min(30,from+delta));
+  var stepDir=delta>0?1:-1, i=from;
+  var iv=setInterval(function(){
+    if(i===to){ clearInterval(iv); blMsg(doneMsg); setTimeout(blEndTurn,700); return; }
+    i+=stepDir; BL.p[who]=i; blDrawTokens();
+  },140);
+}
+function blAsk(who){
+  var q=blPickQ(), names=blNames();
+  var human=(who===0 || BL.vs==="p2");
+  if(human){
+    var qp=document.getElementById('blqp');
+    qp.style.display='block';
+    qp.innerHTML='<div class="bl-qs">؟ '+T(q.s)+'</div>'
+      +'<div class="bl-qb"><button class="g2-btn" style="margin:0" id="blqT">✓ '+(AR()?"صحيح":"True")+'</button>'
+      +'<button class="g2-btn" style="margin:0;background:#f28b82;color:#5b1210" id="blqF">✗ '+(AR()?"خطأ":"False")+'</button></div>';
+    var answer=function(val){
+      qp.style.display='none';
+      var ok=(val===q.t);
+      if(ok){ blMsg('🪜 '+(AR()?"إجابة صحيحة! تسلّق ٤ خانات — ":"Correct! Climb 4 — ")+T(q.why)); blSlide(who,4,'🪜 '+T(q.why)); }
+      else { blMsg('🛝 '+(AR()?"إجابة خاطئة! انزل ٤ خانات — ":"Wrong! Slide 4 — ")+T(q.why)); blSlide(who,-4,'🛝 '+T(q.why)); }
+    };
+    document.getElementById('blqT').onclick=function(){ answer(true); };
+    document.getElementById('blqF').onclick=function(){ answer(false); };
+  } else {
+    var ok=Math.random()<0.6;
+    blMsg('🤖 ؟ '+T(q.s));
+    setTimeout(function(){
+      if(ok){ blMsg('🤖🪜 '+(AR()?"الروبوت أجاب صحيحًا وتسلّق!":"Robot answered right and climbs!")); blSlide(who,4,'🪜 '+T(q.why)); }
+      else { blMsg('🤖🛝 '+(AR()?"الروبوت أخطأ ونزل! — ":"Robot got it wrong and slides! — ")+T(q.why)); blSlide(who,-4,'🛝 '+T(q.why)); }
+    },1100);
+  }
+}
+function blDoMove(who,d){
+  BL.busy=true; blDie(d);
+  var names=blNames();
   blMsg((AR()?(who===0?'رميتَ':'رمى '+names[1]):names[who]+' rolled')+' 🎲 '+d);
   var target=BL.p[who]+d; if(target>30) target=30;
   var i=BL.p[who];
@@ -19468,38 +19530,54 @@ function blRoll(auto){
     i++; BL.p[who]=i; blDrawTokens();
     if(i>=target){
       clearInterval(iv);
-      var ev=BL_EV[i];
-      setTimeout(function(){
-        if(ev){ BL.p[who]=ev.to; blDrawTokens(); blMsg(names[who]+': '+T(ev)); }
-        if(BL.p[who]>=30){
-          blMsg('🏆 '+(AR()?(who===0?'وصلتَ القمة! العادات الصحية توصلك دائمًا أعلى.':names[1]+' وصل القمة! جرّب مرة أخرى — العادات الصحية توصلك أعلى.')
-                        :(names[who]+' reached the top! Healthy habits always take you higher.')));
-          var rb=document.getElementById('blroll'); if(rb){ rb.textContent=AR()?"العب من جديد":"Play again"; rb.onclick=function(){ window.openLadders(); }; }
-          BL.busy=false; return;
-        }
-        BL.turn=1-BL.turn; BL.busy=false;
-        var rb2=document.getElementById('blroll');
-        if(BL.vs==="bot" && BL.turn===1){ if(rb2) rb2.disabled=true; setTimeout(function(){ blRoll(true); },900); }
-        else if(rb2){ rb2.disabled=false; rb2.textContent='🎲 '+(AR()?(BL.turn===0?"دورك":"دور "+names[1]):(BL.turn===0?"Your turn":names[1]+"'s turn")); }
-      }, ev?450:150);
+      if(BL.p[who]>=30){ setTimeout(function(){ blWin(who); },300); return; }
+      if(BL_QC[BL.p[who]]){ setTimeout(function(){ blAsk(who); },420); }
+      else setTimeout(blEndTurn,420);
     }
   },170);
 }
-window.blRoll=blRoll;
-window.blMode=function(m){ BL={p:[0,0],turn:0,busy:false,vs:m}; blStartUI(); };
+function blBotRoll(){
+  if(BL.over) return;
+  var n=0, iv=setInterval(function(){ n++; var v=1+Math.floor(Math.random()*6); blDie(v); blBar((n*14)%100);
+    if(n>=6){ clearInterval(iv); blBar(0); blDoMove(1,1+Math.floor(Math.random()*6)); } },110);
+}
+var blCh={on:false,iv:null,val:1,p:0};
+function blChargeStart(e){
+  if(BL.busy||BL.over) return;
+  if(BL.vs==="bot"&&BL.turn!==0) return;
+  if(e && e.preventDefault) e.preventDefault();
+  blCh.on=true; blCh.p=0;
+  blCh.iv=setInterval(function(){
+    blCh.val=(blCh.val%6)+1; blCh.p=(blCh.p+9)%104;
+    blDie(blCh.val); blBar(Math.min(100,blCh.p));
+  },95);
+}
+function blChargeEnd(e){
+  if(!blCh.on) return; blCh.on=false;
+  clearInterval(blCh.iv); blBar(0);
+  if(e && e.preventDefault) e.preventDefault();
+  blDoMove(BL.turn, blCh.val);
+}
+window.blMode=function(m){ BL={p:[0,0],turn:0,busy:false,vs:m,qbag:[],over:false}; blStartUI(); };
 function blStartUI(){
   var s=g2(AR()?"🪜 سلّم العظام":"🪜 Bones & Ladders");
-  s.hud.innerHTML='<span>🧒 '+(AR()?"أنت":"You")+'</span><span>'+(BL.vs==="bot"?'🤖 '+(AR()?"الروبوت":"Robot"):'🧑 '+(AR()?"لاعب ٢":"Player 2"))+'</span>';
+  var names=blNames();
+  s.hud.innerHTML='<span>🧒 '+names[0]+'</span><span>'+(BL.vs==="bot"?'🤖 ':'🧑 ')+names[1]+'</span><span id="bldie">🎲 −</span>';
   s.stage.innerHTML=blBoard()
-    +'<div class="bl-msg" id="blmsg">'+(AR()?"العادات الصحية تصعد بك 🪜 والعادات السيئة تنزل بك 🛝":"Good habits climb you up 🪜 — bad ones slide you down 🛝")+'</div>'
-    +'<button class="g2-btn" id="blroll" onclick="window.blRoll()">🎲 '+(AR()?"ارمِ النرد":"Roll the dice")+'</button>';
+    +'<div class="bl-bar"><i id="blbar"></i></div>'
+    +'<div class="bl-msg" id="blmsg">'+(AR()?"اضغط الزر مطوّلًا لشحن النرد ثم اتركه لترميه! خانات «؟» فيها سؤال: أجب صح لتتسلق 🪜 أو تنزل 🛝":"Hold the button to charge the die, release to throw! «?» squares ask a question: right climbs 🪜, wrong slides 🛝")+'</div>'
+    +'<div id="blqp" class="bl-qp" style="display:none"></div>'
+    +'<button class="g2-btn" id="blroll">🎲 '+(AR()?"اضغط مطوّلًا واترك — دورك":"Hold & release — your turn")+'</button>';
+  var rb=document.getElementById('blroll');
+  rb.onpointerdown=blChargeStart; rb.onpointerup=blChargeEnd; rb.onpointerleave=blChargeEnd;
+  rb.oncontextmenu=function(e){ e.preventDefault(); return false; };
   blDrawTokens();
 }
 window.openLadders=function(){
   var s=g2(AR()?"🪜 سلّم العظام":"🪜 Bones & Ladders");
   s.hud.innerHTML='';
   s.stage.innerHTML='<div class="g2-end"><div class="big">🪜</div><h4>'+(AR()?"من يصل القمة أولًا؟":"Who reaches the top first?")+'</h4>'
-    +'<p style="opacity:.85;margin:4px 0 14px">'+(AR()?"العادات الصحية سلالم، والعادات السيئة زلاقات!":"Healthy habits are ladders; bad habits are slides!")+'</p>'
+    +'<p style="opacity:.85;margin:4px 0 14px">'+(AR()?"اشحن النرد بضغطة طويلة، وأجب عن أسئلة «؟» لتتسلق!":"Charge the die with a long press, and answer «?» questions to climb!")+'</p>'
     +'<button class="g2-btn" onclick="window.blMode(\'bot\')">🤖 '+(AR()?"ضد الروبوت":"Vs the robot")+'</button>'
     +'<button class="g2-btn" onclick="window.blMode(\'p2\')" style="background:#7fc8f8;color:#0b3556">🧑‍🤝‍🧑 '+(AR()?"لاعبان على نفس الجهاز":"Two players, one device")+'</button></div>';
 };
@@ -19711,15 +19789,15 @@ function noise(t0,dur,fLow,fHigh,gain){ var c=ac(),len=Math.max(1,Math.floor(c.s
   src.connect(f); f.connect(g); g.connect(c.destination); src.start(t0); }
 var SND=[
  {n:{ar:"نبض القلب",en:"A heartbeat"},f:{ar:"القلب عضلة تنبض نحو ١٠٠ ألف مرة في اليوم.",en:"The heart beats about 100,000 times a day."},
-  play:function(){ var t=ac().currentTime; for(var i=0;i<4;i++){ tone(t+i*0.8,70,0.12,"sine",0.7); tone(t+i*0.8+0.22,55,0.1,"sine",0.5); } }},
+  play:function(){ var t=ac().currentTime+0.08; for(var i=0;i<4;i++){ tone(t+i*0.8,70,0.12,"sine",0.7); tone(t+i*0.8+0.22,55,0.1,"sine",0.5); } }},
  {n:{ar:"خطوات الجري",en:"Running feet"},f:{ar:"الجري يقوّي العظام لأنها تحمل وزن الجسم.",en:"Running strengthens bones by loading them."},
-  play:function(){ var t=ac().currentTime; for(var i=0;i<8;i++) noise(t+i*0.28,0.08,120,400,0.5); }},
+  play:function(){ var t=ac().currentTime+0.08; for(var i=0;i<8;i++) noise(t+i*0.28,0.08,120,400,0.5); }},
  {n:{ar:"التنفس العميق",en:"Deep breathing"},f:{ar:"الأضلاع تتحرك مع كل نفَس لتفسح للرئتين.",en:"Ribs move with every breath to make room for the lungs."},
-  play:function(){ var t=ac().currentTime; noise(t,1.2,300,900,0.25); noise(t+1.5,1.2,200,700,0.2); }},
+  play:function(){ var t=ac().currentTime+0.08; noise(t,1.2,300,900,0.25); noise(t+1.5,1.2,200,700,0.2); }},
  {n:{ar:"طقطقة مفصل",en:"A joint pop"},f:{ar:"الصوت فقاعة غاز في سائل المفصل — وليس كسرًا!",en:"That pop is a gas bubble in joint fluid — not a break!"},
-  play:function(){ var t=ac().currentTime; tone(t,900,0.03,"square",0.4); noise(t,0.05,800,2500,0.4); }},
+  play:function(){ var t=ac().currentTime+0.08; tone(t,900,0.03,"square",0.4); noise(t,0.05,800,2500,0.4); }},
  {n:{ar:"مضغ الطعام",en:"Munching food"},f:{ar:"الأسنان أقسى جزء في الجسم — والمضغ أول خطوات الهضم.",en:"Teeth are the body's hardest part — chewing starts digestion."},
-  play:function(){ var t=ac().currentTime; for(var i=0;i<6;i++) noise(t+i*0.35,0.12,400,1600,0.45); }}
+  play:function(){ var t=ac().currentTime+0.08; for(var i=0;i<6;i++) noise(t+i*0.35,0.12,400,1600,0.45); }}
 ];
 var snI=0, snScore=0, snOrder=[];
 function snRender(){
@@ -19729,12 +19807,28 @@ function snRender(){
   var s=window.__sn;
   s.hud.innerHTML='<span>'+(snI+1)+' / '+SND.length+'</span><span>⭐ '+snScore+'</span>';
   s.stage.innerHTML='<div class="sh-sil" style="font-size:56px">🔊</div>'
-    +'<button class="g2-btn" style="margin:0 0 10px" onclick="window.snPlay()">🔊 '+(AR()?"شغّل الصوت":"Play the sound")+'</button>'
+    +'<button class="g2-btn" id="snplay" style="margin:0 0 10px" onclick="window.snPlay()">🔊 '+(AR()?"شغّل الصوت":"Play the sound")+'</button>'
     +'<div class="g2-q">'+(AR()?"ما هذا الصوت؟":"What is this sound?")+'</div>'
     +'<div class="sh-opts">'+opts.map(function(o){ return '<button class="st1361-b" onclick="window.snPick(this,'+(o===it?1:0)+','+SND.indexOf(it)+')">'+T(o.n)+'</button>'; }).join("")+'</div>'
     +'<div id="snend"></div>';
 }
-window.snPlay=function(){ try{ SND[snOrder[snI]].play(); }catch(e){} };
+window.snPlay=function(){
+  try{
+    var c=ac();
+    var go=function(){
+      try{
+        var b=c.createBuffer(1,1,22050), s0=c.createBufferSource(); s0.buffer=b; s0.connect(c.destination); s0.start(0);
+        SND[snOrder[snI]].play();
+      }catch(e){}
+      try{
+        var pb=document.getElementById('snplay');
+        if(pb){ var t0=pb.textContent; pb.textContent='🔉 '+(AR()?"يعزف...":"playing..."); setTimeout(function(){ try{ pb.textContent=t0; }catch(e){} },1800); }
+      }catch(e){}
+    };
+    if(c.state!=="running"){ var p=c.resume(); if(p&&p.then){ p.then(go).catch(go); } else { setTimeout(go,60); } }
+    else go();
+  }catch(e){}
+};
 window.snPick=function(btn,ok,idx){
   var it=SND[idx];
   if(ok){
@@ -19767,7 +19861,14 @@ try{
   +'.bl-c.up{background:rgba(126,226,161,.28)}.bl-c.down{background:rgba(245,161,154,.28)}.bl-c.fin{background:rgba(244,168,60,.35)}'
   +'.bl-tk{position:absolute;bottom:1px;inset-inline-end:2px;font-size:14px;line-height:1}'
   +'.bl-msg{background:rgba(255,255,255,.12);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;min-height:36px;text-align:center}'
-  +'.sh-sil{font-size:84px;text-align:center;filter:brightness(0) invert(.25);transition:filter .5s;line-height:1.2;margin-bottom:8px}'
+  +'.bl-c.q{background:rgba(127,200,248,.3);font-weight:900;font-size:17px}'
++'.bl-bar{height:9px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden;margin:2px 0 8px}'
++'.bl-bar i{display:block;height:100%;width:0%;background:#f4a83c;transition:width .09s linear}'
++'.bl-qp{background:rgba(255,255,255,.95);color:#123;border-radius:14px;padding:12px;margin:8px 0}'
++'.bl-qs{font-weight:800;font-size:15px;margin-bottom:10px}'
++'.bl-qb{display:flex;gap:8px}.bl-qb .g2-btn{flex:1}'
++'#blroll{user-select:none;-webkit-user-select:none;touch-action:none}'
++'.sh-sil{font-size:84px;text-align:center;filter:brightness(0) invert(.25);transition:filter .5s;line-height:1.2;margin-bottom:8px}'
   +'.sh-sil.rev{filter:none}'
   +'.sh-opts{display:flex;flex-direction:column;gap:8px}'
   +'.g2-stage .st1361-b{background:rgba(255,255,255,.92);border-color:transparent;color:#123}'
