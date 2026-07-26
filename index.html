@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.0 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.1 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -1005,7 +1005,7 @@ function libCards(items,q){
   var grid=document.getElementById("grid"); grid.innerHTML=""; var shown=0; var ql=(q||"").toLowerCase();
   items.forEach(function(it){
     if(ql && it.title.toLowerCase().indexOf(ql)<0 && (it.sub||"").toLowerCase().indexOf(ql)<0) return; shown++;
-    var isGame=(it.kind==="quiz"||it.kind==="match"||it.kind==="spot"||it.kind==="word"||it.kind==="catch"||it.kind==="memory");
+    var isGame=(typeof it.open==="function"||it.kind==="quiz"||it.kind==="match"||it.kind==="spot"||it.kind==="word"||it.kind==="catch"||it.kind==="memory"||it.kind==="skeleton"||it.kind==="steps"||it.kind==="who");
     var isBk=(it.kind==="booklet"||it.kind==="booklet2");
     var src=(it.kind==="booklet")?((typeof HUSAM_IMG!=="undefined"&&HUSAM_IMG[it.img])||""):(it.kind==="booklet2")?((typeof GROWTH_IMG!=="undefined"&&GROWTH_IMG[it.img])||""):((typeof STORY_IMG!=="undefined"&&STORY_IMG[it.img])||"");
     var tag=isGame?(lang==="ar"?"🎮 لعبة تفاعلية":"🎮 Interactive game"):isBk?(lang==="ar"?"كتيّب تفاعلي مصوّر":"Interactive illustrated booklet"):(lang==="ar"?"قصة مصوّرة تفاعلية":"Interactive illustrated story");
@@ -2464,7 +2464,7 @@ function mtRender(){ var T=gmT(), b=document.getElementById('qz-body'); if(!b) r
   if(MT.matched>=pr.length){ b.innerHTML=gmResult(100,T.matchWin,'','mtStart('+MT.set+')','openMatch()'); return; }
   var L=MT.leftOrder.map(function(i){return mtCell('L',i);}).join(''); var R=MT.rightOrder.map(function(i){return mtCell('R',i);}).join('');
   b.innerHTML='<div class="qz-top"><div class="qz-prog"><i style="width:'+(MT.matched/pr.length*100)+'%"></i></div></div>'+
-    '<div class="mt-grid"><div class="mt-col"><div class="mt-h">'+T.condCol+'</div>'+L+'</div><div class="mt-col"><div class="mt-h">'+T.locCol+'</div>'+R+'</div></div>'; }
+    '<div class="mt-grid"><div class="mt-col"><div class="mt-h">'+((MT_SETS[MT.set].heads&&qzTx(MT_SETS[MT.set].heads.L))||T.condCol)+'</div>'+L+'</div><div class="mt-col"><div class="mt-h">'+((MT_SETS[MT.set].heads&&qzTx(MT_SETS[MT.set].heads.R))||T.locCol)+'</div>'+R+'</div></div>'; }
 
 /* ============================== SPOT (6 sets) ============================== */
 function SR(topic,signs){ return {topic:topic,signs:signs}; }
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.0 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.1 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -19004,27 +19004,26 @@ var POOL=[
  S("أصابع زرقاء تحت الجبس تنتظر ليوم غد","Blue fingers under a cast can wait a day",false,"علامة ضغط تستدعي مراجعة فورية.","A pressure sign — same-day review."),
  S("عظام الأطفال تلتئم أسرع من الكبار","Children's bones heal faster than adults'",true,"العظم النامي نشيط الترميم.","Growing bone repairs quickly."),
  S("القماط الصحيح يشد الساقين مستقيمتين","Good swaddling holds the legs straight and tight",false,"الوركان يحتاجان حرية الانثناء والتباعد.","Hips need to bend and spread freely."),
- S("جهاز بافليك يُضبط في البيت متى شئنا","Adjust the Pavlik harness at home freely",false,"الضبط للفريق المعالج فقط.","Only the treating team adjusts it."),
- S("سونار الورك يكشف خلل التنسج مبكرًا","Hip ultrasound detects dysplasia early",true,"أدق فحص في الأشهر الأولى.","The most accurate early test."),
- S("حنف القدم يُعالج غالبًا بجبائر أسبوعية","Clubfoot is usually treated with weekly casts",true,"طريقة بونسيتي ناجحة في معظم الحالات.","The Ponseti method succeeds in most cases."),
- S("حذاء القضيب الليلي يمنع عودة حنف القدم","Night boots-and-bar prevent clubfoot relapse",true,"الالتزام به سر بقاء التصحيح.","Sticking with it keeps the correction."),
  S("حقيبة المدرسة الثقيلة تسبب الجنف","Heavy schoolbags cause scoliosis",false,"قد تتعب العضلات لكنها لا تسبب الجنف.","They tire muscles but don't cause scoliosis."),
- S("دعامة الجنف تمنع ازدياد الانحناء","A scoliosis brace stops curve progression",true,"توجّه النمو حتى يكتمل.","It guides growth until it finishes."),
  S("ألم ليلي يوقظ الطفل يستدعي مراجعة","Night pain waking a child needs review",true,"من العلامات التي تُفحص دائمًا.","A sign we always assess."),
  S("تقوّس الساقين قبل السنتين غالبًا طبيعي","Bow legs before age two are usually normal",true,"يستقيم مع النمو في معظم الأطفال.","It straightens with growth in most children."),
  S("مرفق المربية يُعاد بمناورة بسيطة","A pulled elbow is fixed with a simple manoeuvre",true,"ثوانٍ في العيادة ويعود الطفل يلعب.","Seconds in clinic and the child plays again."),
- S("الإبهام الزنادي دائمًا يحتاج جراحة","Trigger thumb always needs surgery",false,"كثير من الحالات يتحسن قبل عمر ٢–٣ سنوات.","Many resolve before age 2–3."),
  S("حرارة مع رفض تحريك الطرف تحتاج طوارئ","Fever with refusal to move a limb needs urgent care",true,"قد تكون عدوى مفصل أو عظم.","It may be a bone or joint infection."),
- S("احمرار ينتشر حول سلك المثبت يُراجع سريعًا","Spreading redness at a pin site needs prompt review",true,"قد يكون بداية التهاب موضع السلك.","It may be an early pin-site infection."),
- S("إفراز صافٍ قليل حول السلك طبيعي","A little clear ooze at a pin site is normal",true,"الصافي القليل الثابت متوقع؛ العكر ليس كذلك.","Small steady clear ooze is expected; cloudy is not."),
  S("الجبس المبتل يُترك حتى يجف وحده","A soaked cast just dries by itself",false,"الجبس الطري يفقد حمايته — راجعوا العيادة.","A soft cast loses protection — visit the clinic."),
  S("الرضّع يولدون بقوس ظاهر في القدم","Babies are born with a visible foot arch",false,"القوس يظهر لاحقًا مع تقوّي القدم.","The arch develops later as the foot strengthens."),
  S("المشي المبكر جدًا يسبب تقوّس الساقين","Very early walking causes bow legs",false,"التقوّس المبكر فسيولوجي ولا يسببه المشي.","Early bowing is physiological, not from walking."),
  S("الكسر عند الطفل قد يمر عبر صفيحة النمو","A child's fracture may involve the growth plate",true,"لذلك نتابع بعض الكسور لفترة أطول.","That's why some fractures get longer follow-up."),
  S("العرج الجديد عند طفل صغير يُقيَّم دائمًا","A new limp in a young child always needs assessment",true,"العرج ليس تشخيصًا — بل علامة نبحث عن سببها.","A limp is a sign, not a diagnosis — we find its cause."),
  S("الحركة والجري يقويان العظام","Movement and running strengthen bones",true,"العظم يستجيب للتحميل فيزداد قوة.","Bone responds to loading by getting stronger."),
- S("بعد إزالة الجبس يعود الطفل للرياضة فورًا بلا تدرج","Straight back to sport the day the cast comes off",false,"العودة تكون تدريجية حسب توجيه الفريق.","Return is gradual, guided by the team.")
-];
+ S("بعد إزالة الجبس يعود الطفل للرياضة فورًا بلا تدرج","Straight back to sport the day the cast comes off",false,"العودة تكون تدريجية حسب توجيه الفريق.","Return is gradual, guided by the team."),
+S("الخوذة تحمي رأسك عند ركوب الدراجة","A helmet protects your head on a bike",true,"معظم إصابات الرأس يمكن منعها بالخوذة.","Most head injuries are preventable with a helmet."),
+S("يولد الطفل بعظام أكثر من الكبار","Babies are born with more bones than adults",true,"نحو ٣٠٠ عظمة تلتحم لتصبح ٢٠٦.","About 300 bones fuse into 206."),
+S("طقطقة الأصابع تسبب التهاب المفاصل","Knuckle cracking causes arthritis",false,"الصوت فقاعات غاز في سائل المفصل ولا يسبب التهابًا.","The pop is gas bubbles in joint fluid — it doesn't cause arthritis."),
+S("الإحماء قبل الرياضة يقلل الإصابات","Warming up before sport reduces injuries",true,"يجهّز العضلات والمفاصل للحركة.","It prepares muscles and joints for action."),
+S("النوم المبكر يساعد الطفل على النمو","Early sleep helps children grow",true,"هرمون النمو يُفرز في النوم العميق.","Growth hormone is released in deep sleep."),
+S("قفز أطفال كثيرين معًا على الترامبولين آمن","Many kids jumping together on a trampoline is safe",false,"معظم الإصابات تحدث عند القفز الجماعي.","Most injuries happen with several jumpers."),
+S("الجلوس الطويل أمام الشاشة يضعف العضلات","Long screen-sitting weakens muscles",true,"العضلات تقوى بالاستخدام وتضعف بالخمول.","Muscles strengthen with use and weaken with idleness."),
+S("حقيبة الظهر تُحمل على كتف واحد","Carry a backpack on one shoulder",false,"الكتفان معًا مع حزام مضبوط أريح للظهر.","Both shoulders with snug straps is kinder to the back.")];
 var css=document.createElement("style");
 css.textContent=".g2-tf{display:flex;gap:10px;margin-top:10px}"
 +".g2-tf button{flex:1;border:0;border-radius:14px;padding:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}"
@@ -19068,111 +19067,342 @@ window.gameItems=function(){ var g=(typeof _gi==="function")?_gi():[];
 })();
 </script>
 
-<script id="opd-1360-family-games">
-/* ============================================================
-   OPD-PE — opd-1360: condition-aware games (26 Jul 2026)
-   A parent reads 1–3 leaflets, not 132 — so the games now meet the family
-   where they are:
-   · every set is tagged with the categories it serves;
-   · set pickers group into «يخصّ طفلك» (matches leaflets the family read
-     or starred) → «لكل العائلة» (universal) → «تخصصات أخرى» (collapsed);
-   · each leaflet with matching sets gets a «🎮 اختبر ما قرأت» chip that
-     jumps into the games with that condition already on top.
-   (c) 2026 Dr. Masoud Al Abdali.
-   ============================================================ */
+
+
+<script id="opd-1361-general-games">
+/* =====================================================
+   opd-1361 · Games for the whole family (general interest)
+   - removes condition-specialty sets from QZ/MT/SP/HM
+   - adds new general-interest sets to every game
+   - two new games: «رتّب الخطوات» (sequencing) & «من أنا؟» (riddles)
+   All new clinical-adjacent statements are DRAFT pending author sign-off.
+   ===================================================== */
 (function(){
 "use strict";
-function AR(){ try{ return (typeof lang!=="undefined"?lang:"ar")==="ar"; }catch(e){ return true; } }
+function AR(){ try{ return (typeof lang!=="undefined"? lang : "ar")!=="en"; }catch(e){ return true; } }
 
-/* ---- set → category tags (index-based, matches current set order) ---- */
-var TAGS={
- QZ:{0:["very-common"],1:["knee","leg","very-common"],2:["foot","clubfoot","very-common"],3:["hip"],4:[],5:["surgical-procedures","injuries"],6:["spine"],7:["injuries"],8:["hand-upper-limb"],9:["hip","clubfoot","foot"]},
- MT:{0:["knee","foot","hip","leg"],1:[],2:[],3:[],4:["hip","leg","very-common"],5:[],6:["clubfoot","hip","spine","foot"],7:["injuries","hip","surgical-procedures"],8:[]},
- SP:{0:["leg","very-common"],1:["foot","very-common"],2:["hip"],3:["spine","neuromuscular"],4:["surgical-procedures"],5:[],6:["injuries"],7:["surgical-procedures"],8:["spine"]},
- HM:{0:[],1:["hip","knee","foot"],2:[],3:[],4:[],5:[],6:[],7:[]}
+/* ---------- 1 · keep only general-interest sets (in-place, dedup) ---------- */
+function keepOnly(arr, names){
+  if(!arr) return;
+  var seen={};
+  for(var i=arr.length-1;i>=0;i--){
+    var n=arr[i]&&arr[i].name&&arr[i].name.ar;
+    if(names.indexOf(n)<0 || seen[n]){ arr.splice(i,1); } else { seen[n]=1; }
+  }
+}
+try{
+  keepOnly(window.QZ_SETS, ["أساسيات","الركبة وآلام النمو","العظام والتغذية"]);
+  keepOnly(window.MT_SETS, ["مصطلح وتعريف","عظمة ومنطقة","العمر والمرحلة","الجهاز والغرض","من يعالج ماذا؟"]);
+  keepOnly(window.SP_SETS, ["عام — متى الطبيب؟"]);
+  keepOnly(window.HM_SETS, ["العظام","العلاج","المفاصل","الأعراض","النمو","الأدوات"]);
+}catch(e){}
+
+/* ---------- 2 · new QUIZ sets ---------- */
+function Q(qa,qe,o,c,wa,we){ var opts=o.map(function(p){return {ar:p[0],en:p[1]};}); return {q:{ar:qa,en:qe},opts:opts,correct:c,why:{ar:wa,en:we}}; }
+try{ window.QZ_SETS.push(
+{ name:{ar:"عظام جسمك",en:"Your body's bones"}, data:[
+ Q("كم عدد العظام في جسم الإنسان البالغ تقريبًا؟","About how many bones are in an adult body?",[["١٠٦","106"],["٢٠٦","206"],["٥٠٠","500"],["٥٠","50"]],1,"البالغ لديه نحو ٢٠٦ عظام، والطفل يولد بعدد أكبر يلتحم مع النمو.","Adults have about 206 bones; children are born with more that fuse while growing."),
+ Q("ما أطول عظمة في الجسم؟","Which is the longest bone in the body?",[["عظمة الفخذ","The femur (thigh)"],["عظمة العضد","The humerus (arm)"],["الترقوة","The collarbone"],["الشظية","The fibula"]],0,"عظمة الفخذ هي الأطول والأقوى في الجسم كله.","The femur is the longest and strongest bone of all."),
+ Q("أين توجد أصغر عظمة في الجسم؟","Where is the smallest bone in the body?",[["في الأذن","In the ear"],["في الأنف","In the nose"],["في الإصبع","In a finger"],["في القدم","In the foot"]],0,"عظمة الركاب في الأذن الوسطى بحجم حبة الأرز تقريبًا!","The stapes in the middle ear is about the size of a grain of rice!"),
+ Q("ماذا تحمي عظام الجمجمة؟","What does the skull protect?",[["القلب","The heart"],["الدماغ","The brain"],["المعدة","The stomach"],["الرئتين","The lungs"]],1,"الجمجمة خوذة طبيعية صلبة تحيط بالدماغ وتحميه.","The skull is a natural hard helmet around the brain."),
+ Q("ماذا يحمي القفص الصدري؟","What does the rib cage protect?",[["الدماغ","The brain"],["القلب والرئتين","The heart and lungs"],["الركبتين","The knees"],["اليدين","The hands"]],1,"الأضلاع قفص مرن يحمي القلب والرئتين ويتحرك مع كل نفَس.","The ribs are a flexible cage guarding heart and lungs, moving with every breath.")]},
+{ name:{ar:"عادات صحية",en:"Healthy habits"}, data:[
+ Q("أي مشروب يساعد على بناء عظام قوية؟","Which drink helps build strong bones?",[["المشروبات الغازية","Fizzy drinks"],["الحليب","Milk"],["مشروبات الطاقة","Energy drinks"],["العصير المحلّى","Sweetened juice"]],1,"الحليب غني بالكالسيوم، حجر الأساس في بناء العظم.","Milk is rich in calcium, the building block of bone."),
+ Q("متى يصنع الجسم فيتامين (د)؟","When does the body make vitamin D?",[["أثناء النوم","While sleeping"],["عند التعرض لأشعة الشمس","In the sunshine"],["أمام التلفاز","Watching TV"],["عند شرب الماء","Drinking water"]],1,"الجلد يصنع فيتامين (د) بأشعة الشمس، وهو ضروري لامتصاص الكالسيوم.","Skin makes vitamin D in sunlight — essential for absorbing calcium."),
+ Q("أي نشاط يقوّي العظام أكثر؟","Which activity strengthens bones most?",[["الجري والقفز","Running and jumping"],["الجلوس الطويل","Long sitting"],["مشاهدة الشاشة","Screen time"],["ركوب السيارة","Riding in a car"]],0,"العظام تتقوّى بالحركة التي تحمل وزن الجسم، كالجري والقفز واللعب.","Bones grow stronger with weight-bearing play like running and jumping."),
+ Q("لماذا النوم المبكر مهم للنمو؟","Why is early sleep important for growth?",[["لا يهم كثيرًا","It doesn't matter"],["لأن هرمون النمو يُفرز أثناء النوم العميق","Growth hormone is released in deep sleep"],["لأنه يمنع الجوع","It stops hunger"],["لأنه يقوّي النظر","It sharpens eyesight"]],1,"معظم هرمون النمو يُفرز أثناء النوم العميق ليلًا.","Most growth hormone is released during deep night sleep."),
+ Q("ماذا نفعل بعد ساعة جلوس أمام الشاشة؟","After an hour of screen-sitting, we should…",[["نكمل ساعة أخرى","Sit another hour"],["ننهض ونتحرك قليلًا","Get up and move"],["ننام فورًا","Sleep at once"],["نأكل حلوى","Have sweets"]],1,"فترات الحركة القصيرة تريح العضلات والمفاصل وتحسّن الجلسة.","Short movement breaks refresh muscles, joints and posture.")]},
+{ name:{ar:"السلامة أولًا",en:"Safety first"}, data:[
+ Q("قبل ركوب الدراجة نلبس…؟","Before riding a bike we put on…",[["قبعة صوف","A wool hat"],["خوذة","A helmet"],["نظارة شمس","Sunglasses"],["حذاءً جديدًا","New shoes"]],1,"الخوذة تحمي الرأس والدماغ عند السقوط.","A helmet protects the head and brain in a fall."),
+ Q("في السيارة يجلس الطفل الصغير…؟","In the car, a young child sits…",[["في حضن أمه","On mum's lap"],["في مقعد الأطفال الخاص","In a child car seat"],["بجانب السائق","Next to the driver"],["واقفًا","Standing up"]],1,"مقعد الأطفال المثبّت جيدًا هو الأكثر أمانًا عند الفرملة والحوادث.","A properly fitted car seat is safest in braking and crashes."),
+ Q("على الترامبولين، الأسلم أن يقفز…؟","On a trampoline it is safest that…",[["طفل واحد في كل مرة","One child jumps at a time"],["ثلاثة أطفال معًا","Three jump together"],["الكبير مع الصغير","Big with small together"],["الجميع معًا","Everyone together"]],0,"معظم إصابات الترامبولين تحدث عند قفز أكثر من طفل معًا.","Most trampoline injuries happen when several children jump together."),
+ Q("قبل اللعب والرياضة من الأفضل…؟","Before sport and play it is best to…",[["الإحماء بحركات خفيفة","Warm up gently"],["الأكل حتى الشبع","Eat a big meal"],["الجلوس طويلًا","Sit for a long time"],["حبس النفس","Hold your breath"]],0,"الإحماء يجهّز العضلات والمفاصل ويقلل الإصابات.","Warming up prepares muscles and joints and prevents injuries."),
+ Q("عند صعود الدرج، الصحيح هو…؟","On the stairs, the right thing is…",[["القفز درجتين درجتين","Jumping two steps at a time"],["الإمساك بالدرابزين","Holding the handrail"],["الركض بسرعة","Running fast"],["النزول بالظهر","Going down backwards"]],1,"الإمساك بالدرابزين يمنع الانزلاق والسقوط.","Holding the rail prevents slips and falls.")]},
+{ name:{ar:"جسمك ينمو",en:"Your growing body"}, data:[
+ Q("الطفل يولد بعدد عظام…؟","A baby is born with…",[["أقل من الكبار","Fewer bones than adults"],["أكثر من الكبار (نحو ٣٠٠)","More bones than adults (~300)"],["نفس عدد الكبار","The same number"],["بلا عظام","No bones"]],1,"يولد الطفل بنحو ٣٠٠ عظمة تلتحم تدريجيًا لتصبح ٢٠٦.","Babies start with about 300 bones that gradually fuse into 206."),
+ Q("ما «صفيحة النمو»؟","What is a growth plate?",[["عضلة في البطن","A tummy muscle"],["منطقة غضروفية تطول منها العظمة","A cartilage zone where bone lengthens"],["نوع من الطعام","A kind of food"],["جهاز طبي","A medical device"]],1,"صفائح النمو أطراف غضروفية لينة تطول منها العظام حتى نهاية البلوغ.","Growth plates are soft cartilage zones where bones lengthen until the end of puberty."),
+ Q("لماذا تلتئم كسور الأطفال أسرع؟","Why do children's fractures heal faster?",[["لأن عظامهم أصغر فقط","Only because bones are smaller"],["لأن عظامهم في بناء دائم وغشاؤها نشط","Their bone is always building, with an active lining"],["لأنهم يأكلون أكثر","Because they eat more"],["صدفة","By chance"]],1,"عظم الطفل في حالة بناء مستمر فيرمّم نفسه بسرعة مدهشة.","A child's bone is constantly building, so it repairs itself remarkably fast."),
+ Q("معظم الأطفال يبدؤون المشي حوالي…؟","Most children start walking around…",[["٦ أشهر","6 months"],["١٢–١٨ شهرًا","12–18 months"],["٣ سنوات","3 years"],["٤ سنوات","4 years"]],1,"المدى الطبيعي واسع؛ معظم الأطفال يمشون بين ١٢ و١٨ شهرًا.","The normal range is wide; most walk between 12 and 18 months."),
+ Q("العضلات تحرّك العظام مثل…؟","Muscles move bones like…",[["الحبال المشدودة","Pulling ropes"],["الوسائد","Pillows"],["الماء","Water"],["الهواء","Air"]],0,"العضلات تعمل كحبال مشدودة تسحب العظام عبر المفاصل فيتحرك الجسم.","Muscles work like ropes pulling bones across joints to move the body.")]}
+); }catch(e){}
+
+/* ---------- 3 · new MATCH sets ---------- */
+function P(a,b,c,d){ return {c:{ar:a,en:b}, l:{ar:c,en:d}}; }
+try{ window.MT_SETS.push(
+{ name:{ar:"العضو والوظيفة",en:"Part → job"}, pairs:[
+ P("العظام","Bones","تسند الجسم وتحميه","Support & protect"),
+ P("العضلات","Muscles","تحرّك الجسم","Move the body"),
+ P("المفاصل","Joints","تسمح بالثني والدوران","Let us bend & turn"),
+ P("الغضروف","Cartilage","وسادة تمتص الصدمات","Cushions the shocks"),
+ P("نخاع العظم","Bone marrow","مصنع كريات الدم","Makes blood cells")]},
+{ name:{ar:"الطعام والفائدة",en:"Food → benefit"}, pairs:[
+ P("الحليب","Milk","كالسيوم للعظام","Calcium for bones"),
+ P("السمك","Fish","فيتامين (د)","Vitamin D"),
+ P("البيض","Eggs","بروتين للبناء","Protein for building"),
+ P("الفواكه والخضار","Fruit & veg","فيتامينات ومناعة","Vitamins & immunity"),
+ P("الماء","Water","ترطيب الجسم","Keeps the body hydrated")]},
+{ name:{ar:"في العيادة",en:"At the clinic"}, pairs:[
+ P("جهاز الأشعة","X-ray machine","صورة للعظام","A picture of the bones"),
+ P("الميزان","The scales","قياس الوزن","Measures weight"),
+ P("شريط القياس","The measuring tape","قياس الطول","Measures height"),
+ P("السماعة","The stethoscope","سماع القلب والتنفس","Hears heart & breathing"),
+ P("الجبيرة","The cast","حماية العظم المكسور","Protects a broken bone")]}
+); }catch(e){}
+/* per-set column headers for the match game */
+try{
+  var MTH={"مصطلح وتعريف":[["المصطلح","Term"],["المعنى","Meaning"]],
+    "عظمة ومنطقة":[["العظمة","Bone"],["المنطقة","Region"]],
+    "العمر والمرحلة":[["العمر","Age"],["المرحلة","Stage"]],
+    "الجهاز والغرض":[["الجهاز","Device"],["الغرض","Purpose"]],
+    "من يعالج ماذا؟":[["المختص","Specialist"],["ماذا يعالج","Treats what"]],
+    "العضو والوظيفة":[["الجزء","Part"],["الوظيفة","Job"]],
+    "الطعام والفائدة":[["الطعام","Food"],["الفائدة","Benefit"]],
+    "في العيادة":[["الأداة","Tool"],["الغرض","Purpose"]]};
+  window.MT_SETS.forEach(function(s){ var hh=MTH[s.name.ar];
+    if(hh) s.heads={L:{ar:hh[0][0],en:hh[0][1]},R:{ar:hh[1][0],en:hh[1][1]}}; });
+}catch(e){}
+
+/* ---------- 4 · new SPOT (warning-sign) sets ---------- */
+function G(t){ return {t:{ar:t[0],en:t[1]}, red:!!t[2]}; }
+function R(ta,te,signs){ return {topic:{ar:ta,en:te}, signs:signs.map(G)}; }
+try{ window.SP_SETS.push(
+{ name:{ar:"بعد السقوط",en:"After a fall"}, rounds:[
+ R("سقط الطفل من الدراجة","Fell off a bike",[
+  ["لا يستطيع تحريك ذراعه","Can't move the arm",1],
+  ["تورّم شديد وتغيّر شكل الطرف","Marked swelling or odd shape",1],
+  ["خدش بسيط في الجلد","A small graze",0],
+  ["بكى ثم عاد يلعب طبيعيًا","Cried, then played normally",0],
+  ["ألم شديد عند اللمس","Severe pain on touch",1],
+  ["كدمة صغيرة","A small bruise",0]]),
+ R("ضرب رأسه أثناء اللعب","Bumped his head playing",[
+  ["تقيؤ متكرر","Repeated vomiting",1],
+  ["نعاس شديد وصعوبة إيقاظه","Very drowsy, hard to wake",1],
+  ["بكاء قصير ثم لعب طبيعي","Short cry, then normal play",0],
+  ["نتوء صغير مؤلم قليلًا","A small tender bump",0],
+  ["تشوّش أو كلام غير مفهوم","Confused or slurred speech",1],
+  ["طلب الطعام بعد ساعة","Asking for food an hour later",0]])]},
+{ name:{ar:"الحرارة والألم",en:"Fever & pain"}, rounds:[
+ R("طفل يعرج مع حرارة","A limping child with fever",[
+  ["حرارة مع رفض المشي","Fever and refusing to walk",1],
+  ["ألم ليلي يوقظه من النوم","Night pain that wakes him",1],
+  ["تعب بعد يوم لعب طويل","Tired after a long play day",0],
+  ["شدّ عضلي زال بعد الراحة","A muscle ache gone after rest",0],
+  ["مفصل ساخن ومنتفخ","A hot, swollen joint",1],
+  ["نشاط طبيعي بلا ألم","Normal play, no pain",0]]),
+ R("آلام الساقين المسائية","Evening leg aches",[
+  ["الألم في الجهتين ويزول صباحًا","Both legs, gone by morning",0],
+  ["يهدأ بالتدليك والطمأنة","Settles with massage & comfort",0],
+  ["الألم في جهة واحدة دائمًا","Always the same side",1],
+  ["تورّم أو احمرار مكان الألم","Swelling or redness at the spot",1],
+  ["عرج صباحي مستمر","A lasting morning limp",1],
+  ["يظهر بعد أيام نشاط زائد","Comes after very active days",0]])]},
+{ name:{ar:"المشي والحركة",en:"Walking & movement"}, rounds:[
+ R("عرج جديد عند طفل","A new limp in a child",[
+  ["عرج مستمر منذ أيام","A limp lasting days",1],
+  ["رفض المشي كليًا","Refusing to walk at all",1],
+  ["تعثّر عابر أثناء الجري","A brief trip while running",0],
+  ["مشية غريبة عند التعب فقط","Odd walk only when tired",0],
+  ["يزداد سوءًا يومًا بعد يوم","Worse day after day",1],
+  ["اختفى تمامًا في اليوم التالي","Completely gone next day",0]]),
+ R("طفل يتعلم المشي","A toddler learning to walk",[
+  ["وقعات خفيفة متكررة","Frequent gentle tumbles",0],
+  ["قدمان متباعدتان للتوازن","Feet wide apart for balance",0],
+  ["يستخدم جهة واحدة فقط دائمًا","Always uses one side only",1],
+  ["لم يمشِ بعد عمر ١٨ شهرًا","Not walking by 18 months",1],
+  ["يتمسك بالأثاث ليمشي","Cruising along furniture",0],
+  ["فقد مهارة كان يتقنها","Lost a skill he had mastered",1]])]}
+); }catch(e){}
+
+/* ---------- 5 · new WORD sets ---------- */
+function W(wa,we,ha,he){ return {w:{ar:wa,en:we}, h:{ar:ha,en:he}}; }
+try{ window.HM_SETS.push(
+{ name:{ar:"الحركة",en:"Movement"}, words:[
+ W("القفز","JUMP","نرتفع به عن الأرض","We leave the ground"),
+ W("الجري","RUN","أسرع من المشي","Faster than walking"),
+ W("التوازن","BALANCE","الوقوف على قدم واحدة","Standing on one foot"),
+ W("التمدد","STRETCH","نطيل العضلات بلطف","Gently lengthening muscles"),
+ W("التسلق","CLIMB","صعود بالأيدي والأرجل","Going up with hands and feet")]},
+{ name:{ar:"في المستشفى",en:"At the hospital"}, words:[
+ W("طبيب","DOCTOR","يفحص ويعالج","Examines and treats"),
+ W("ممرضة","NURSE","تعتني بالمرضى","Cares for patients"),
+ W("أشعة","XRAY","صورة تُظهر العظام","A picture that shows bones"),
+ W("عيادة","CLINIC","مكان الفحص والمتابعة","Where check-ups happen"),
+ W("دواء","MEDICINE","يساعد على الشفاء","Helps you get better")]}
+); }catch(e){}
+
+/* ---------- 6 · NEW GAME: رتّب الخطوات (sequencing) ---------- */
+var ST_SETS=[
+{ name:{ar:"شفاء الكسر",en:"How a break heals"}, icon:"🦴", steps:[
+  {ar:"يحدث الكسر أثناء اللعب",en:"A bone breaks during play"},
+  {ar:"صورة أشعة تُظهر الكسر",en:"An X-ray shows the break"},
+  {ar:"جبيرة تحمي العظم وتريحه",en:"A cast protects and rests it"},
+  {ar:"العظم يبني جسرًا جديدًا من الداخل",en:"The bone builds a new bridge inside"},
+  {ar:"يعود العظم قويًّا كما كان",en:"The bone is strong again"}]},
+{ name:{ar:"زيارة العيادة",en:"A clinic visit"}, icon:"🏥", steps:[
+  {ar:"نسجّل عند الاستقبال",en:"Check in at reception"},
+  {ar:"نقيس الطول والوزن",en:"Height and weight measured"},
+  {ar:"نقابل الطبيب ونحكي القصة",en:"Meet the doctor and tell the story"},
+  {ar:"الطبيب يفحص بلطف",en:"A gentle examination"},
+  {ar:"نسمع الخطة ونعود للبيت مطمئنين",en:"Hear the plan and go home reassured"}]},
+{ name:{ar:"عظام قوية",en:"Strong bones recipe"}, icon:"💪", steps:[
+  {ar:"نشرب الحليب في الفطور",en:"Milk with breakfast"},
+  {ar:"نلعب تحت الشمس",en:"Play in the sunshine"},
+  {ar:"نجري ونقفز ونتسلق",en:"Run, jump and climb"},
+  {ar:"نأكل عشاءً صحيًا",en:"A healthy dinner"},
+  {ar:"ننام مبكرًا لينمو الجسم",en:"Early sleep so the body grows"}]},
+{ name:{ar:"يوم الأشعة",en:"X-ray day"}, icon:"📷", steps:[
+  {ar:"ندخل غرفة الأشعة",en:"Enter the X-ray room"},
+  {ar:"نقف أو نستلقي بثبات",en:"Stand or lie very still"},
+  {ar:"الجهاز يلتقط الصورة بلا ألم",en:"The machine takes a painless picture"},
+  {ar:"الطبيب يقرأ الصورة",en:"The doctor reads the image"},
+  {ar:"نعرف الإجابة ونكمل الخطة",en:"We get the answer and the plan"}]}
+];
+var stCur=null, stNext=0, stMiss=0;
+window.stepsStart=function(i){
+  stCur=ST_SETS[i]; stNext=0; stMiss=0;
+  var order=stCur.steps.map(function(_,k){return k;});
+  for(var a=order.length-1;a>0;a--){ var b=Math.floor(Math.random()*(a+1)); var t=order[a];order[a]=order[b];order[b]=t; }
+  var ar=AR();
+  var html='<div class="st1361">'
+    +'<div class="st1361-name">'+stCur.icon+' '+(ar?stCur.name.ar:stCur.name.en)+'</div>'
+    +'<p class="st1361-hint">'+(ar?"اضغط الخطوات بالترتيب الصحيح":"Tap the steps in the right order")+'</p>'
+    +'<ol class="st1361-done" id="st1361done"></ol>'
+    +'<div class="st1361-pool" id="st1361pool">'
+    +order.map(function(k){ return '<button type="button" class="st1361-b" data-k="'+k+'" onclick="window.stepsTap(this)">'+(ar?stCur.steps[k].ar:stCur.steps[k].en)+'</button>'; }).join("")
+    +'</div><div id="st1361end"></div></div>';
+  document.getElementById('qz-body').innerHTML=html;
 };
-function tagsFor(sets,i){
-  try{
-    if(sets===window.QZ_SETS) return TAGS.QZ[i]||[];
-    if(sets===window.MT_SETS) return TAGS.MT[i]||[];
-    if(sets===window.SP_SETS) return TAGS.SP[i]||[];
-    if(sets===window.HM_SETS) return TAGS.HM[i]||[];
-  }catch(e){}
-  return [];
-}
-
-/* ---- what does this family care about? read history + stars ---- */
-function myCats(){
-  var ids={};
-  try{ var st=JSON.parse(localStorage.getItem("opd7_stats")); if(st&&st.readIds) Object.keys(st.readIds).forEach(function(k){ids[k]=1;}); }catch(e){}
-  try{ (JSON.parse(localStorage.getItem("opd_clinic_favs_v1"))||[]).forEach(function(k){ids[k]=1;}); }catch(e){}
-  try{ (JSON.parse(localStorage.getItem("pe_mylist"))||[]).forEach(function(k){ids[k]=1;}); }catch(e){}
-  var cats={};
-  try{ LEAFLETS.forEach(function(x){ if(ids[x.id]&&x.cat) cats[x.cat]=1; }); }catch(e){}
-  return cats;
-}
-
-/* ---- grouped picker (all four set-games share gmPicker) ---- */
-var _pick=window.gmPicker;
-window.gmPicker=function(sets,fn){
-  try{
-    var mine=myCats(), A=[],B=[],C=[];
-    sets.forEach(function(s,i){
-      var tg=tagsFor(sets,i);
-      if(tg.length===0){ B.push(i); return; }
-      var hit=tg.some(function(c){ return mine[c]; });
-      (hit?A:C).push(i);
-    });
-    if(A.length===0 && C.length===0) return _pick(sets,fn);
-    function btn(i){ var s=sets[i];
-      return '<button class="gm-set" type="button" onclick="'+fn+'('+i+')"><span class="gm-set-n">'+(i+1)+'</span><span class="gm-set-t">'+(AR()?s.name.ar:s.name.en)+'</span><span class="gm-set-go">▶</span></button>'; }
-    function head(t){ return '<div class="gm-pick-h" style="margin-top:10px">'+t+'</div>'; }
-    var out='<div class="gm-pick">';
-    if(A.length){ out+=head(AR()?"🎯 يخصّ طفلك":"🎯 About your child")+A.map(btn).join(""); }
-    if(B.length){ out+=head(AR()?"🌟 لكل العائلة":"🌟 For every family")+B.map(btn).join(""); }
-    if(C.length){ out+='<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800;opacity:.75;padding:6px 2px">'+(AR()?"مجموعات تخصصات أخرى ("+C.length+")":"Other specialty sets ("+C.length+")")+'</summary>'+C.map(btn).join("")+'</details>'; }
-    out+='</div>';
-    return out;
-  }catch(e){ return _pick(sets,fn); }
+window.stepsTap=function(btn){
+  if(!stCur) return;
+  var k=+btn.getAttribute('data-k'), ar=AR();
+  if(k===stNext){
+    var li=document.createElement('li'); li.textContent=btn.textContent; li.className="ok";
+    document.getElementById('st1361done').appendChild(li);
+    btn.remove(); stNext++;
+    if(stNext>=stCur.steps.length){
+      var stars=stMiss===0?"⭐⭐⭐":(stMiss<3?"⭐⭐":"⭐");
+      document.getElementById('st1361end').innerHTML='<div class="st1361-win">'+stars+'<br>'+(ar?"أحسنت! الترتيب صحيح":"Well done! Perfect order")+'</div>'
+        +'<button type="button" class="st1361-again" onclick="window.openSteps()">'+(ar?"سلسلة أخرى":"Another sequence")+'</button>';
+    }
+  } else {
+    stMiss++; btn.classList.add('bad');
+    setTimeout(function(){ try{btn.classList.remove('bad');}catch(e){} },450);
+  }
+};
+window.openSteps=function(){
+  gmOpen(AR()?"🪜 رتّب الخطوات":"🪜 Order the Steps", (AR()? ST_SETS.length+" سلاسل — اختر واحدة" : ST_SETS.length+" sequences — pick one"));
+  document.getElementById('qz-body').innerHTML=gmPicker(ST_SETS,'stepsStart');
 };
 
-/* ---- «اختبر ما قرأت» chip inside each leaflet with matching sets ---- */
-function leafletHasSets(x){
-  if(!x||!x.cat) return false;
-  var all=[TAGS.QZ,TAGS.MT,TAGS.SP,TAGS.HM];
-  for(var a=0;a<all.length;a++){ for(var k in all[a]){ if((all[a][k]||[]).indexOf(x.cat)>=0) return true; } }
-  return false;
+/* ---------- 7 · NEW GAME: من أنا؟ (riddles) ---------- */
+var RD=[
+{ clues:[{ar:"أنا خوذة طبيعية صلبة",en:"I am a natural hard helmet"},{ar:"أحمي أهم جهاز في جسمك",en:"I protect your most precious organ"},{ar:"أحمل وجهك وابتسامتك",en:"I carry your face and your smile"}],
+  opts:[{ar:"الجمجمة",en:"The skull"},{ar:"الحوض",en:"The pelvis"},{ar:"الركبة",en:"The knee"},{ar:"الكتف",en:"The shoulder"}], correct:0,
+  fact:{ar:"عظام الجمجمة تلتحم مع النمو لتصبح درعًا واحدًا.",en:"Skull bones fuse with growth into one shield."}},
+{ clues:[{ar:"أنا أطول عظمة في جسمك",en:"I am your longest bone"},{ar:"أحملك عند الجري والقفز",en:"I carry you running and jumping"},{ar:"أصل الورك بالركبة",en:"I join the hip to the knee"}],
+  opts:[{ar:"عظمة الفخذ",en:"The femur"},{ar:"عظمة العضد",en:"The humerus"},{ar:"الترقوة",en:"The collarbone"},{ar:"عظمة الكعب",en:"The heel bone"}], correct:0,
+  fact:{ar:"عظمة الفخذ أقوى من الخرسانة بوزن مماثل!",en:"Weight for weight, the femur is stronger than concrete!"}},
+{ clues:[{ar:"أنا برج من ٣٣ قطعة",en:"I am a tower of 33 pieces"},{ar:"أحمي حبلًا عصبيًا ثمينًا",en:"I guard a precious nerve cord"},{ar:"بفضلي تقف معتدلًا",en:"Thanks to me you stand tall"}],
+  opts:[{ar:"العمود الفقري",en:"The spine"},{ar:"القفص الصدري",en:"The rib cage"},{ar:"الساق",en:"The leg"},{ar:"الذراع",en:"The arm"}], correct:0,
+  fact:{ar:"بين فقراتي وسائد غضروفية تمتص الصدمات.",en:"Between my vertebrae sit cushioning discs."}},
+{ clues:[{ar:"أنا قفص لكن لا أسجن أحدًا",en:"I am a cage that imprisons no one"},{ar:"أتحرك مع كل نفَس تأخذه",en:"I move with every breath you take"},{ar:"أحمي قلبك ورئتيك",en:"I protect your heart and lungs"}],
+  opts:[{ar:"القفص الصدري",en:"The rib cage"},{ar:"الجمجمة",en:"The skull"},{ar:"الحوض",en:"The pelvis"},{ar:"القدم",en:"The foot"}], correct:0,
+  fact:{ar:"لديك ١٢ زوجًا من الأضلاع المرنة.",en:"You have 12 pairs of springy ribs."}},
+{ clues:[{ar:"أنا أكبر مفصل في جسمك",en:"I am your biggest joint"},{ar:"أعمل مثل مفصل الباب",en:"I work like a door hinge"},{ar:"عندي عظمة تسمى الصابونة",en:"I have a bone called the kneecap"}],
+  opts:[{ar:"الركبة",en:"The knee"},{ar:"الكوع",en:"The elbow"},{ar:"الرسغ",en:"The wrist"},{ar:"الكاحل",en:"The ankle"}], correct:0,
+  fact:{ar:"الرضفة (الصابونة) درع صغير يحمي مفصلي.",en:"The kneecap is a little shield guarding my joint."}},
+{ clues:[{ar:"في داخلي ٢٧ عظمة صغيرة",en:"Inside me are 27 small bones"},{ar:"أكتب وأرسم وألوّح",en:"I write, draw and wave"},{ar:"أصابعي الخمسة أدواتي",en:"My five fingers are my tools"}],
+  opts:[{ar:"اليد",en:"The hand"},{ar:"القدم",en:"The foot"},{ar:"الأذن",en:"The ear"},{ar:"الركبة",en:"The knee"}], correct:0,
+  fact:{ar:"نحو ربع عظام جسمك في يديك وقدميك!",en:"About a quarter of your bones are in your hands and feet!"}},
+{ clues:[{ar:"أنا منطقة لينة قرب أطراف العظام",en:"I am a soft zone near bone ends"},{ar:"بفضلي تطول وتكبر",en:"Because of me you grow taller"},{ar:"أختفي عندما تصبح بالغًا",en:"I disappear when you are grown"}],
+  opts:[{ar:"صفيحة النمو",en:"The growth plate"},{ar:"النخاع",en:"The marrow"},{ar:"الوتر",en:"The tendon"},{ar:"الجلد",en:"The skin"}], correct:0,
+  fact:{ar:"تتصلب صفائح النمو في نهاية البلوغ فيتوقف الطول.",en:"Growth plates harden at the end of puberty, and height stops."}},
+{ clues:[{ar:"أنا أول ما يلمس الأرض عند المشي",en:"I touch the ground first when you walk"},{ar:"أحمل وزنك مع كل خطوة",en:"I bear your weight at every step"},{ar:"يتصل بي وتر قوي مشهور",en:"A famous strong tendon joins me"}],
+  opts:[{ar:"الكعب",en:"The heel"},{ar:"الإبهام",en:"The thumb"},{ar:"الجبهة",en:"The forehead"},{ar:"الكوع",en:"The elbow"}], correct:0,
+  fact:{ar:"وتر أخيل المتصل بي أقوى وتر في الجسم.",en:"My Achilles tendon is the strongest in the body."}}
+];
+var rdI=0, rdClue=1, rdScore=0, rdOrder=[];
+function rdShuffle(n){ var a=[]; for(var i=0;i<n;i++)a.push(i); for(var x=a.length-1;x>0;x--){ var y=Math.floor(Math.random()*(x+1)); var t=a[x];a[x]=a[y];a[y]=t; } return a; }
+function rdRender(){
+  var ar=AR(), r=RD[rdI];
+  var clues=r.clues.slice(0,rdClue).map(function(c){ return '<div class="rd1361-clue">💡 '+(ar?c.ar:c.en)+'</div>'; }).join("");
+  var perm=rdOrder[rdI];
+  var html='<div class="st1361">'
+    +'<div class="st1361-name">🕵️ '+(ar?("اللغز "+(rdI+1)+" من "+RD.length):("Riddle "+(rdI+1)+" of "+RD.length))+' · ⭐ '+rdScore+'</div>'
+    +clues
+    +(rdClue<3?'<button type="button" class="rd1361-more" onclick="window.rdMore()">'+(ar?"🔍 تلميح آخر":"🔍 Another clue")+'</button>':'')
+    +'<div class="st1361-pool">'
+    +perm.map(function(k){ return '<button type="button" class="st1361-b" onclick="window.rdPick('+k+',this)">'+(ar?r.opts[k].ar:r.opts[k].en)+'</button>'; }).join("")
+    +'</div><div id="rd1361end"></div></div>';
+  document.getElementById('qz-body').innerHTML=html;
 }
-function injectChip(x){
-  try{
-    var host=document.getElementById("rbody"); if(!host) return;
-    var old=document.getElementById("opd1360chip"); if(old) old.parentNode.removeChild(old);
-    if(!leafletHasSets(x)) return;
-    var b=document.createElement("button"); b.type="button"; b.id="opd1360chip"; b.className="mb-launch";
-    b.innerHTML="🎮 "+(AR()?"اختبر ما قرأت — لعبة قصيرة":"Quiz what you read — a short game");
-    b.onclick=function(){ try{ if(typeof openQuiz==="function") openQuiz(); }catch(e){} };
-    host.insertBefore(b, host.firstChild);
-  }catch(e){}
-}
-var _or=window.openReader;
-if(typeof _or==="function" && !_or.__opd1360){
-  var w=function(x){ var r=_or.apply(this,arguments); try{ setTimeout(function(){ injectChip(x); },250); }catch(e){} return r; };
-  w.__opd1360=true; window.openReader=w;
-}
+window.rdMore=function(){ if(rdClue<3){ rdClue++; rdRender(); } };
+window.rdPick=function(k,btn){
+  var ar=AR(), r=RD[rdI];
+  if(k===r.correct){
+    var pts=4-rdClue; rdScore+=pts;
+    var nxt=(rdI+1<RD.length);
+    document.getElementById('rd1361end').innerHTML='<div class="st1361-win">✅ +'+pts+'<br><span class="rd1361-fact">'+(ar?r.fact.ar:r.fact.en)+'</span></div>'
+      +'<button type="button" class="st1361-again" onclick="window.rdNext()">'+(nxt?(ar?"اللغز التالي":"Next riddle"):(ar?"النتيجة":"See result"))+'</button>';
+    var bs=document.querySelectorAll('.st1361-b'); for(var i=0;i<bs.length;i++) bs[i].disabled=true;
+    btn.classList.add('okpick');
+  } else {
+    btn.classList.add('bad'); btn.disabled=true;
+  }
+};
+window.rdNext=function(){
+  rdI++;
+  if(rdI>=RD.length){
+    var ar=AR(), max=RD.length*3;
+    var stars=rdScore>=max*0.8?"⭐⭐⭐":(rdScore>=max*0.5?"⭐⭐":"⭐");
+    document.getElementById('qz-body').innerHTML='<div class="st1361"><div class="st1361-win" style="font-size:1.2em">'+stars+'<br>'
+      +(ar?("نتيجتك "+rdScore+" من "+max):("You scored "+rdScore+" of "+max))+'</div>'
+      +'<button type="button" class="st1361-again" onclick="window.openWho()">'+(ar?"العب من جديد":"Play again")+'</button></div>';
+    return;
+  }
+  rdClue=1; rdRender();
+};
+window.openWho=function(){
+  rdI=0; rdClue=1; rdScore=0;
+  rdOrder=RD.map(function(r){ return rdShuffle(r.opts.length); });
+  gmOpen(AR()?"🕵️ من أنا؟":"🕵️ Who Am I?", AR()?"٨ ألغاز عن الجسم — خمّن من التلميحات":"8 body riddles — guess from the clues");
+  rdRender();
+};
 
-/* ---- registry copy reflects the new promise ---- */
+/* ---------- 8 · styles ---------- */
+try{
+  var css=document.createElement('style');
+  css.textContent='.st1361{padding:6px 2px}.st1361-name{font-weight:800;font-size:1.05em;margin-bottom:6px}'
+   +'.st1361-hint{opacity:.75;margin:0 0 10px}'
+   +'.st1361-done{margin:0 0 10px;padding-inline-start:22px}.st1361-done li.ok{background:#e6f7ea;border-radius:8px;padding:6px 8px;margin-bottom:5px;font-weight:600}'
+   +'.st1361-pool{display:flex;flex-direction:column;gap:8px}'
+   +'.st1361-b{text-align:start;padding:10px 12px;border-radius:12px;border:1.5px solid #d6d2c8;background:#fff;font:inherit;font-weight:600;cursor:pointer}'
+   +'.st1361-b.bad{background:#fde8e8;border-color:#e08b8b;animation:st1361sh .35s}'
+   +'.st1361-b.okpick{background:#e6f7ea;border-color:#57ad74}'
+   +'.st1361-b:disabled{opacity:.55}'
+   +'@keyframes st1361sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}'
+   +'.st1361-win{text-align:center;font-weight:800;font-size:1.1em;margin:12px 0;line-height:1.7}'
+   +'.st1361-again{display:block;margin:6px auto;padding:10px 22px;border-radius:999px;border:0;background:#0f6b4f;color:#fff;font:inherit;font-weight:700;cursor:pointer}'
+   +'.rd1361-clue{background:#fff8e6;border:1.5px dashed #e3c46b;border-radius:12px;padding:9px 12px;margin-bottom:8px;font-weight:600}'
+   +'.rd1361-more{margin:2px 0 10px;padding:7px 14px;border-radius:999px;border:1.5px solid #b9b2a4;background:#faf8f2;font:inherit;font-weight:700;cursor:pointer}'
+   +'.rd1361-fact{font-weight:600;font-size:.92em;opacity:.85}';
+  document.head.appendChild(css);
+}catch(e){}
+
+/* ---------- 9 · register new games + refreshed subtitles ---------- */
 var _gi=window.gameItems;
 window.gameItems=function(){
   var g=(typeof _gi==="function")?_gi():[];
-  g.forEach(function(it){
-    if(it.kind==="quiz"&&!it.bestKey){ it.sub=AR()?"أسئلة عن حالة طفلك — ومجموعات لكل العائلة":"Questions about your child — plus family sets"; }
-    if(it.kind==="spot"){ it.sub=AR()?"علامات تخصّ حالة طفلك: متى نراجع الطبيب؟":"Warning signs for your child's condition"; }
-    if(it.kind==="match"){ it.sub=AR()?"مطابقات عن حالة طفلك ومجموعات عامة":"Matches about your child's condition + general sets"; }
-    if(it.kind==="word"){ it.sub=AR()?"كلمات عن العظام وحالة طفلك":"Words about bones and your child's condition"; }
-  });
+  var ar=AR();
+  g.push({kind:"steps", open:window.openSteps, emoji:"🪜",
+    title:ar?"رتّب الخطوات":"Order the Steps",
+    sub:ar?ST_SETS.length+" سلاسل: رتّب القصة من البداية للنهاية":ST_SETS.length+" sequences: put the story in order"});
+  g.push({kind:"who", open:window.openWho, emoji:"🕵️",
+    title:ar?"من أنا؟":"Who Am I?",
+    sub:ar?"٨ ألغاز: خمّن الجزء من ثلاثة تلميحات":"8 riddles: guess the part from three clues"});
   return g;
 };
-try{ window.__opd1360="family-games: tagged sets, grouped pickers, leaflet quiz chip"; }catch(e){}
+try{ window.__opd1361="general-interest games: filtered specialty sets, +12 general sets, steps & riddle games"; }catch(e){}
 })();
 </script>
 
