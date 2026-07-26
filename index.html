@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.4 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.5 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.4 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.5 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -19541,22 +19541,25 @@ function blBotRoll(){
   var n=0, iv=setInterval(function(){ n++; var v=1+Math.floor(Math.random()*6); blDie(v); blBar((n*14)%100);
     if(n>=6){ clearInterval(iv); blBar(0); blDoMove(1,1+Math.floor(Math.random()*6)); } },110);
 }
-var blCh={on:false,iv:null,val:1,p:0};
+var blCh={on:false,iv:null,p:0};
+function blPow(p){ return Math.max(1,Math.min(6,1+Math.floor(p/16.7))); }
 function blChargeStart(e){
   if(BL.busy||BL.over) return;
   if(BL.vs==="bot"&&BL.turn!==0) return;
   if(e && e.preventDefault) e.preventDefault();
-  blCh.on=true; blCh.p=0;
+  blCh.on=true; blCh.p=0; blDie(1); blBar(0);
   blCh.iv=setInterval(function(){
-    blCh.val=(blCh.val%6)+1; blCh.p=(blCh.p+9)%104;
-    blDie(blCh.val); blBar(Math.min(100,blCh.p));
-  },95);
+    blCh.p=Math.min(100,blCh.p+3.4);
+    blDie(blPow(blCh.p)); blBar(blCh.p);
+  },60);
 }
 function blChargeEnd(e){
   if(!blCh.on) return; blCh.on=false;
-  clearInterval(blCh.iv); blBar(0);
+  clearInterval(blCh.iv);
   if(e && e.preventDefault) e.preventDefault();
-  blDoMove(BL.turn, blCh.val);
+  var v=blPow(blCh.p);
+  blBar(0);
+  blDoMove(BL.turn, v);
 }
 window.blMode=function(m){ BL={p:[0,0],turn:0,busy:false,vs:m,qbag:[],over:false}; blStartUI(); };
 function blStartUI(){
@@ -19565,7 +19568,7 @@ function blStartUI(){
   s.hud.innerHTML='<span>🧒 '+names[0]+'</span><span>'+(BL.vs==="bot"?'🤖 ':'🧑 ')+names[1]+'</span><span id="bldie">🎲 −</span>';
   s.stage.innerHTML=blBoard()
     +'<div class="bl-bar"><i id="blbar"></i></div>'
-    +'<div class="bl-msg" id="blmsg">'+(AR()?"اضغط الزر مطوّلًا لشحن النرد ثم اتركه لترميه! خانات «؟» فيها سؤال: أجب صح لتتسلق 🪜 أو تنزل 🛝":"Hold the button to charge the die, release to throw! «?» squares ask a question: right climbs 🪜, wrong slides 🛝")+'</div>'
+    +'<div class="bl-msg" id="blmsg">'+(AR()?"اضغط الزر مطوّلًا لشحن النرد: شحنة قصيرة = خطوة واحدة، وشحنة كاملة = ٦ خطوات! خانات «؟» فيها سؤال: أجب صح لتتسلق 🪜 أو تنزل 🛝":"Hold to charge the die: a short press = 1 step, a full charge = 6 steps! «?» squares ask a question: right climbs 🪜, wrong slides 🛝")+'</div>'
     +'<div id="blqp" class="bl-qp" style="display:none"></div>'
     +'<button class="g2-btn" id="blroll">🎲 '+(AR()?"اضغط مطوّلًا واترك — دورك":"Hold & release — your turn")+'</button>';
   var rb=document.getElementById('blroll');
@@ -19577,7 +19580,7 @@ window.openLadders=function(){
   var s=g2(AR()?"🪜 سلّم العظام":"🪜 Bones & Ladders");
   s.hud.innerHTML='';
   s.stage.innerHTML='<div class="g2-end"><div class="big">🪜</div><h4>'+(AR()?"من يصل القمة أولًا؟":"Who reaches the top first?")+'</h4>'
-    +'<p style="opacity:.85;margin:4px 0 14px">'+(AR()?"اشحن النرد بضغطة طويلة، وأجب عن أسئلة «؟» لتتسلق!":"Charge the die with a long press, and answer «?» questions to climb!")+'</p>'
+    +'<p style="opacity:.85;margin:4px 0 14px">'+(AR()?"كلما طالت ضغطتك زادت خطواتك! وأجب عن أسئلة «؟» لتتسلق.":"The longer you hold, the further you go! Answer «?» questions to climb.")+'</p>'
     +'<button class="g2-btn" onclick="window.blMode(\'bot\')">🤖 '+(AR()?"ضد الروبوت":"Vs the robot")+'</button>'
     +'<button class="g2-btn" onclick="window.blMode(\'p2\')" style="background:#7fc8f8;color:#0b3556">🧑‍🤝‍🧑 '+(AR()?"لاعبان على نفس الجهاز":"Two players, one device")+'</button></div>';
 };
@@ -19774,83 +19777,6 @@ window.hpScore=function(){
 };
 window.openPlate=function(){ hpPick=[]; window.__hp=g2(AR()?"🍽️ طبق صحي":"🍽️ Healthy Plate"); hpRender(); };
 
-/* ================= 6 · صوت الجسم (Sound Quiz) ================= */
-var sndCtx=null;
-function ac(){ if(!sndCtx){ var C=window.AudioContext||window.webkitAudioContext; sndCtx=new C(); } if(sndCtx.state==="suspended") sndCtx.resume(); return sndCtx; }
-function tone(t0,f,dur,type,gain){ var c=ac(),o=c.createOscillator(),g=c.createGain();
-  o.type=type||"sine"; o.frequency.value=f; o.connect(g); g.connect(c.destination);
-  g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(gain||0.5,t0+0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur); o.start(t0); o.stop(t0+dur+0.05); }
-function noise(t0,dur,fLow,fHigh,gain){ var c=ac(),len=Math.max(1,Math.floor(c.sampleRate*dur)),b=c.createBuffer(1,len,c.sampleRate),d=b.getChannelData(0);
-  for(var i=0;i<len;i++) d[i]=Math.random()*2-1;
-  var src=c.createBufferSource(); src.buffer=b;
-  var f=c.createBiquadFilter(); f.type="bandpass"; f.frequency.value=(fLow+fHigh)/2; f.Q.value=1;
-  var g=c.createGain(); g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(gain||0.4,t0+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  src.connect(f); f.connect(g); g.connect(c.destination); src.start(t0); }
-var SND=[
- {n:{ar:"نبض القلب",en:"A heartbeat"},f:{ar:"القلب عضلة تنبض نحو ١٠٠ ألف مرة في اليوم.",en:"The heart beats about 100,000 times a day."},
-  play:function(){ var t=ac().currentTime+0.08; for(var i=0;i<4;i++){ tone(t+i*0.8,70,0.12,"sine",0.7); tone(t+i*0.8+0.22,55,0.1,"sine",0.5); } }},
- {n:{ar:"خطوات الجري",en:"Running feet"},f:{ar:"الجري يقوّي العظام لأنها تحمل وزن الجسم.",en:"Running strengthens bones by loading them."},
-  play:function(){ var t=ac().currentTime+0.08; for(var i=0;i<8;i++) noise(t+i*0.28,0.08,120,400,0.5); }},
- {n:{ar:"التنفس العميق",en:"Deep breathing"},f:{ar:"الأضلاع تتحرك مع كل نفَس لتفسح للرئتين.",en:"Ribs move with every breath to make room for the lungs."},
-  play:function(){ var t=ac().currentTime+0.08; noise(t,1.2,300,900,0.25); noise(t+1.5,1.2,200,700,0.2); }},
- {n:{ar:"طقطقة مفصل",en:"A joint pop"},f:{ar:"الصوت فقاعة غاز في سائل المفصل — وليس كسرًا!",en:"That pop is a gas bubble in joint fluid — not a break!"},
-  play:function(){ var t=ac().currentTime+0.08; tone(t,900,0.03,"square",0.4); noise(t,0.05,800,2500,0.4); }},
- {n:{ar:"مضغ الطعام",en:"Munching food"},f:{ar:"الأسنان أقسى جزء في الجسم — والمضغ أول خطوات الهضم.",en:"Teeth are the body's hardest part — chewing starts digestion."},
-  play:function(){ var t=ac().currentTime+0.08; for(var i=0;i<6;i++) noise(t+i*0.35,0.12,400,1600,0.45); }}
-];
-var snI=0, snScore=0, snOrder=[];
-function snRender(){
-  var it=SND[snOrder[snI]];
-  var wrong=shuffle(SND.filter(function(x){return x!==it;})).slice(0,3);
-  var opts=shuffle([it].concat(wrong));
-  var s=window.__sn;
-  s.hud.innerHTML='<span>'+(snI+1)+' / '+SND.length+'</span><span>⭐ '+snScore+'</span>';
-  s.stage.innerHTML='<div class="sh-sil" style="font-size:56px">🔊</div>'
-    +'<button class="g2-btn" id="snplay" style="margin:0 0 10px" onclick="window.snPlay()">🔊 '+(AR()?"شغّل الصوت":"Play the sound")+'</button>'
-    +'<div class="g2-q">'+(AR()?"ما هذا الصوت؟":"What is this sound?")+'</div>'
-    +'<div class="sh-opts">'+opts.map(function(o){ return '<button class="st1361-b" onclick="window.snPick(this,'+(o===it?1:0)+','+SND.indexOf(it)+')">'+T(o.n)+'</button>'; }).join("")+'</div>'
-    +'<div id="snend"></div>';
-}
-window.snPlay=function(){
-  try{
-    var c=ac();
-    var go=function(){
-      try{
-        var b=c.createBuffer(1,1,22050), s0=c.createBufferSource(); s0.buffer=b; s0.connect(c.destination); s0.start(0);
-        SND[snOrder[snI]].play();
-      }catch(e){}
-      try{
-        var pb=document.getElementById('snplay');
-        if(pb){ var t0=pb.textContent; pb.textContent='🔉 '+(AR()?"يعزف...":"playing..."); setTimeout(function(){ try{ pb.textContent=t0; }catch(e){} },1800); }
-      }catch(e){}
-    };
-    if(c.state!=="running"){ var p=c.resume(); if(p&&p.then){ p.then(go).catch(go); } else { setTimeout(go,60); } }
-    else go();
-  }catch(e){}
-};
-window.snPick=function(btn,ok,idx){
-  var it=SND[idx];
-  if(ok){
-    snScore++; btn.classList.add('okpick');
-    var bs=document.querySelectorAll('.sh-opts button'); for(var i=0;i<bs.length;i++) bs[i].disabled=true;
-    document.getElementById('snend').innerHTML='<div class="g2-fact" style="display:block">'+T(it.f)+'</div>'
-      +'<button class="g2-btn" onclick="window.snNext()">'+(snI+1<SND.length?(AR()?"الصوت التالي":"Next sound"):(AR()?"النتيجة":"Result"))+'</button>';
-  } else { btn.classList.add('bad'); btn.disabled=true; }
-};
-window.snNext=function(){
-  snI++;
-  if(snI>=SND.length){
-    var s=window.__sn, st=snScore>=4?"⭐⭐⭐":(snScore>=3?"⭐⭐":"⭐");
-    s.stage.innerHTML='<div class="g2-end"><div class="big">'+st+'</div><h4>'+(AR()?("أذن ذهبية! "+snScore+" من "+SND.length):("Golden ear! "+snScore+" of "+SND.length))+'</h4>'
-      +'<button class="g2-btn" onclick="window.openSound()">'+(AR()?"العب من جديد":"Play again")+'</button></div>';
-    return;
-  }
-  snRender();
-};
-window.openSound=function(){ snI=0; snScore=0; snOrder=shuffle(SND.map(function(_,i){return i;}));
-  window.__sn=g2(AR()?"🔊 صوت الجسم":"🔊 Body Sounds"); snRender(); };
-
 /* ================= styles ================= */
 try{
   var css=document.createElement('style');
@@ -19896,8 +19822,7 @@ window.gameItems=function(){
    {kind:"shadow",open:window.openShadow,emoji:"👤",title:ar?"ظل العظمة":"Shadow Match",sub:ar?"١٠ ظلال: خمّن الجزء — للصغار قبل الكبار":"10 shadows to name — great for little ones"},
    {kind:"posture",open:window.openPosture,emoji:"🕵️",title:ar?"صح الجلسة":"Posture Detective",sub:ar?"٣ مشاهد: اكتشف أخطاء الجلسة والحقيبة والشاشة":"3 scenes: find the posture mistakes"},
    {kind:"build",open:window.openBuild,emoji:"🦴",title:ar?"ابنِ الهيكل":"Build the Skeleton",sub:ar?"ضع كل عظمة في مكانها الصحيح":"Put every bone where it belongs"},
-   {kind:"plate",open:window.openPlate,emoji:"🍽️",title:ar?"طبق صحي":"Healthy Plate",sub:ar?"ركّب طبقًا يبني عظامًا قوية":"Build a bone-strong plate"},
-   {kind:"sound",open:window.openSound,emoji:"🔊",title:ar?"صوت الجسم":"Body Sounds",sub:ar?"٥ أصوات: خمّن ما تسمع":"5 sounds: guess what you hear"});
+   {kind:"plate",open:window.openPlate,emoji:"🍽️",title:ar?"طبق صحي":"Healthy Plate",sub:ar?"ركّب طبقًا يبني عظامًا قوية":"Build a bone-strong plate"});
   return g;
 };
 try{ window.__opd1362="six family games: ladders, shadow, posture, build, plate, sound"; }catch(e){}
