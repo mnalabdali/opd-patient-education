@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.7 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.8 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.7 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.8 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -19829,5 +19829,48 @@ try{ window.__opd1362="six family games: ladders, shadow, posture, build, plate,
 })();
 </script>
 
+<script id="opd-1363-wide-layout">
+/* Desktop-only "Wide layout" personalization toggle.
+   Widens the centered --maxw column so the auto-fill card grid gains columns
+   and fills most of the page. Persisted in localStorage. No effect on mobile. */
+(function(){
+"use strict";
+try{
+  var css=document.createElement('style'); css.id='opd-1363-css';
+  css.textContent=
+    '@media(min-width:1000px){ body.wide{ --maxw:min(1720px,94vw); } }'
+   +'.wide-btn{display:none}'
+   +'@media(min-width:1000px){ .wide-btn{display:inline-block} }';
+  document.head.appendChild(css);
+}catch(e){}
+var KEY='opd_wide';
+function apply(on){ try{ document.body.classList.toggle('wide', !!on); }catch(e){} }
+try{ apply(localStorage.getItem(KEY)==='1'); }catch(e){}
+function isAr(){ try{ return (typeof lang!=="undefined"?lang:"ar")==="ar"; }catch(e){ return true; } }
+function mount(tries){
+  var anchor=document.getElementById('hcBtn')||document.getElementById('langBtn');
+  if(!anchor){ if((tries||0)<40) return setTimeout(function(){mount((tries||0)+1);},80); return; }
+  if(document.getElementById('wideBtn')) return;
+  var b=document.createElement('button');
+  b.id='wideBtn'; b.type='button'; b.className=(anchor.className||'hc-btn')+' wide-btn';
+  function lbl(){ var on=document.body.classList.contains('wide');
+    b.textContent=isAr()?(on?"عرض عادي":"عرض واسع"):(on?"Normal width":"Wide layout");
+    b.setAttribute('aria-pressed', on?'true':'false');
+    b.setAttribute('aria-label', isAr()?"تبديل عرض الصفحة":"Toggle wide page layout"); }
+  lbl();
+  b.addEventListener('click', function(){
+    var on=document.body.classList.toggle('wide');
+    try{ localStorage.setItem(KEY, on?'1':'0'); }catch(e){}
+    lbl();
+  });
+  anchor.parentNode.insertBefore(b, anchor.nextSibling);
+  var lg=document.getElementById('langBtn');
+  if(lg) lg.addEventListener('click', function(){ setTimeout(lbl,70); });
+}
+if(document.readyState==="loading") document.addEventListener('DOMContentLoaded', function(){mount(0);});
+else mount(0);
+try{ window.__opd1363="wide-layout desktop toggle"; }catch(e){}
+})();
+</script>
 </body>
 </html>
