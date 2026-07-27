@@ -4,9 +4,20 @@
   "assign": {
     "spine": "706293",
     "hand-upper-limb": "90c22f",
-    "hip": "d43f01"
+    "hip": "d43f01",
+    "foot": "c60d28",
+    "bone-lesions": "c59d28",
+    "leg": "867dcf"
   },
-  "override": {},
+  "override": {
+    "knee-pain": "1026ca",
+    "bakers-cyst": "1026ca",
+    "discoid-meniscus": "1026ca",
+    "knee-ocd": "1026ca",
+    "acl-injury": "1026ca",
+    "tibial-spine-fracture": "1026ca",
+    "patella-dislocation": "1026ca"
+  },
   "status": {
     "ddh-pavlik": {
       "state": "reviewed",
@@ -73,12 +84,5 @@
       }
     }
   },
-  "reviewers": {
-    "c60d28": {
-      "name": {
-        "en": "Dr Wafa Al Baluki",
-        "ar": "د. وفاء البلوكي"
-      }
-    }
-  }
+  "reviewers": {}
 }
