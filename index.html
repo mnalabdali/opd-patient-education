@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.8 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v9.9 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.8 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v9.9 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -19870,6 +19870,54 @@ function mount(tries){
 if(document.readyState==="loading") document.addEventListener('DOMContentLoaded', function(){mount(0);});
 else mount(0);
 try{ window.__opd1363="wide-layout desktop toggle"; }catch(e){}
+})();
+</script>
+<script id="opd-1364-fontsize-home">
+/* Home-page font-size control + fuller reach for the size buttons.
+   - Scales the whole home content (hero + main) with --afs so ALL home text grows/shrinks.
+   - Adds A- / A+ buttons to the home header (in place of the high-contrast pill).
+   - Also scales the reader top-bar title with --afs (was fixed).
+   Uses the existing global `afs` + applyAfs(); persisted via pe_afs. */
+(function(){
+"use strict";
+try{
+  var css=document.createElement('style'); css.id='opd-1364-css';
+  css.textContent=
+    '.hero-band,main{zoom:var(--afs)}'
+   +'#rtitle{font-size:calc(15px*var(--afs))}'
+   +'.fs-pill{display:inline-flex;gap:0;overflow:hidden}'
+   +'.fs-pill button{font-weight:800;cursor:pointer;border:none;background:transparent;color:inherit;padding:9px 12px;font-size:14px;line-height:1}'
+   +'.fs-pill button:first-child{border-inline-end:1.5px solid currentColor;opacity:.9}';
+  document.head.appendChild(css);
+}catch(e){}
+function clamp(v){ return Math.max(0.85, Math.min(1.6, Math.round(v*100)/100)); }
+function step(d){
+  try{ window.afs = clamp((typeof window.afs==='number'?window.afs:1) + d);
+       if(typeof window.applyAfs==='function') window.applyAfs();
+       else document.documentElement.style.setProperty('--afs', window.afs);
+  }catch(e){}
+}
+function mount(tries){
+  var lang=document.getElementById('langBtn');
+  if(!lang){ if((tries||0)<40) return setTimeout(function(){mount((tries||0)+1);},80); return; }
+  if(document.getElementById('fsPill')) return;
+  // remove the home high-contrast pill (replaced by the size control)
+  var hc=document.getElementById('hcBtn'); if(hc && hc.parentNode) hc.parentNode.removeChild(hc);
+  var pill=document.createElement('span');
+  pill.id='fsPill'; pill.className=(lang.className||'lang-btn')+' fs-pill';
+  pill.style.padding='0';
+  var minus=document.createElement('button'); minus.type='button'; minus.textContent='A−';
+  minus.setAttribute('aria-label','Decrease text size / تصغير الخط');
+  var plus=document.createElement('button'); plus.type='button'; plus.textContent='A+';
+  plus.setAttribute('aria-label','Increase text size / تكبير الخط');
+  minus.addEventListener('click', function(){ step(-0.1); });
+  plus.addEventListener('click', function(){ step(0.1); });
+  pill.appendChild(minus); pill.appendChild(plus);
+  lang.parentNode.insertBefore(pill, lang.nextSibling);
+}
+if(document.readyState==="loading") document.addEventListener('DOMContentLoaded', function(){mount(0);});
+else mount(0);
+try{ window.__opd1364="home font-size control + global text scaling"; }catch(e){}
 })();
 </script>
 </body>
