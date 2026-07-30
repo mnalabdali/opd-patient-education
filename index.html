@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.0 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.1 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.0 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.1 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -8405,7 +8405,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
 (function () {
   var L = null;
   for (var i = 0; i < LEAFLETS.length; i++) if (LEAFLETS[i].id === 'back-pain') L = LEAFLETS[i];
-  if (!L) { console.error('opd130: back-pain not found — amendment NOT applied'); return; }
+  if (!L) { console.error('opd130: back-pain not found — amendment superseded by opd-1365'); return; }
 
   var EVB = '<span class="evsrc" dir="ltr" style="unicode-bidi:isolate">(Berger &amp; Doyle, ' +
             '<i>Curr Opin Pediatr</i> 2019, doi:10.1097/MOP.0000000000000706)</span>';
@@ -8476,7 +8476,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
 
   /* ---- COMMIT, or refuse. All or nothing. ---- */
   if (failed.length) {
-    console.error('opd130: NOT APPLIED — ' + failed.length + ' anchor(s) failed: ' + failed.join(', ') +
+    console.error('opd130: superseded by opd-1365 — ' + failed.length + ' anchor(s) failed: ' + failed.join(', ') +
                   '. back-pain left untouched rather than half-amended.');
     return;
   }
@@ -8527,7 +8527,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
 (function () {
   var L = null;
   for (var i = 0; i < LEAFLETS.length; i++) if (LEAFLETS[i].id === 'apophysitis') L = LEAFLETS[i];
-  if (!L) { console.error('opd131: apophysitis not found — NOT applied'); return; }
+  if (!L) { console.log('opd131 [superseded by opd-1365]: apophysitis not found — NOT applied'); return; }
 
   var EVC = '<span class="evsrc" dir="ltr" style="unicode-bidi:isolate">(Circi et al., ' +
             '<i>Musculoskelet Surg</i> 2017, doi:10.1007/s12306-017-0479-7)</span>';
@@ -8592,7 +8592,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
   }
 
   if (failed.length) {
-    console.error('opd131: NOT APPLIED — anchors failed: ' + failed.join(', ') + '. apophysitis untouched.');
+    console.log('opd131 [superseded by opd-1365]: superseded by opd-1365 — anchors failed: ' + failed.join(', ') + '. apophysitis untouched.');
     return;
   }
   L.html.en = en; L.html.ar = ar;
@@ -9172,7 +9172,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
   }
 
   if (failed.length) {
-    console.error('opd139: NOT APPLIED — anchors failed: ' + failed.join(', ') + '. fractures untouched.');
+    console.error('opd139: moot: cast-care dedup already resolved by override — anchors failed: ' + failed.join(', ') + '. fractures untouched.');
     return;
   }
   L.html.en = en; L.html.ar = ar;
@@ -11550,7 +11550,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
 (function(){
   var L = null;
   for (var i = 0; i < LEAFLETS.length; i++) if (LEAFLETS[i].id === 'fractures') L = LEAFLETS[i];
-  if (!L || !L.html) { console.error('opd173: NOT APPLIED — fractures not found'); return; }
+  if (!L || !L.html) { console.error('opd173: superseded by opd-1365 — fractures not found'); return; }
 
   var failed = [];
   function edit(html, find, repl, tag) {
@@ -11581,7 +11581,7 @@ var OPD77_LAMIA_IMG={"lm-cover": "img/lm-cover.jpg", "lm-1": "img/lm-1-f326ef7b6
     'ar clavicle line');
 
   if (failed.length) {
-    console.error('opd173: NOT APPLIED — anchors not matched: ' + failed.join(', ') +
+    console.error('opd173: superseded by opd-1365 — anchors not matched: ' + failed.join(', ') +
                   '. Hub left exactly as it was rather than half-amended.');
     return;
   }
@@ -19918,6 +19918,39 @@ function mount(tries){
 if(document.readyState==="loading") document.addEventListener('DOMContentLoaded', function(){mount(0);});
 else mount(0);
 try{ window.__opd1364="home font-size control + global text scaling"; }catch(e){}
+})();
+</script>
+
+<script id="opd-1365-restore-amendments">
+(function(){
+  function LF(id){for(var i=0;i<LEAFLETS.length;i++)if(LEAFLETS[i].id===id)return LEAFLETS[i];return null;}
+  var done=[],miss=[];
+  (function(){ var L=LF("apophysitis"); if(!L){miss.push("apophysitis:not-found");return;}
+    var EN_NEW="<h3>When should we see a doctor?</h3>\n    <div class=\"lf-redflag\"><strong>⚠ These are NOT growth-centre pains — have your child checked:</strong>\n      <ul>\n        <li><strong>Pain that is not at the bump.</strong> This condition hurts <strong>right on the bony bump just below the kneecap</strong>, and it is brought on by jumping and stairs <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Circi et al., <i>Musculoskelet Surg</i> 2017, doi:10.1007/s12306-017-0479-7)</span>. Pain <strong>above the knee, in the thigh, or deep inside the joint</strong> is something else, and should be looked at.</li>\n        <li>Pain that is <strong>severe or constant, present at rest, or that wakes the child at night</strong>.</li>\n        <li>A <strong>persistent limp</strong>, or marked <strong>swelling, redness or warmth</strong> over the area.</li>\n        <li><strong>Weight loss, night sweats, unusual tiredness, paleness, or easy bruising.</strong> These have nothing to do with sport, and that is exactly why they matter.</li>\n        <li>Pain that began with a <strong>single injury</strong> (a fall or twist) rather than gradual overuse.</li>\n        <li><strong>Fever</strong> or feeling generally unwell together with the limb pain.</li>\n        <li>Pain that <strong>keeps worsening despite rest</strong> and stretching, or that stops normal play and school activity.</li>\n      </ul>\n    </div>";
+    var AR_NEW="<h3>متى نراجع الطبيب؟</h3>\n    <div class=\"lf-redflag\"><strong>⚠ هذه ليست آلام مركز النمو — اعرضوا طفلكم على الطبيب:</strong>\n      <ul>\n        <li><strong>ألم في غير النتوء.</strong> فهذه الحالة تؤلم <strong>على النتوء العظمي أسفل الرضفة مباشرةً</strong>، ويثيرها القفز وصعود الدرج <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Circi et al., <i>Musculoskelet Surg</i> 2017, doi:10.1007/s12306-017-0479-7)</span>. أمّا الألم <strong>فوق الركبة أو في الفخذ أو في عمق المفصل</strong> فهو شيء آخر، وينبغي النظر فيه.</li>\n        <li>ألم <strong>شديد أو مستمرّ أو يوجد في الراحة أو يوقظ الطفل ليلاً</strong>.</li>\n        <li><strong>عرج مستمرّ</strong>، أو <strong>تورّم أو احمرار أو حرارة</strong> واضحة في الموضع.</li>\n        <li><strong>نقص الوزن أو تعرّق ليلي أو تعب غير معتاد أو شحوب أو سهولة الكدمات.</strong> وهذه لا صلة لها بالرياضة، ولهذا بالذات تهمّ.</li>\n        <li>ألم بدأ <strong>بإصابة واحدة</strong> (سقطة أو التواء) لا بإفراط تدريجي في الاستعمال.</li>\n        <li><strong>حمّى</strong> أو شعور عامّ بالتوعّك مع ألم الطرف.</li>\n        <li>ألم <strong>يزداد سوءًا رغم الراحة</strong> والإطالة، أو يمنع اللعب والمدرسة.</li>\n      </ul>\n    </div>";
+    var AR_OLD="<div class=\"lf-redflag\"><p>راجعوا الطبيب إذا كان الألم شديداً أو مستمراً، أو حاضراً في أثناء الراحة، أو يوقظ الطفل ليلاً.</p><p>راجعوه إذا استمرّ العرج، أو ظهر تورّمٌ واضح أو احمرارٌ أو سخونةٌ فوق الموضع.</p><p>راجعوه إذا بدأ الألم بإصابةٍ واحدة — سقطةٍ أو التواء — لا بالإجهاد المتكرّر التدريجي.</p><p>راجعوه إذا صاحب ألمَ الطرف حُمّى أو شعورٌ عام بالتعب.</p><p>راجعوه إذا ظلّ الألم يزداد رغم الراحة والإطالة، أو منع اللعب المعتاد والنشاط المدرسي.</p></div>";
+    var en=L.html.en, a=en.indexOf("<h3>When should we see a doctor?</h3>"), okEN=false;
+    if(a>=0){var u=en.indexOf("</ul>",a); if(u>=0){L.html.en=en.slice(0,a)+EN_NEW+en.slice(u+5); okEN=true;}}
+    var okAR=false; if(L.html.ar.indexOf(AR_OLD)>=0){L.html.ar=L.html.ar.replace(AR_OLD,AR_NEW); okAR=true;}
+    if(okEN&&okAR) done.push("apophysitis"); else miss.push("apophysitis:en="+okEN+",ar="+okAR);
+  })();
+  (function(){ var L=LF("back-pain"); if(!L){miss.push("back-pain:not-found");return;}
+    var en=L.html.en, ar=L.html.ar, f=[];
+    var EN=[["eases with rest</strong>, moves around, does not wake", "eases with rest</strong>, does not wake"], ["is almost always benign and settles within a few weeks.</div>", "is almost always benign and settles within a few weeks. <strong>If it does not settle in that time, that is exactly when to come back</strong> — those same few weeks are the window in which one particular cause stops being easy to fix.</div>"], ["<div class=\"lf-redflag\">", "<div class=\"lf-note\"><strong>One cause worth knowing by name.</strong> In a young athlete with back pain brought on by <strong>arching backwards</strong>, felt <strong>in one spot</strong>, and not settling, the commonest culprit is a <strong>stress fracture in the spine</strong> — and it is the first thing specialists think of when a child has back pain <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Berger 2019)</span>. It heals well when caught early, and stops healing when it is not. See the leaflet <strong>“Stress Fracture in the Spine (Spondylolysis &amp; Spondylolisthesis)”</strong>.</div>\n\n    <div class=\"lf-redflag\">"], ["<li><strong>Night pain</strong>", "<li><strong>Pain when arching backwards</strong>, or pain <strong>always in one spot</strong> in the low back that your child can point to. <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Berger &amp; Doyle, <i>Curr Opin Pediatr</i> 2019, doi:10.1097/MOP.0000000000000706)</span></li>\n        <li><strong>An adolescent in a sport with repeated arching of the back</strong> — diving, weightlifting, gymnastics or wrestling — whose back pain keeps returning. <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Mohile et al., <i>J Am Board Fam Med</i> 2022, doi:10.3122/jabfm.2022.220130R1)</span></li>\n        <li><strong>Night pain</strong>"]];
+    var AR=[["بالراحة ويتنقّل من مكان إلى آخر ولا يوقظ الطفل", "بالراحة ولا يوقظ الطفل", "ALL"], ["ويزول خلال أسابيع قليلة. فاطمئنوا", "ويزول خلال أسابيع قليلة. <strong>فإن لم يزل في تلك المدّة فذلك هو أوان العودة</strong> — فتلك الأسابيع القليلة نفسها هي التي يكفّ فيها سبب بعينه عن كونه سهل الإصلاح. فاطمئنوا", "ONE"], ["<div class=\"lf-redflag\">", "<div class=\"lf-note\"><strong>سبب يستحقّ أن تعرفوه باسمه.</strong> إذا كان الرياضيّ الصغير يؤلمه ظهره عند <strong>التقوّس إلى الخلف</strong>، والألم <strong>في موضع واحد</strong>، ولا يهدأ، فأشيع سبب لذلك <strong>كسر إجهاد في العمود الفقري</strong>، وهو أوّل ما يفكّر فيه المختصّون إذا اشتكى طفل ظهره <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Berger 2019)</span>. وهو يلتئم جيّدًا إن أُدرك مبكّرًا، ويكفّ عن الالتئام إن لم يُدرك. انظروا ورقة <strong>«كسر الإجهاد في العمود الفقري (الانحلال والانزلاق الفقاري)»</strong>.</div>\n\n    <div class=\"lf-redflag\">", "ONE"], ["<li>ألم ليلي يوقظ الطفل", "<li><strong>ألم عند التقوّس إلى الخلف</strong>، أو ألم <strong>في موضع واحد دائمًا</strong> من أسفل الظهر يشير إليه طفلكم. <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Berger &amp; Doyle, <i>Curr Opin Pediatr</i> 2019, doi:10.1097/MOP.0000000000000706)</span></li>\n        <li><strong>مراهق يمارس رياضة يتكرّر فيها تقوّس الظهر</strong>، كالغطس ورفع الأثقال والجمباز والمصارعة، وألم ظهره يعود ويعود. <span class=\"evsrc\" dir=\"ltr\" style=\"unicode-bidi:isolate\">(Mohile et al., <i>J Am Board Fam Med</i> 2022, doi:10.3122/jabfm.2022.220130R1)</span></li>\n        <li>ألم ليلي يوقظ الطفل", "ONE"]];
+    EN.forEach(function(p){ if(en.indexOf(p[0])<0){f.push("en:"+p[0].slice(0,18));} else en=en.replace(p[0],p[1]); });
+    AR.forEach(function(p){ if(ar.indexOf(p[0])<0){f.push("ar:"+p[0].slice(0,12));} else { ar = p[2]==="ALL" ? ar.split(p[0]).join(p[1]) : ar.replace(p[0],p[1]); } });
+    if(f.length){ miss.push("back-pain:"+f.join("|")); } else { L.html.en=en; L.html.ar=ar; done.push("back-pain"); }
+  })();
+  (function(){ var L=LF("fractures"); if(!L){miss.push("fractures:not-found");return;}
+    var en=L.html.en, ar=L.html.ar, f=[];
+    var EN=[["<li><strong>Toddler's fracture</strong> — a fine spiral crack of the shin bone in a young child who suddenly limps or won't walk after a twist/fall; heals in a cast.</li>", "<li><strong>Toddler's fracture</strong> — a fine spiral crack of the shin bone in a young child who suddenly limps or won't walk after a twist/fall. It heals reliably, and about a quarter are invisible on the first X-ray. A cast is <strong>not</strong> always needed. See <strong>“A Toddler Who Suddenly Won't Walk”</strong>.</li>"], ["<li><strong>Collarbone (clavicle) fracture</strong> — common after a fall onto the shoulder; usually needs only a sling and settles on its own, even with a visible bump that remodels.</li>", "<li><strong>Collarbone (clavicle) fracture</strong> — common after a fall onto the shoulder; usually needs only a sling and settles on its own, even with a visible bump that remodels. If the X-ray looked alarming, see <strong>“A Broken Collarbone”</strong> — the picture at injury is the worst it will look.</li>"]];
+    var AR=[["<li>كسر الطفل الصغير: شرخٌ حلزونيٌّ دقيق في عظم الساق يصيب الطفل الصغير الذي يعرج فجأةً أو يرفض المشي بعد التواءٍ أو سقوط، ويلتئم بالجبس.</li>", "<li>كسر الطفل الصغير: شرخٌ حلزونيٌّ دقيق في عظم الساق يصيب الطفل الصغير الذي يعرج فجأةً أو يرفض المشي بعد التواءٍ أو سقوط. يلتئم التئامًا موثوقًا، ونحو ربعه لا يُرى في الأشعّة الأولى. والجبس <strong>ليس</strong> لازمًا دائمًا. انظروا <strong>«دارج يأبى المشي فجأةً»</strong>.</li>"], ["<li>كسر الترقوة: كثير الحدوث بعد السقوط على الكتف، ولا يحتاج عادةً إلا إلى حمّالة الذراع، ويهدأ من تلقاء نفسه ولو ظهر بروزٌ يُعيد تشكيل نفسه.</li>", "<li>كسر الترقوة: كثير الحدوث بعد السقوط على الكتف، ولا يحتاج عادةً إلا إلى حمّالة الذراع، ويهدأ من تلقاء نفسه ولو ظهر بروزٌ يُعيد تشكيل نفسه. وإن بدت الأشعّة مفزعة فانظروا <strong>«كسر الترقوة»</strong>: فصورة الإصابة الأولى هي أسوأ صورة لها على الإطلاق.</li>"]];
+    EN.forEach(function(p){ if(en.indexOf(p[0])<0){f.push("en:"+p[0].slice(0,20));} else en=en.replace(p[0],p[1]); });
+    AR.forEach(function(p){ if(ar.indexOf(p[0])<0){f.push("ar:"+p[0].slice(0,14));} else ar=ar.replace(p[0],p[1]); });
+    if(f.length){ miss.push("fractures:"+f.join("|")); } else { L.html.en=en; L.html.ar=ar; done.push("fractures(hub links)"); }
+  })();
+  try{console.log("opd-1365 restored:",done.join(",")||"none","| miss:",miss.join(";")||"none");}catch(e){}
 })();
 </script>
 </body>
