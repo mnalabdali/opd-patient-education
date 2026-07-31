@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.6 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.7 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4329,7 +4329,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.6 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.7 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -20039,6 +20039,35 @@ try{ window.__opd1364="home font-size control + global text scaling"; }catch(e){
   try{ if(typeof buildChips==="function") buildChips(); }catch(e){}
   try{ window.__opd1373={added:OBJS.map(function(o){return o.id;})}; }catch(e){}
 })(); </script>
+
+<script id="opd-1374-hero-localize"> (function(){
+  /* opd-1374: repoint the 5 new heroes (hsp, sb-hip, sb-foot, sb-insensate, cip) from
+     CloudFront URLs to repo-baked img/h-<id>.jpg, matching the native HIMG convention
+     used by every other leaflet. Removes the interim lf-hero <img> prepend (added in
+     opd-1372/opd-1373) so the reader shows only the native cover figure. (c) 2026 Dr. Masoud Al Abdali. */
+  try{
+  if(typeof LEAFLETS==="undefined") return;
+  var IDS=["hsp","sb-hip","sb-foot","sb-insensate","cip"];
+  IDS.forEach(function(id){
+    try{ if(typeof IMG!=="undefined") IMG["h-"+id]="img/h-"+id+".jpg"; }catch(e){}
+  });
+  LEAFLETS.forEach(function(l){
+    if(!l||!l.id||IDS.indexOf(l.id)<0) return;
+    if(l.html){ ["en","ar"].forEach(function(lg){
+      if(l.html[lg]) l.html[lg]=l.html[lg].replace(/<img class="lf-hero"[^>]*>\s*/g,"");
+    });}
+    l.illus=l.illus||{};
+    if(l.illus.card==="cover-"+l.id) delete l.illus.card;
+    l.illus.cover="h-"+l.id;
+    try{ if(typeof ILLUS!=="undefined" && ILLUS["cover-"+l.id]) delete ILLUS["cover-"+l.id]; }catch(e){}
+  });
+  try{ if(typeof buildIndex==="function") buildIndex(); }catch(e){}
+  try{ if(typeof buildChips==="function") buildChips(); }catch(e){}
+  try{ if(typeof render==="function") render(); }catch(e){}
+  try{ window.__opd1374={localized:IDS}; }catch(e){}
+  }catch(e){ try{console.warn("opd-1374",e)}catch(_){} }
+})(); </script>
+
 
 
 
