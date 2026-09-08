@@ -1,88 +1,32 @@
 {
+  "_comment": "PUBLIC config, deployed beside index.html. Since v10.8 it carries NO secrets: no gateKey, no reviewer tokens, no endpoint. Reviewers are referenced by the display ids r01-r13 defined in the roster inside index.html; the id-to-person mapping is in 05_GOVERNANCE/REVIEWER_IDS.md. Never add a gateKey, token or endpoint to this file - GitHub Pages serves it to anyone.",
   "stage": 1,
-  "gateKey": "khoula-ortho-2026",
   "assign": {
-    "spine": "706293",
-    "hand-upper-limb": "90c22f",
-    "hip": "d43f01",
-    "foot": "c60d28",
-    "bone-lesions": "c59d28",
-    "leg": "867dcf"
+    "spine": "r01",
+    "hand-upper-limb": "r02",
+    "hip": "r04",
+    "foot": "r07",
+    "bone-lesions": "r11",
+    "leg": "r05"
   },
   "override": {
-    "knee-pain": "1026ca",
-    "bakers-cyst": "1026ca",
-    "discoid-meniscus": "1026ca",
-    "knee-ocd": "1026ca",
-    "acl-injury": "1026ca",
-    "tibial-spine-fracture": "1026ca",
-    "patella-dislocation": "1026ca"
+    "knee-pain": "r03",
+    "bakers-cyst": "r03",
+    "discoid-meniscus": "r03",
+    "knee-ocd": "r03",
+    "acl-injury": "r03",
+    "tibial-spine-fracture": "r03",
+    "patella-dislocation": "r03"
   },
   "status": {
-    "ddh-pavlik": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "ddh-spica": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "perthes": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "scfe": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "bone-joint-infection": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "limping-child": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "residual-dysplasia": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    },
-    "fai": {
-      "state": "reviewed",
-      "by": "d43f01",
-      "date": {
-        "en": "25 July 2026",
-        "ar": "25 يوليو 2026"
-      }
-    }
+    "ddh-pavlik":           {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "ddh-spica":            {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "perthes":              {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "scfe":                 {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "bone-joint-infection": {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "limping-child":        {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "residual-dysplasia":   {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}},
+    "fai":                  {"state": "reviewed", "by": "r04", "date": {"en": "25 July 2026", "ar": "25 يوليو 2026"}}
   },
   "reviewers": {}
 }

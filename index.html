@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.7 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.8 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -3521,14 +3521,21 @@ var OPD7_ORDER=LEAFLETS.slice(); /* pristine order */
     var ranked=false;
     try{
       if(q && activeCat!=="library" && activeCat!=="games"){
+        /* opd-1375 (F1 fix): refresh the pristine order from the LIVE array immediately before
+           ranking. The load-time snapshot at the top of this layer was taken before later layers
+           appended leaflets, so wiping and restoring from it silently dropped every leaflet added
+           after this layer — 70 of 137 on v10.7. Re-slicing here is always safe: the array is
+           restored below in the same synchronous call and is never left ranked between renders. */
+        OPD7_ORDER=LEAFLETS.slice();
         var scored=OPD7_ORDER.map(function(x,i){ return {x:x, i:i, s:opd7Score(x,q)}; });
         scored.sort(function(a,b){ return (b.s-a.s)||(a.i-b.i); });
         LEAFLETS.length=0; scored.forEach(function(r){ LEAFLETS.push(r.x); });
         ranked=true;
       }
     }catch(e){}
-    _render.apply(this,arguments);
-    if(ranked){ try{ LEAFLETS.length=0; OPD7_ORDER.forEach(function(x){ LEAFLETS.push(x); }); }catch(e){} }
+    /* restore in a finally: a throw inside the wrapped render must not leave the catalogue ranked */
+    try{ _render.apply(this,arguments); }
+    finally{ if(ranked){ try{ LEAFLETS.length=0; OPD7_ORDER.forEach(function(x){ LEAFLETS.push(x); }); }catch(e){} } }
     try{
       var empty=document.getElementById("empty");
       var old=document.getElementById("opd7-dym"); if(old) old.parentNode.removeChild(old);
@@ -4329,7 +4336,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.7 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.8 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -15282,30 +15289,40 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
      - STATUS: mark a leaflet reviewed:  "id":{state:"reviewed"|"reviewed-edited"|"coauthor", by:"<token>", date:{en,ar}}
        reviewed = accepted as-is or phrasing only; reviewed-edited = <50% of scientific content changed; coauthor = >50% changed
      ================================================================================== */
-  window.OPD_REVIEW_ENDPOINT = "https://formspree.io/f/xvzeqbpq";
-  var PR_STAGE_DEFAULT=1, PR_GATEKEY_DEFAULT="khoula-ortho-2026";  /* Stage 1=restricted, 2=public. Change stage/gateKey in assignments.json */
+  /* opd-1376 (credentials removal, v10.8): this file is published to GitHub Pages, so NOTHING
+     secret may live here or in any deployed assignments.json. Removed from the public build:
+     the Formspree endpoint, the cleartext gate key, and the thirteen reviewer access tokens.
+     The roster below is DISPLAY ONLY — opaque ids and names, which are published credits, not
+     credentials. Reviewer submission now runs from the private, undeployed reviewer page.
+     NEVER put an endpoint, gateKey or token back into this file or into a deployed
+     assignments.json; a client-side gate on a public static site cannot restrict anything. */
+  window.OPD_REVIEW_ENDPOINT = null;
+  var PR_STAGE_DEFAULT=1, PR_GATEKEY_DEFAULT=null;
   var PR_STAGE=null, PR_GATEKEY=null;
   var AV="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23dbe7f5'/%3E%3Ccircle cx='60' cy='46' r='22' fill='%2390a9c7'/%3E%3Cpath d='M22 104c0-21 17-32 38-32s38 11 38 32z' fill='%2390a9c7'/%3E%3C/svg%3E";
+  /* DISPLAY-ONLY roster: opaque id -> published name. No tokens. Sign-off records in
+     assignments.json reference these ids (by:"r04"), never a token. Mapping in
+     05_GOVERNANCE/REVIEWER_IDS.md. */
   var REVIEWERS = {
-    "706293":{token:"706293",name:{en:"Dr Abdulrahman Al Subhi",ar:"د. عبدالرحمن الصبحي"}},
-    "90c22f":{token:"90c22f",name:{en:"Dr Ahmed Al Wehaibi",ar:"د. أحمد الوهيبي"}},
-    "1026ca":{token:"1026ca",name:{en:"Dr Ismail Al Habsi",ar:"د. إسماعيل الحبسي"}},
-    "d43f01":{token:"d43f01",name:{en:"Dr Ahmed Al Shukaili",ar:"د. أحمد الشكيلي"}},
-    "867dcf":{token:"867dcf",name:{en:"Dr Abdullah Al Ajmi",ar:"د. عبدالله العجمي"}},
-    "b04bba":{token:"b04bba",name:{en:"Dr Amur Al Riyami",ar:"د. عامر الريامي"}},
-    "c60d28":{token:"c60d28",name:{en:"Dr Wafa Al Baluki",ar:"د. وفاء البلوشية"}},
-    "854b29":{token:"854b29",name:{en:"Dr Sherif Jalal",ar:"د. شريف جلال"}},
-    "6ff818":{token:"6ff818",name:{en:"Dr Yaqoob Al Mufargi",ar:"د. يعقوب المفرجي"}},
-    "f14929":{token:"f14929",name:{en:"Dr Walid Ibrahim",ar:"د. وليد إبراهيم"}},
-    "c59d28":{token:"c59d28",name:{en:"Dr Maitham Al Mosawi",ar:"د. ميثم الموسوي"}},
-    "0a8e51":{token:"0a8e51",name:{en:"Dr Obaid Yaseen",ar:"د. عبيد ياسين"}},
-    "622a31":{token:"622a31",name:{en:"Dr Mohammed Khalid",ar:"د. محمد خالد"}}
+    "r01":{name:{en:"Dr Abdulrahman Al Subhi",ar:"د. عبدالرحمن الصبحي"}},
+    "r02":{name:{en:"Dr Ahmed Al Wehaibi",ar:"د. أحمد الوهيبي"}},
+    "r03":{name:{en:"Dr Ismail Al Habsi",ar:"د. إسماعيل الحبسي"}},
+    "r04":{name:{en:"Dr Ahmed Al Shukaili",ar:"د. أحمد الشكيلي"}},
+    "r05":{name:{en:"Dr Abdullah Al Ajmi",ar:"د. عبدالله العجمي"}},
+    "r06":{name:{en:"Dr Amur Al Riyami",ar:"د. عامر الريامي"}},
+    "r07":{name:{en:"Dr Wafa Al Baluki",ar:"د. وفاء البلوشية"}},
+    "r08":{name:{en:"Dr Sherif Jalal",ar:"د. شريف جلال"}},
+    "r09":{name:{en:"Dr Yaqoob Al Mufargi",ar:"د. يعقوب المفرجي"}},
+    "r10":{name:{en:"Dr Walid Ibrahim",ar:"د. وليد إبراهيم"}},
+    "r11":{name:{en:"Dr Maitham Al Mosawi",ar:"د. ميثم الموسوي"}},
+    "r12":{name:{en:"Dr Obaid Yaseen",ar:"د. عبيد ياسين"}},
+    "r13":{name:{en:"Dr Mohammed Khalid",ar:"د. محمد خالد"}}
   };
   var ASSIGN   = { };   /* category -> token  (empty for now: each reviewer sees all non-surgical) */
   var OVERRIDE = { };   /* leafletId -> token */
   var STATUS   = { };   /* real sign-offs go here */
   /* ---- preview the reviewed state only with ?prdemo=1 (never on the live site) ---- */
-  try{ if(/prdemo=1/.test(location.search+location.hash)) STATUS["intoeing"]={state:"reviewed-edited",by:"706293",date:{en:"21 July 2026",ar:"21 يوليو 2026"}}; }catch(e){}
+  try{ if(/prdemo=1/.test(location.search+location.hash)) STATUS["intoeing"]={state:"reviewed-edited",by:"r01",date:{en:"21 July 2026",ar:"21 يوليو 2026"}}; }catch(e){}
   /* ================================================================================== */
 
   var EXPLAIN={
@@ -15606,7 +15623,10 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
       .catch(function(e){ res.textContent="ERROR: "+e.message+"\n"+tt("Network/CORS blocked — downloading instead.","حُظرت الشبكة — يجري التنزيل بدلًا من ذلك."); download(x); showToast(tt("Sent as download instead","تم التنزيل بدلًا من ذلك")); });
   }
 
-  function resolve(tok){ for(var k in REVIEWERS){ if(REVIEWERS[k].token===tok||k===tok) return k; } return null; }
+  /* opd-1376: token entry is disabled in the PUBLIC build. The roster now holds display ids only,
+     so matching on the key would let anyone open reviewer mode by guessing "r01". A client-side
+     check cannot gate a public static file; reviewer access lives in the private reviewer page. */
+  function resolve(tok){ return null; }
   function entry(){ try{ var m=(location.search+" "+location.hash).match(/review=([A-Za-z0-9_-]+)/); if(m){ var id=resolve(m[1]); if(id){ REVIEW_MODE=id; setTimeout(openReviewer,80); } } }catch(e){} }
 
   /* ---- assignments.json: external control panel (category assignments, status, reviewer profiles) ---- */
@@ -15628,6 +15648,13 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
     var gk=(PR_GATEKEY!=null?PR_GATEKEY:PR_GATEKEY_DEFAULT);
     function openUp(){ if(splash&&splash.parentNode) splash.parentNode.removeChild(splash); }
     if(String(stage)==="2"){ openUp(); return; }
+    /* opd-1376 (v10.8): with the cleartext key removed there is no key to check, so stage 1 can no
+       longer restrict anything and the app opens. This is written explicitly: without it the page
+       still opened, but only by the accident that an unset localStorage item returns null and
+       null===gk when gk is null. A gate over a file served publicly is theatre in any case — the
+       key was readable in the page source — so restricting access needs real hosting auth, not
+       this splash. SURGEON DECISION: re-gate behind hosting auth, or leave the app open. */
+    if(gk==null){ openUp(); return; }
     var granted=!!REVIEW_MODE;
     try{ var m=(location.search+" "+location.hash).match(/[?&#]key=([^&#\s]+)/); if(m&&decodeURIComponent(m[1])===gk){ granted=true; localStorage.setItem("pr_gate_ok",gk); } }catch(e){}
     try{ if(!granted && localStorage.getItem("pr_gate_ok")===gk) granted=true; }catch(e){}
