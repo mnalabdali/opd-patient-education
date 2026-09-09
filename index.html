@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.8 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.9 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4336,7 +4336,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.8 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.9 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -15104,7 +15104,8 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
      background:#2a4a6b;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.28);opacity:.55;transition:opacity .15s}
   .clinic-entry:hover{opacity:1}
   .clinic-root{position:fixed;inset:0;z-index:70;background:#eef1f4;display:flex;flex-direction:column;overflow:hidden;font-family:inherit}
-  .cl-top{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#22303f;color:#fff;flex:0 0 auto}
+  .cl-top{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#22303f;color:#fff;flex:0 0 auto;direction:ltr}
+  .cl-top h2{flex:1;margin:0}
   .cl-top h2{font-size:17px;margin:0;font-weight:700;flex:1 1 auto}
   .cl-ico{inline-size:38px;block-size:38px;border-radius:10px;border:none;background:#33475b;color:#fff;font-size:16px;cursor:pointer;display:grid;place-items:center}
   .cl-ico:hover{background:#415a72}
@@ -15203,7 +15204,18 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
     var lb=document.createElement("button"); lb.className="cl-ico"; lb.type="button"; lb.title="Language"; lb.textContent="🌐";
     lb.onclick=function(){ try{ lang=isAr()?"en":"ar"; localStorage.setItem("pe_lang",lang);}catch(e){} try{ if(typeof applyLang==="function") applyLang(); }catch(e){} renderClinic(); };
     var xb=document.createElement("button"); xb.className="cl-ico"; xb.type="button"; xb.title="Close"; xb.textContent="✕";
-    xb.onclick=window.closeClinic;
+    /* opd-1377 (v10.9): the X used to be wired to whatever window.closeClinic pointed at when this
+       toolbar was rendered. opd-1350-companion reassigns window.closeClinic to its own board closer
+       (#mlov), while the entry button still opens THIS root because it captured the old openClinic
+       at build time. The X therefore closed a board that was not open and left clinic mode stuck.
+       Close deterministically instead: this root, plus the companion board if it happens to be open. */
+    xb.onclick=function(){
+      try{ root.style.display="none"; }catch(e){}
+      try{ document.documentElement.classList.remove("clinic-open"); }catch(e){}
+      try{ closeShare(); }catch(e){}
+      try{ var b=document.getElementById("mlov"); if(b) b.classList.remove("open"); }catch(e){}
+      try{ document.documentElement.style.overflow=""; }catch(e){}
+    };
     top.appendChild(lb); top.appendChild(xb);
     var tabs=document.createElement("div"); tabs.className="cl-tabs";
     var t1=document.createElement("button"); t1.className="cl-tab"+(TAB==="fav"?" on":""); t1.type="button"; t1.textContent="★ "+tt("My leaflets","نشراتي");
@@ -18359,7 +18371,7 @@ try{ window.__opd_1324=log; }catch(e){}
   css.textContent=
     "#mlov{position:fixed;inset:0;z-index:9000;background:var(--bg,#f4f8fc);display:none;flex-direction:column;font-family:inherit;}"
    +"#mlov.open{display:flex;}"
-   +".mlv-head{background:var(--navy,#14395f);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex:0 0 auto;}"
+   +".mlv-head{background:var(--navy,#14395f);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex:0 0 auto;direction:ltr;}"
    +".mlv-head h2{margin:0;font-size:17px;font-weight:800;flex:1;}"
    +".mlv-ico{border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;width:38px;height:38px;font-size:16px;cursor:pointer;display:inline-grid;place-items:center;padding:0;}"
    +".mlv-full{border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 15px;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;}"
