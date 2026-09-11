@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.9 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.10 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4336,7 +4336,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.9 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.10 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -15635,11 +15635,42 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
       .catch(function(e){ res.textContent="ERROR: "+e.message+"\n"+tt("Network/CORS blocked — downloading instead.","حُظرت الشبكة — يجري التنزيل بدلًا من ذلك."); download(x); showToast(tt("Sent as download instead","تم التنزيل بدلًا من ذلك")); });
   }
 
-  /* opd-1376: token entry is disabled in the PUBLIC build. The roster now holds display ids only,
-     so matching on the key would let anyone open reviewer mode by guessing "r01". A client-side
-     check cannot gate a public static file; reviewer access lives in the private reviewer page. */
-  function resolve(tok){ return null; }
-  function entry(){ try{ var m=(location.search+" "+location.hash).match(/review=([A-Za-z0-9_-]+)/); if(m){ var id=resolve(m[1]); if(id){ REVIEW_MODE=id; setTimeout(openReviewer,80); } } }catch(e){} }
+  /* opd-1377 (v10.10): reviewer links restored WITHOUT republishing the tokens.
+     v10.8 removed the plaintext roster and stubbed resolve() to null, which silently broke every
+     ?review=<token> link already sent to reviewers — they landed on the platform home instead of
+     their worklist. The tokens are matched by SALTED HASH instead: the file stores only
+     SHA-256("OPD-REV|"+token), from which the token cannot be read back. This is the same scheme
+     05_GOVERNANCE/provenance_registry.json already records for QR access ("file stores
+     SHA-256(\"OPD-QR|\"+token) only"). Links that were already sent keep working unchanged.
+     NOTE: these tokens were public until v10.8 and remain in this repository's history, so they
+     are compromised. Rotating them means reissuing every reviewer link; that is a separate call. */
+  var RTOK = {
+    "4993c9884da62b2373f0043fbfaeb7fb94ddb93ad29969e245edf12d3f05644b":"r01",
+    "405c96cb77da0a5461ce759309b6e8f3caeebd3b74df8688ea2a432f258f6142":"r02",
+    "d2ed392d5b817249930ab00784c4fd32a0fb61b88dd2ef469c027add7e2b98af":"r03",
+    "2c64db728263e23a2f7055a8c5c8f759645120f914c1be7baf71af984c45ed58":"r04",
+    "053a9aff091e0b20f5c46a9d059575d82b353e51e4ee7f1251f763992e06dfa4":"r05",
+    "d27c061a31e50b645ae28c1c631d4033801fb990b135c66f993ec884d5bcb71f":"r06",
+    "c22149fa9bded5be34301714885ca1877533865a21757093cb3a5783e094dff8":"r07",
+    "59cc93c3871484b770772ef487849224e5db84b7de146241149915705cd60a64":"r08",
+    "a4a4196d8fbb17d63172b131e0503f655240a65b32c7e0aae91321a0b9949a26":"r09",
+    "25a38f13939c08df8f526b94ab903ccf9d26d52b53e172482eb8283fd5c1fd91":"r10",
+    "a6d997676bfd86eb78a54c9485c1b3a0829b417bcb60c95a4bd6380b28795663":"r11",
+    "14d95081bc63226d170cf85d30d06f745cb02791a972d2600acc23ebc58792e1":"r12",
+    "498c2bad8028dc4a3393edf10c367006121297c39db775d77648ddda14547990":"r13"
+  };
+  /* async: crypto.subtle.digest returns a Promise. Resolves to a reviewer id or null. Never throws. */
+  function resolveTok(tok){
+    try{
+      if(!tok || !window.crypto || !crypto.subtle || !window.TextEncoder) return Promise.resolve(null);
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode("OPD-REV|"+tok))
+        .then(function(buf){
+          var h=Array.prototype.map.call(new Uint8Array(buf),function(b){return ("0"+b.toString(16)).slice(-2);}).join("");
+          return RTOK[h]||null;
+        })["catch"](function(){ return null; });
+    }catch(e){ return Promise.resolve(null); }
+  }
+  function entry(){ try{ var m=(location.search+" "+location.hash).match(/review=([A-Za-z0-9_-]+)/); if(m){ resolveTok(m[1]).then(function(id){ if(id){ REVIEW_MODE=id; setTimeout(openReviewer,80); } }); } }catch(e){} }
 
   /* ---- assignments.json: external control panel (category assignments, status, reviewer profiles) ---- */
   function applyConfig(cfg){ if(!cfg||typeof cfg!=="object") return;
@@ -15683,7 +15714,7 @@ body.hc .qr-card{border:2px solid #000;} body.hc .qr-card h3,body.hc .qr-link{co
   }
   loadAssignments();
   entry();
-  window.openReviewWorklist=function(tok){ var id=resolve(tok); if(id){ REVIEW_MODE=id; openReviewer(); } };
+  window.openReviewWorklist=function(tok){ resolveTok(tok).then(function(id){ if(id){ REVIEW_MODE=id; openReviewer(); } }); };
   try{ console.log("opd-1288 peer-review ready; review-mode="+(REVIEW_MODE||"off")); }catch(e){}
 })();
 </script><script id="opd-1290">
