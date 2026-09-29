@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.12 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.13 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4336,7 +4336,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.12 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.13 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -20173,6 +20173,266 @@ try{ window.__opd1364="home font-size control + global text scaling"; }catch(e){
     }
     try{ window.__opd1378={added:added, skipped:skipped, missing:missing}; }catch(e){}
   }catch(e){ try{ console.warn('opd-1378', e); }catch(_){ } }
+})();
+</script>
+
+
+<script id="opd-1379-booklet-index">/* ============================================================
+   OPD-PE — opd-1379-booklet-index
+   Audited 2026-09-29 (AUDIT_decision_booklets_2026-09-29.md, finding A6): the app advertises
+   "📘 70 booklets" on a stat pill that is not clickable, and there is no index anywhere. Every
+   booklet is reachable only by opening its host leaflet and scrolling to a CTA, so a parent told
+   in clinic "read the decision guide" cannot find it.
+
+   This makes that pill the door. It opens a searchable index of every registered booklet,
+   grouped into the ones that help you DECIDE something and the ones that help you DO something
+   at home. Rows open the booklet directly.
+
+   Sources of truth, read live so the index never drifts from the app:
+     - MB_REG (68 registered mini-booklets)   -> openMini(key)
+     - HB_UI  (Hussam's Achilles exercises)   -> openHusam()
+     - GB_UI  (Growth-plate pains)            -> openGrowth()
+   Duplicate registrations (the same booklet hosted by two leaflets, e.g. bowlegs/knock-knees and
+   scoliosis/scoliosis-brace) are collapsed to one row.
+   Click handling is delegated to the document, because opd-1317-stat-split rebuilds the pills.
+   ============================================================ */
+(function(){
+  "use strict";
+  try{
+
+  var ID="opd1379";
+  if(window.__opd1379) return;
+
+  function isAr(){
+    try{ if(typeof lang!=="undefined") return lang!=="en"; }catch(e){}
+    try{ return (document.documentElement.getAttribute("dir")||"")==="rtl"; }catch(e){}
+    return true;
+  }
+  function esc(s){ return String(s==null?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function deent(s){ var d=document.createElement("textarea"); d.innerHTML=String(s==null?"":s); return d.value; }
+
+  /* Arabic-tolerant search key: strip diacritics/tatweel, unify alef/ya/ta-marbuta */
+  function norm(s){
+    s=deent(s).toLowerCase();
+    s=s.replace(/[ً-ٰٟـ]/g,"");
+    s=s.replace(/[آأإٱ]/g,"ا");
+    s=s.replace(/ى/g,"ي").replace(/ة/g,"ه");
+    s=s.replace(/[^\p{L}\p{N} ]/gu," ");
+    return s.replace(/\s+/g," ").trim();
+  }
+
+  function items(){
+    var out=[], seen={};
+    try{
+      var reg=window.MB_REG||{};
+      for(var k in reg){
+        var v=reg[k]; if(!v||!v.ui) continue;
+        var ar=v.ui.ar||{}, en=v.ui.en||{};
+        var sig=norm((en.title||"")+"|"+(en.sub||""));
+        if(seen[sig]) continue; seen[sig]=1;
+        var P=v.panels||[];
+        var hasV=false;
+        for(var i=0;i<P.length;i++){
+          var h=P[i]&&P[i].en&&P[i].en.head;
+          if(h && h.indexOf("What matters most")>-1){ hasV=true; break; }
+        }
+        var decide = hasV || /\?|\bor\b/i.test(en.title||"");
+        out.push({ key:k, kind:"mini", decide:decide,
+          tAr:ar.title||en.title||k, sAr:ar.sub||"",
+          tEn:en.title||k,          sEn:en.sub||"" });
+      }
+    }catch(e){}
+    try{ if(typeof HB_UI!=="undefined" && typeof openHusam==="function")
+      out.push({ key:"__husam", kind:"husam", decide:false,
+        tAr:HB_UI.ar.title, sAr:HB_UI.ar.sub, tEn:HB_UI.en.title, sEn:HB_UI.en.sub }); }catch(e){}
+    try{ if(typeof GB_UI!=="undefined" && typeof openGrowth==="function")
+      out.push({ key:"__growth", kind:"growth", decide:false,
+        tAr:GB_UI.ar.title, sAr:GB_UI.ar.sub, tEn:GB_UI.en.title, sEn:GB_UI.en.sub }); }catch(e){}
+    return out;
+  }
+
+  function css(){
+    if(document.getElementById("opd1379-css")) return;
+    var st=document.createElement("style"); st.id="opd1379-css";
+    st.textContent=
+      "#bi-ov{position:fixed;inset:0;background:rgba(20,18,16,.62);backdrop-filter:blur(3px);z-index:10000;display:none;align-items:center;justify-content:center;padding:16px}"+
+      "#bi-ov.open{display:flex}"+
+      "#bi-card{background:#fffdf9;color:#241f1a;max-width:640px;width:100%;max-height:92vh;display:flex;flex-direction:column;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.3);overflow:hidden}"+
+      "#bi-hd{padding:16px 18px 10px;border-bottom:1px solid #eee3d4;flex:0 0 auto}"+
+      "#bi-ttl{margin:0 0 2px;padding-inline-end:40px;font:700 19px/1.3 system-ui;color:#3b2f22}"+
+      "#bi-sub{margin:0;padding-inline-end:40px;font:400 13.5px/1.5 system-ui;color:#7a6a58}"+
+      "#bi-x{position:absolute;inset-inline-end:8px;inset-block-start:10px;border:0;background:transparent;font-size:22px;line-height:1;color:#6b5c4a;cursor:pointer;padding:4px 8px}"+
+      "#bi-q{width:100%;margin-top:12px;box-sizing:border-box;border:1.5px solid #d8cbb8;border-radius:12px;padding:11px 13px;font:400 15px/1.4 system-ui;color:#3b2f22;background:#fff}"+
+      "#bi-q:focus{outline:none;border-color:#8a5a2b;box-shadow:0 0 0 3px rgba(138,90,43,.13)}"+
+      "#bi-body{overflow:auto;padding:6px 12px 16px;flex:1 1 auto;-webkit-overflow-scrolling:touch}"+
+      ".bi-grp{margin:12px 6px 6px;font:700 13px/1.4 system-ui;letter-spacing:.02em;color:#8a5a2b;text-transform:none}"+
+      ".bi-grp span{font-weight:500;color:#a8977f}"+
+      ".bi-row{display:block;width:100%;text-align:inherit;border:1px solid #eadfcd;background:#fff;border-radius:13px;padding:11px 13px;margin:7px 0;cursor:pointer}"+
+      ".bi-row:hover{border-color:#8a5a2b;background:#fdf8f1}"+
+      ".bi-row:focus-visible{outline:2px solid #8a5a2b;outline-offset:2px}"+
+      ".bi-t{display:block;font:600 15.5px/1.4 system-ui;color:#2f2619}"+
+      ".bi-s{display:block;margin-top:3px;font:400 13px/1.5 system-ui;color:#7a6a58}"+
+      "#bi-none{padding:22px 8px;text-align:center;font:400 15px/1.6 system-ui;color:#7a6a58}"+
+      "@media (max-width:420px){#bi-card{max-height:94vh}.bi-t{font-size:15px}}";
+    document.head.appendChild(st);
+  }
+
+  var built=false;
+  function build(){
+    if(built) return; built=true; css();
+    var ov=document.createElement("div"); ov.id="bi-ov"; ov.setAttribute("role","dialog");
+    ov.setAttribute("aria-modal","true");
+    ov.innerHTML=
+      '<div id="bi-card">'+
+        '<div id="bi-hd" style="position:relative">'+
+          '<button id="bi-x" type="button" aria-label="Close">&times;</button>'+
+          '<h2 id="bi-ttl"></h2><p id="bi-sub"></p>'+
+          '<input id="bi-q" type="search" autocomplete="off">'+
+        '</div>'+
+        '<div id="bi-body"></div>'+
+      '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function(e){ if(e.target===ov) close(); });
+    ov.querySelector("#bi-x").addEventListener("click", close);
+    ov.querySelector("#bi-q").addEventListener("input", render);
+    document.addEventListener("keydown", function(e){
+      if(e.key==="Escape" && ov.classList.contains("open")) close();
+    });
+  }
+
+  function render(){
+    var ar=isAr(), ov=document.getElementById("bi-ov"); if(!ov) return;
+    var card=ov.querySelector("#bi-card");
+    card.setAttribute("dir", ar?"rtl":"ltr");
+    ov.querySelector("#bi-ttl").textContent = ar?"كل الكتيّبات":"All the booklets";
+    ov.querySelector("#bi-sub").textContent = ar
+      ? "أدلّة قصيرة: بعضها يساعدكم على اتّخاذ قرار، وبعضها على تنفيذ شيء في البيت."
+      : "Short guides: some help you decide something, some help you do something at home.";
+    var q=ov.querySelector("#bi-q");
+    q.setAttribute("placeholder", ar?"ابحثوا عن كتيّب…":"Search the booklets…");
+    q.setAttribute("aria-label", ar?"ابحثوا عن كتيّب":"Search the booklets");
+
+    var needle=norm(q.value||"");
+    var all=items().map(function(it){
+      it.title = ar?it.tAr:it.tEn; it.sub = ar?it.sAr:it.sEn;
+      it.hay = norm(it.tAr+" "+it.sAr+" "+it.tEn+" "+it.sEn+" "+it.key);
+      return it;
+    }).filter(function(it){ return !needle || it.hay.indexOf(needle)>-1; });
+
+    all.sort(function(a,b){ return String(a.title).localeCompare(String(b.title), ar?"ar":"en"); });
+
+    var dec=all.filter(function(x){ return x.decide; });
+    var care=all.filter(function(x){ return !x.decide; });
+    var body=ov.querySelector("#bi-body"); body.innerHTML="";
+
+    if(!all.length){
+      var n=document.createElement("div"); n.id="bi-none";
+      n.textContent = ar?"لا يوجد كتيّب بهذا الاسم.":"No booklet matches that.";
+      body.appendChild(n); return;
+    }
+    function group(list, labAr, labEn){
+      if(!list.length) return;
+      var h=document.createElement("div"); h.className="bi-grp";
+      h.innerHTML=esc(ar?labAr:labEn)+' <span>('+list.length+')</span>';
+      body.appendChild(h);
+      list.forEach(function(it){
+        var b=document.createElement("button"); b.type="button"; b.className="bi-row";
+        b.innerHTML='<span class="bi-t">'+esc(deent(it.title))+'</span>'+
+                    (it.sub?'<span class="bi-s">'+esc(deent(it.sub))+'</span>':'');
+        b.addEventListener("click", function(){ open(it); });
+        body.appendChild(b);
+      });
+    }
+    group(dec, "تساعدكم على القرار", "To help you decide");
+    group(care, "تساعدكم في البيت", "To help you at home");
+  }
+
+  function open(it){
+    close();
+    setTimeout(function(){
+      try{
+        if(it.kind==="mini" && typeof openMini==="function") openMini(it.key);
+        else if(it.kind==="husam" && typeof openHusam==="function") openHusam();
+        else if(it.kind==="growth" && typeof openGrowth==="function") openGrowth();
+      }catch(e){ try{ console.warn("opd-1379 open", e); }catch(_){ } }
+    }, 60);
+  }
+
+  var lastFocus=null;
+  function show(){
+    build(); render();
+    var ov=document.getElementById("bi-ov");
+    lastFocus=document.activeElement;
+    ov.classList.add("open");
+    try{ document.body.style.overflow="hidden"; }catch(e){}
+    setTimeout(function(){ try{ ov.querySelector("#bi-q").focus(); }catch(e){} }, 30);
+  }
+  function close(){
+    var ov=document.getElementById("bi-ov"); if(!ov) return;
+    ov.classList.remove("open");
+    try{ document.body.style.overflow=""; }catch(e){}
+    try{ if(lastFocus && lastFocus.focus) lastFocus.focus(); }catch(e){}
+  }
+  window.openBookletIndex=show;
+
+  /* The booklets pill is rebuilt by opd-1317, so delegate rather than bind. */
+  function isBookletPill(el){
+    if(!el) return false;
+    var e=el.querySelector?el.querySelector(".ve"):null;
+    if(e && (e.textContent||"").indexOf("📘")>-1) return true;   /* 📘 */
+    var l=el.querySelector?el.querySelector(".vlab"):null;
+    return !!(l && /booklet|كتيّب|كتيب/i.test(l.textContent||""));
+  }
+  document.addEventListener("click", function(e){
+    var pill=e.target && e.target.closest && e.target.closest(".opd7-cpill");
+    if(!pill || !isBookletPill(pill)) return;
+    e.preventDefault(); e.stopPropagation(); show();
+  }, true);
+  document.addEventListener("keydown", function(e){
+    if(e.key!=="Enter" && e.key!==" ") return;
+    var pill=e.target && e.target.closest && e.target.closest(".opd7-cpill");
+    if(!pill || !isBookletPill(pill)) return;
+    e.preventDefault(); show();
+  }, true);
+
+  /* make it look and behave like a control */
+  function dress(){
+    try{
+      var pills=document.querySelectorAll(".opd7-cpill");
+      for(var i=0;i<pills.length;i++){
+        var p=pills[i]; if(!isBookletPill(p) || p.getAttribute("data-"+ID)) continue;
+        p.setAttribute("data-"+ID,"1");
+        p.setAttribute("role","button");
+        p.setAttribute("tabindex","0");
+        p.style.cursor="pointer";
+        p.style.textDecoration="underline";
+        p.style.textUnderlineOffset="3px";
+        p.style.textDecorationThickness="1px";
+        p.title = isAr()?"افتحوا فهرس الكتيّبات":"Open the booklet index";
+      }
+    }catch(e){}
+  }
+  dress();
+  /* Observe only to re-dress a rebuilt pill. It must NEVER call render(): render() writes into
+     #bi-body, which would fire this observer again and loop. The index re-renders on open, and the
+     language toggle sits behind the overlay so it cannot change while the index is on screen. */
+  try{
+    var pending=false;
+    new MutationObserver(function(muts){
+      if(pending) return;
+      for(var i=0;i<muts.length;i++){
+        var t=muts[i].target;
+        if(t && t.closest && t.closest("#bi-ov")) return;   /* our own writes */
+      }
+      pending=true;
+      requestAnimationFrame(function(){ pending=false; dress(); });
+    }).observe(document.body,{childList:true,subtree:true});
+  }catch(e){}
+  var tries=0; var iv=setInterval(function(){ dress(); if(++tries>20) clearInterval(iv); }, 500);
+
+  window.__opd1379={ok:true, count:items().length};
+  }catch(e){ try{ console.warn("opd-1379", e); }catch(_){ } }
 })();
 </script>
 
