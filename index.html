@@ -723,7 +723,7 @@ body{padding-block-end:36px}
   </div>
 </main>
 
-<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.13 · 2026</span></footer>
+<footer class="app"><span data-i18n="foot">Educational material · Pediatric Orthopedics · Khoula Hospital</span><br><span style="opacity:.75">v10.14 · 2026</span></footer>
 
 <section class="reader" id="reader" aria-hidden="true">
   <div class="reader-bar">
@@ -4336,7 +4336,7 @@ var OPD7=(function(){
   /* ---------------- boot ---------------- */
   function boot(){
     applyModes(); buildBar(); buildPopHost();
-    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.13 · 2026"; }catch(e){}
+    try{ var f=document.querySelector("footer.app span:last-child"); if(f) f.textContent="v10.14 · 2026"; }catch(e){}
     try{ render(); buildChips(); }catch(e){}
   }
   if(document.readyState!=="loading") boot(); else document.addEventListener("DOMContentLoaded",boot);
@@ -20436,5 +20436,172 @@ try{ window.__opd1364="home font-size control + global text scaling"; }catch(e){
 })();
 </script>
 
+
+<script id="opd-1380-safety-reach">/* ============================================================
+   OPD-PE — opd-1380-safety-reach
+   Audited 2026-09-29 (AUDIT_decision_booklets_2026-09-29.md, finding A3): a booklet's safety
+   netting sat only on its LAST panel. A worried parent who reads three panels at midnight and
+   puts the phone down never reaches the one part that is time-critical.
+
+   This puts a quiet control on EVERY panel that leads to that booklet's own safety text.
+   It authors nothing. Each booklet has exactly one target, found at runtime:
+
+     1. the booklet's own <div class="mb-safe"> block  -> revealed inline, verbatim
+     2. else, its own dedicated safety PANEL, matched on that panel's heading -> jumps to it,
+        steering the module's own "mb-<key>-page" store so the booklet reopens on that panel
+
+   Booklets with neither get no control — inventing safety advice is the author's job, not this
+   layer's. Those are listed in window.__opd1380.noTarget for the record.
+
+   Panel changes are picked up by wrapping openMini/mbNext/mbPrev, deliberately NOT by a
+   MutationObserver: opd-1379's first draft looped that way and wedged the tab.
+   ============================================================ */
+(function(){
+  "use strict";
+  try{
+  if(window.__opd1380) return;
+
+  var CUR=null;
+
+  function isAr(){
+    try{ if(typeof lang!=="undefined") return lang!=="en"; }catch(e){}
+    try{ return (document.documentElement.getAttribute("dir")||"")==="rtl"; }catch(e){}
+    return true;
+  }
+  function body(p){ if(!p) return ""; var L=isAr()?"ar":"en"; return (p[L]&&p[L].body)||(p.en&&p.en.body)||""; }
+  function head(p,L){ return (p&&p[L]&&p[L].head)||""; }
+
+  var SAFE_RE=/class\s*=\s*['"]mb-safe['"]/;
+  var STRICT_EN=/\bwhen to\s+(call|see|contact|tell|stop|check\s*back|seek)|go straight in|straight away|is an emergency|2\s*a\.m\./i;
+  var STRICT_AR=/متى\s+(نتصل|نراجع|نعود|تتصلون|تتواصلون|نطلب)|نعود\s+فورًا|طوارئ|راجِعونا|راجعونا/;
+  var LOOSE_EN=/call us|contact us|see us|red flag|warning|signs|watch for/i;
+  var LOOSE_AR=/علامات|ننتبه|نتصل|نراجع/;
+  /* headings that LOOK like safety but are not — never use these as a target */
+  var DENY=/tell us the real number|what it should feel like|أخبِرونا بالرقم|الرقم الحقيقي/i;
+
+  function findTarget(key){
+    var reg=window.MB_REG||{}, v=reg[key]; if(!v||!v.panels) return null;
+    var P=v.panels, i;
+    for(i=0;i<P.length;i++){
+      if(SAFE_RE.test((P[i].en&&P[i].en.body)||"") || SAFE_RE.test((P[i].ar&&P[i].ar.body)||""))
+        return {type:"sheet", idx:i};
+    }
+    var strict=-1, loose=-1;
+    for(i=0;i<P.length;i++){
+      var he=head(P[i],"en"), ha=head(P[i],"ar");
+      if(DENY.test(he)||DENY.test(ha)) continue;
+      if(STRICT_EN.test(he)||STRICT_AR.test(ha)) strict=i;          /* prefer the LAST strict hit */
+      else if(LOOSE_EN.test(he)||LOOSE_AR.test(ha)) loose=i;
+    }
+    var idx = (strict>-1)?strict:loose;
+    if(idx>-1) return {type:"jump", idx:idx};
+    return null;
+  }
+
+  function css(){
+    if(document.getElementById("opd1380-css")) return;
+    var st=document.createElement("style"); st.id="opd1380-css";
+    st.textContent=
+      ".mb-flagbtn{display:flex;align-items:center;gap:7px;width:100%;margin:14px 0 2px;box-sizing:border-box;"+
+        "text-align:inherit;border:1px solid #e8cdbd;background:#fbf0ea;border-radius:12px;padding:10px 13px;"+
+        "font:600 13.5px/1.45 system-ui;color:#6b3f22;cursor:pointer}"+
+      ".mb-flagbtn:hover{border-color:#d9a184;background:#f8e7dd}"+
+      ".mb-flagbtn:focus-visible{outline:2px solid #8a5a2b;outline-offset:2px}"+
+      ".mb-flagbtn .fi{font-size:15px;line-height:1}"+
+      ".mb-flagbtn .fc{flex:1 1 auto}"+
+      ".mb-flagbtn .fx{opacity:.55;font-weight:400}"+
+      ".mb-flagwrap{margin:10px 0 2px}"+
+      ".mb-flagwrap .mb-safe{margin-top:8px}";
+    document.head.appendChild(st);
+  }
+
+  function label(){ return isAr()?"متى تتواصلون معنا":"When to contact us"; }
+
+  function inject(){
+    try{
+      css();
+      var card=document.getElementById("mb-card"); if(!card) return;
+      var nav=card.querySelector(".mb-nav"); if(!nav) return;
+      var old=card.querySelector(".mb-flagbtn, .mb-flagwrap");
+      if(old && old.parentNode) old.parentNode.removeChild(old);
+      if(!CUR) return;
+      var t=findTarget(CUR); if(!t) return;
+
+      /* already showing its own safety text on this panel? then nothing to add */
+      if(card.querySelector(".mb-safe")) return;
+
+      var P=((window.MB_REG||{})[CUR]||{}).panels||[];
+      var curIdx=-1;
+      try{
+        var n=(nav.textContent||"").match(/\d+/);
+        if(n) curIdx=parseInt(n[0],10)-1;
+      }catch(e){}
+      if(t.type==="jump" && curIdx===t.idx) return;
+
+      var b=document.createElement("button");
+      b.type="button"; b.className="mb-flagbtn";
+      if(t.type==="jump"){
+        var dest=isAr()?head(P[t.idx],"ar"):head(P[t.idx],"en");
+        var d=document.createElement("textarea");
+        d.innerHTML=String(dest||"").replace(/<[^>]+>/g,"");
+        b.title=d.value;
+      }
+      b.innerHTML='<span class="fi" aria-hidden="true">&#9888;&#65038;</span>'+
+                  '<span class="fc">'+label()+'</span>'+
+                  '<span class="fx" aria-hidden="true">'+(t.type==="sheet"?"+":"→")+'</span>';
+      b.addEventListener("click", function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        if(t.type==="sheet") reveal(card, nav, P[t.idx]);
+        else jump(CUR, t.idx);
+      });
+      nav.parentNode.insertBefore(b, nav);
+    }catch(e){ try{ console.warn("opd-1380 inject", e); }catch(_){ } }
+  }
+
+  function reveal(card, nav, panel){
+    var b=card.querySelector(".mb-flagbtn"); if(b&&b.parentNode) b.parentNode.removeChild(b);
+    var w=document.createElement("div"); w.className="mb-flagwrap";
+    var html=body(panel), m=html.match(/<div[^>]*class\s*=\s*['"]mb-safe['"][\s\S]*?<\/div>/i);
+    w.innerHTML = m ? m[0] : "";
+    if(!w.innerHTML) return;
+    nav.parentNode.insertBefore(w, nav);
+    try{ w.scrollIntoView({block:"nearest", behavior:"smooth"}); }catch(e){}
+  }
+
+  function jump(key, idx){
+    try{ localStorage.setItem("mb-"+key+"-page", String(idx)); }catch(e){}
+    try{ if(typeof openMini==="function") openMini(key); }catch(e){}
+  }
+
+  function wrap(name, before){
+    var orig=window[name]; if(typeof orig!=="function" || orig.__opd1380) return;
+    var f=function(){
+      try{ if(before) before.apply(null, arguments); }catch(e){}
+      var r=orig.apply(this, arguments);
+      try{ inject(); }catch(e){}
+      setTimeout(inject, 0);
+      return r;
+    };
+    f.__opd1380=true;
+    try{ window[name]=f; }catch(e){}
+  }
+
+  function arm(){
+    wrap("openMini", function(k){ CUR=k; });
+    wrap("mbNext"); wrap("mbPrev");
+  }
+  arm();
+  /* other layers may replace these later in the load; re-wrap a few times, then stop */
+  var tries=0, iv=setInterval(function(){ arm(); if(++tries>10) clearInterval(iv); }, 600);
+
+  var noTarget=[];
+  try{
+    var reg=window.MB_REG||{};
+    for(var k in reg){ if(!findTarget(k)) noTarget.push(k); }
+  }catch(e){}
+  window.__opd1380={ok:true, noTarget:noTarget};
+  }catch(e){ try{ console.warn("opd-1380", e); }catch(_){ } }
+})();
+</script>
 </body>
 </html>
